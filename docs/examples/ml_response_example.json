@@ -1,0 +1,41 @@
+{
+  "_comment": "DEMO/EXAMPLE RESPONSE ONLY - 0.84 probability is an illustrative example value, not actual model performance",
+  "prediction_id": "PRED-000001",
+  "mine_id": "MINE-001",
+  "zone_id": "ZONE-003",
+  "timestamp": "2026-08-14T10:30:00Z",
+  "rockfall_probability": 0.84,
+  "risk_level": "HIGH",
+  "contributing_factors": [
+    {
+      "feature": "rainfall_mm",
+      "importance": 0.38,
+      "description": "Heavy cumulative rainfall significantly increases pore water pressure and triggers slope instability"
+    },
+    {
+      "feature": "displacement_mm",
+      "importance": 0.31,
+      "description": "Elevated slope displacement rate exceeds normal bench stability thresholds"
+    },
+    {
+      "feature": "pore_pressure_kpa",
+      "importance": 0.18,
+      "description": "Elevated subsurface hydrostatic pressure reducing shear strength"
+    },
+    {
+      "feature": "slope_deg",
+      "importance": 0.13,
+      "description": "Steep bench geometry amplifies gravitational vector components"
+    }
+  ],
+  "model_version": "v1.0.0",
+  "status": "SUCCESS",
+  "metadata": {
+    "data_sources": {
+      "sensors": "IoT/Simulation Stream",
+      "terrain": "GIS DEM Surface Analysis"
+    },
+    "inference_time_ms": 14.5,
+    "demo_mode": true
+  }
+}

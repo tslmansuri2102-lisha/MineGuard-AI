@@ -1,0 +1,25 @@
+{
+  "_comment": "DEMO/EXAMPLE REQUEST ONLY - Not actual sensor measurements",
+  "mine_id": "MINE-001",
+  "zone_id": "ZONE-003",
+  "sensor_id": "SENSOR-003",
+  "timestamp": "2026-08-14T10:30:00Z",
+  "location": {
+    "latitude": 23.7954,
+    "longitude": 86.4304,
+    "elevation_m": 245.5
+  },
+  "terrain": {
+    "slope_deg": 48.5,
+    "aspect_deg": 135.0,
+    "curvature": 0.04
+  },
+  "sensors": {
+    "displacement_mm": 24.2,
+    "strain": 0.81,
+    "pore_pressure_kpa": 62.0,
+    "rainfall_mm": 74.0,
+    "temperature_c": 32.0,
+    "vibration_g": 1.2
+  }
+}

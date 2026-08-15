@@ -1,0 +1,182 @@
+{
+  "pipeline_status": "COMPLETED",
+  "raw_samples": 11033,
+  "target_samples": 10912,
+  "feature_count": 173,
+  "target_stats": {
+    "target_column": "target_rockfall",
+    "positive_class": "1 (Rockfall Event)",
+    "negative_class": "0 (Non-Rockfall Slope Failure)",
+    "total_samples": 10912,
+    "positive_samples": 671,
+    "negative_samples": 10241,
+    "positive_ratio": 0.06149193548387097,
+    "excluded_samples": 121,
+    "class_imbalance_ratio": 15.262295081967213
+  },
+  "split_stats": {
+    "strategy": "time_aware",
+    "total_samples": 10912,
+    "train": {
+      "samples": 7638,
+      "ratio": 0.6999633431085044,
+      "positive_count": 199,
+      "negative_count": 7439,
+      "positive_ratio": 0.026053940822204767
+    },
+    "validation": {
+      "samples": 1636,
+      "ratio": 0.1499266862170088,
+      "positive_count": 255,
+      "negative_count": 1381,
+      "positive_ratio": 0.1558679706601467
+    },
+    "test": {
+      "samples": 1638,
+      "ratio": 0.1501099706744868,
+      "positive_count": 217,
+      "negative_count": 1421,
+      "positive_ratio": 0.13247863247863248
+    }
+  },
+  "validation_metrics": {
+    "dataset": "Validation",
+    "sample_count": 1636,
+    "positive_count": 255,
+    "negative_count": 1381,
+    "accuracy": 0.7445,
+    "precision": 0.3436,
+    "recall": 0.702,
+    "f1_score": 0.4613,
+    "roc_auc": 0.811,
+    "pr_auc": 0.4735,
+    "confusion_matrix": {
+      "true_negatives": 1039,
+      "false_positives": 342,
+      "false_negatives": 76,
+      "true_positives": 179
+    },
+    "top_contributing_features": [
+      {
+        "feature": "longitude",
+        "importance": 0.1001,
+        "description": "Feature longitude influence score"
+      },
+      {
+        "feature": "latitude",
+        "importance": 0.0951,
+        "description": "Feature latitude influence score"
+      },
+      {
+        "feature": "day_of_year",
+        "importance": 0.0938,
+        "description": "Feature day_of_year influence score"
+      },
+      {
+        "feature": "year",
+        "importance": 0.0729,
+        "description": "Feature year influence score"
+      },
+      {
+        "feature": "landslide_size_unknown",
+        "importance": 0.0604,
+        "description": "Feature landslide_size_unknown influence score"
+      },
+      {
+        "feature": "rainfall_3h_sum",
+        "importance": 0.0548,
+        "description": "Feature rainfall_3h_sum influence score"
+      },
+      {
+        "feature": "landslide_size_small",
+        "importance": 0.0524,
+        "description": "Feature landslide_size_small influence score"
+      },
+      {
+        "feature": "landslide_setting_unknown",
+        "importance": 0.0501,
+        "description": "Feature landslide_setting_unknown influence score"
+      },
+      {
+        "feature": "month",
+        "importance": 0.0484,
+        "description": "Feature month influence score"
+      },
+      {
+        "feature": "rainfall_mm",
+        "importance": 0.0425,
+        "description": "Feature rainfall_mm influence score"
+      }
+    ]
+  },
+  "test_metrics": {
+    "dataset": "Test",
+    "sample_count": 1638,
+    "positive_count": 217,
+    "negative_count": 1421,
+    "accuracy": 0.6838,
+    "precision": 0.2652,
+    "recall": 0.7834,
+    "f1_score": 0.3963,
+    "roc_auc": 0.8019,
+    "pr_auc": 0.4219,
+    "confusion_matrix": {
+      "true_negatives": 950,
+      "false_positives": 471,
+      "false_negatives": 47,
+      "true_positives": 170
+    },
+    "top_contributing_features": [
+      {
+        "feature": "longitude",
+        "importance": 0.1001,
+        "description": "Feature longitude influence score"
+      },
+      {
+        "feature": "latitude",
+        "importance": 0.0951,
+        "description": "Feature latitude influence score"
+      },
+      {
+        "feature": "day_of_year",
+        "importance": 0.0938,
+        "description": "Feature day_of_year influence score"
+      },
+      {
+        "feature": "year",
+        "importance": 0.0729,
+        "description": "Feature year influence score"
+      },
+      {
+        "feature": "landslide_size_unknown",
+        "importance": 0.0604,
+        "description": "Feature landslide_size_unknown influence score"
+      },
+      {
+        "feature": "rainfall_3h_sum",
+        "importance": 0.0548,
+        "description": "Feature rainfall_3h_sum influence score"
+      },
+      {
+        "feature": "landslide_size_small",
+        "importance": 0.0524,
+        "description": "Feature landslide_size_small influence score"
+      },
+      {
+        "feature": "landslide_setting_unknown",
+        "importance": 0.0501,
+        "description": "Feature landslide_setting_unknown influence score"
+      },
+      {
+        "feature": "month",
+        "importance": 0.0484,
+        "description": "Feature month influence score"
+      },
+      {
+        "feature": "rainfall_mm",
+        "importance": 0.0425,
+        "description": "Feature rainfall_mm influence score"
+      }
+    ]
+  }
+}
