@@ -1,0 +1,69 @@
+{
+  "sample_index": 0,
+  "actual_label": 0,
+  "predicted_label": 0,
+  "rockfall_probability": 0.4649,
+  "risk_level": "MEDIUM",
+  "top_contributors": [
+    {
+      "feature": "landslide_size_medium",
+      "value": 1.0,
+      "contribution": 1.4964641262320437,
+      "direction": "increases_risk"
+    },
+    {
+      "feature": "landslide_setting_natural_slope",
+      "value": 1.0,
+      "contribution": 1.0696214251265457,
+      "direction": "increases_risk"
+    },
+    {
+      "feature": "day_of_year",
+      "value": 0.5379589404658035,
+      "contribution": 0.9244998520450749,
+      "direction": "increases_risk"
+    },
+    {
+      "feature": "landslide_trigger_rain",
+      "value": 1.0,
+      "contribution": -0.7357503217177519,
+      "direction": "decreases_risk"
+    },
+    {
+      "feature": "month",
+      "value": 0.45215972376273433,
+      "contribution": -0.6434605428544194,
+      "direction": "decreases_risk"
+    },
+    {
+      "feature": "longitude",
+      "value": 0.9735575619561004,
+      "contribution": -0.46537051314517114,
+      "direction": "decreases_risk"
+    },
+    {
+      "feature": "country_code_missing",
+      "value": 1.0,
+      "contribution": 0.35925308889034197,
+      "direction": "increases_risk"
+    },
+    {
+      "feature": "rainfall_mm",
+      "value": -0.9940186068843134,
+      "contribution": 0.18611247736013595,
+      "direction": "increases_risk"
+    },
+    {
+      "feature": "rainfall_24h_sum",
+      "value": -0.9940186068843133,
+      "contribution": 0.18611247736013417,
+      "direction": "increases_risk"
+    },
+    {
+      "feature": "rainfall_3h_sum",
+      "value": -0.9940186068843134,
+      "contribution": 0.18611247736013356,
+      "direction": "increases_risk"
+    }
+  ]
+}

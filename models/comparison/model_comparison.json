@@ -1,0 +1,87 @@
+{
+  "comparison_status": "COMPLETED",
+  "selection_criterion": [
+    "validation_recall",
+    "validation_f1",
+    "validation_pr_auc"
+  ],
+  "recommended_model": "logistic_regression",
+  "models": {
+    "random_forest": {
+      "validation": {
+        "dataset": "Validation",
+        "sample_count": 1636,
+        "positive_count": 255,
+        "negative_count": 1381,
+        "accuracy": 0.8417,
+        "precision": 0.4928,
+        "recall": 0.5373,
+        "f1_score": 0.5141,
+        "roc_auc": 0.8034,
+        "pr_auc": 0.4616,
+        "confusion_matrix": {
+          "true_negatives": 1240,
+          "false_positives": 141,
+          "false_negatives": 118,
+          "true_positives": 137
+        }
+      },
+      "test": {
+        "dataset": "Test",
+        "sample_count": 1638,
+        "positive_count": 217,
+        "negative_count": 1421,
+        "accuracy": 0.8547,
+        "precision": 0.4516,
+        "recall": 0.4516,
+        "f1_score": 0.4516,
+        "roc_auc": 0.8026,
+        "pr_auc": 0.4417,
+        "confusion_matrix": {
+          "true_negatives": 1302,
+          "false_positives": 119,
+          "false_negatives": 119,
+          "true_positives": 98
+        }
+      }
+    },
+    "logistic_regression": {
+      "validation": {
+        "dataset": "Validation",
+        "sample_count": 1636,
+        "positive_count": 255,
+        "negative_count": 1381,
+        "accuracy": 0.5996,
+        "precision": 0.263,
+        "recall": 0.8706,
+        "f1_score": 0.404,
+        "roc_auc": 0.8128,
+        "pr_auc": 0.4278,
+        "confusion_matrix": {
+          "true_negatives": 759,
+          "false_positives": 622,
+          "false_negatives": 33,
+          "true_positives": 222
+        }
+      },
+      "test": {
+        "dataset": "Test",
+        "sample_count": 1638,
+        "positive_count": 217,
+        "negative_count": 1421,
+        "accuracy": 0.5488,
+        "precision": 0.2021,
+        "recall": 0.8157,
+        "f1_score": 0.3239,
+        "roc_auc": 0.7555,
+        "pr_auc": 0.3465,
+        "confusion_matrix": {
+          "true_negatives": 722,
+          "false_positives": 699,
+          "false_negatives": 40,
+          "true_positives": 177
+        }
+      }
+    }
+  }
+}
