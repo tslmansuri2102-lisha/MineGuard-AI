@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_6b4ef95038d3acec18368c582786eb34 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+<div style="
+position: fixed;
+bottom: 30px;
+left: 30px;
+width: 220px;
+background-color: white;
+border: 2px solid grey;
+z-index: 9999;
+padding: 12px;
+font-size: 14px;
+">
+
+<b>Jharia Mine Risk Map</b><br><br>
+
+<span style="color:green;">■</span>
+Low Risk<br>
+
+<span style="color:orange;">■</span>
+Medium Risk<br>
+
+<span style="color:red;">■</span>
+High Risk<br>
+
+<span style="color:purple;">■</span>
+Gas Monitoring<br>
+
+<span style="color:darkred;">■</span>
+Fire/Thermal Risk<br>
+
+<span style="color:black;">■</span>
+Restricted Area<br>
+
+📍 Sensor Location
+
+</div>
+    
+            <div class="folium-map" id="map_6b4ef95038d3acec18368c582786eb34" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_6b4ef95038d3acec18368c582786eb34 = L.map(
+                "map_6b4ef95038d3acec18368c582786eb34",
+                {
+                    center: [23.7822, 86.3933],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 14,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_ef536aeea9ed14a2710fda2b65b702e6 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_ef536aeea9ed14a2710fda2b65b702e6.addTo(map_6b4ef95038d3acec18368c582786eb34);
+        
+    
+            var polygon_acd2533ed02e75f0ab47abcffe618ddb = L.polygon(
+                [[23.787, 86.387], [23.787, 86.401], [23.779, 86.402], [23.777, 86.389]],
+                {"bubblingMouseEvents": true, "color": "black", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "black", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 3}
+            ).addTo(map_6b4ef95038d3acec18368c582786eb34);
+        
+    
+        var popup_145fdcaf9c27d6148e3a374c48e1d38c = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_ce9fb046acf589258a2ac1c720d180cf = $(`<div id="html_ce9fb046acf589258a2ac1c720d180cf" style="width: 100.0%; height: 100.0%;">Kusunda Study Area</div>`)[0];
+                popup_145fdcaf9c27d6148e3a374c48e1d38c.setContent(html_ce9fb046acf589258a2ac1c720d180cf);
+            
+        
+
+        polygon_acd2533ed02e75f0ab47abcffe618ddb.bindPopup(popup_145fdcaf9c27d6148e3a374c48e1d38c)
+        ;
+
+        
+    
+    
+            var polygon_cfa7c4cd2f9c227e826b06322347bd6a = L.polygon(
+                [[23.7865, 86.3875], [23.7865, 86.3935], [23.782, 86.394], [23.781, 86.3885]],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.35, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 3}
+            ).addTo(map_6b4ef95038d3acec18368c582786eb34);
+        
+    
+        var popup_7637c3aafd65f81e6beea1e396f19fa2 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_51ace34233c21d84ecc33c57e1bdbe50 = $(`<div id="html_51ace34233c21d84ecc33c57e1bdbe50" style="width: 100.0%; height: 100.0%;">Zone A - Low Risk | Risk: LOW</div>`)[0];
+                popup_7637c3aafd65f81e6beea1e396f19fa2.setContent(html_51ace34233c21d84ecc33c57e1bdbe50);
+            
+        
+
+        polygon_cfa7c4cd2f9c227e826b06322347bd6a.bindPopup(popup_7637c3aafd65f81e6beea1e396f19fa2)
+        ;
+
+        
+    
+    
+            var polygon_043ef08b32078a7a5e79be450a21effe = L.polygon(
+                [[23.7865, 86.3935], [23.7865, 86.4005], [23.7815, 86.401], [23.782, 86.394]],
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "orange", "fillOpacity": 0.35, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 3}
+            ).addTo(map_6b4ef95038d3acec18368c582786eb34);
+        
+    
+        var popup_097cd332bcd9775de4b0987f1241d456 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_7832ea4da4b33e6d58640af81c1c4ff2 = $(`<div id="html_7832ea4da4b33e6d58640af81c1c4ff2" style="width: 100.0%; height: 100.0%;">Zone B - Medium Risk | Risk: MEDIUM</div>`)[0];
+                popup_097cd332bcd9775de4b0987f1241d456.setContent(html_7832ea4da4b33e6d58640af81c1c4ff2);
+            
+        
+
+        polygon_043ef08b32078a7a5e79be450a21effe.bindPopup(popup_097cd332bcd9775de4b0987f1241d456)
+        ;
+
+        
+    
+    
+            var polygon_bd9de236fead57492a7cd18400100cbd = L.polygon(
+                [[23.781, 86.3885], [23.782, 86.394], [23.7775, 86.397], [23.7775, 86.39]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.35, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 3}
+            ).addTo(map_6b4ef95038d3acec18368c582786eb34);
+        
+    
+        var popup_40b3cd8f112720f48506a8bfaf4a28c0 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_571f591bb25c0ccea0acb736fd996c8d = $(`<div id="html_571f591bb25c0ccea0acb736fd996c8d" style="width: 100.0%; height: 100.0%;">Zone C - High Risk | Risk: HIGH</div>`)[0];
+                popup_40b3cd8f112720f48506a8bfaf4a28c0.setContent(html_571f591bb25c0ccea0acb736fd996c8d);
+            
+        
+
+        polygon_bd9de236fead57492a7cd18400100cbd.bindPopup(popup_40b3cd8f112720f48506a8bfaf4a28c0)
+        ;
+
+        
+    
+    
+            var feature_group_b50d39a52ec294c33768d9be5c7b3cd4 = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var marker_79f0725317cf7ca04d5ecf50644bc574 = L.marker(
+                [23.7845, 86.3905],
+                {
+}
+            ).addTo(feature_group_b50d39a52ec294c33768d9be5c7b3cd4);
+        
+    
+            var icon_812e2cc92b8f8758f09e53a6434b4233 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_b65ab1d7ad004e13482bd658fde5e58a = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_945c956daf8f8a65fced36b0f587aad7 = $(`<div id="html_945c956daf8f8a65fced36b0f587aad7" style="width: 100.0%; height: 100.0%;">     <b>SENSOR-01</b><br>     Type: Environmental<br>     Parameters: Temperature, Humidity, Rainfall     </div>`)[0];
+                popup_b65ab1d7ad004e13482bd658fde5e58a.setContent(html_945c956daf8f8a65fced36b0f587aad7);
+            
+        
+
+        marker_79f0725317cf7ca04d5ecf50644bc574.bindPopup(popup_b65ab1d7ad004e13482bd658fde5e58a)
+        ;
+
+        
+    
+    
+            marker_79f0725317cf7ca04d5ecf50644bc574.bindTooltip(
+                `<div>
+                     SENSOR-01
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_79f0725317cf7ca04d5ecf50644bc574.setIcon(icon_812e2cc92b8f8758f09e53a6434b4233);
+            
+    
+            var marker_2082449506e0ca6ed59000ea484c126f = L.marker(
+                [23.783, 86.396],
+                {
+}
+            ).addTo(feature_group_b50d39a52ec294c33768d9be5c7b3cd4);
+        
+    
+            var icon_ce6b32bf086593075e326de3e9f38858 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_e5c179eec192c2c214fdfc4f11d9899c = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_6076de154ff7eab1d227dc0e8e885acd = $(`<div id="html_6076de154ff7eab1d227dc0e8e885acd" style="width: 100.0%; height: 100.0%;">     <b>SENSOR-02</b><br>     Type: Ground Movement<br>     Parameters: Displacement, Vibration     </div>`)[0];
+                popup_e5c179eec192c2c214fdfc4f11d9899c.setContent(html_6076de154ff7eab1d227dc0e8e885acd);
+            
+        
+
+        marker_2082449506e0ca6ed59000ea484c126f.bindPopup(popup_e5c179eec192c2c214fdfc4f11d9899c)
+        ;
+
+        
+    
+    
+            marker_2082449506e0ca6ed59000ea484c126f.bindTooltip(
+                `<div>
+                     SENSOR-02
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_2082449506e0ca6ed59000ea484c126f.setIcon(icon_ce6b32bf086593075e326de3e9f38858);
+            
+    
+            var marker_685146a2b56e3981ba796f9ee8e085e2 = L.marker(
+                [23.7795, 86.3935],
+                {
+}
+            ).addTo(feature_group_b50d39a52ec294c33768d9be5c7b3cd4);
+        
+    
+            var icon_afafe9be69a7d7bbb2c05eedc7a256cb = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_a4708020c6971632eb83d1a284525135 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_518459ef02c1a18b341b64def16a77d1 = $(`<div id="html_518459ef02c1a18b341b64def16a77d1" style="width: 100.0%; height: 100.0%;">     <b>SENSOR-03</b><br>     Type: Gas Monitoring<br>     Parameters: CO, CO2, CH4     </div>`)[0];
+                popup_a4708020c6971632eb83d1a284525135.setContent(html_518459ef02c1a18b341b64def16a77d1);
+            
+        
+
+        marker_685146a2b56e3981ba796f9ee8e085e2.bindPopup(popup_a4708020c6971632eb83d1a284525135)
+        ;
+
+        
+    
+    
+            marker_685146a2b56e3981ba796f9ee8e085e2.bindTooltip(
+                `<div>
+                     SENSOR-03
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_685146a2b56e3981ba796f9ee8e085e2.setIcon(icon_afafe9be69a7d7bbb2c05eedc7a256cb);
+            
+    
+            var marker_9cad0be9d2ac7dd3b3aa1223579f0d2e = L.marker(
+                [23.785, 86.399],
+                {
+}
+            ).addTo(feature_group_b50d39a52ec294c33768d9be5c7b3cd4);
+        
+    
+            var icon_6073442bd235605599f76019a79c3e6e = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_2de2db4fe0cc29209af1cba5f9343ae0 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_9465437f791edb5b31649517a329420a = $(`<div id="html_9465437f791edb5b31649517a329420a" style="width: 100.0%; height: 100.0%;">     <b>SENSOR-04</b><br>     Type: Environmental<br>     Parameters: Temperature, Humidity     </div>`)[0];
+                popup_2de2db4fe0cc29209af1cba5f9343ae0.setContent(html_9465437f791edb5b31649517a329420a);
+            
+        
+
+        marker_9cad0be9d2ac7dd3b3aa1223579f0d2e.bindPopup(popup_2de2db4fe0cc29209af1cba5f9343ae0)
+        ;
+
+        
+    
+    
+            marker_9cad0be9d2ac7dd3b3aa1223579f0d2e.bindTooltip(
+                `<div>
+                     SENSOR-04
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_9cad0be9d2ac7dd3b3aa1223579f0d2e.setIcon(icon_6073442bd235605599f76019a79c3e6e);
+            
+    
+            feature_group_b50d39a52ec294c33768d9be5c7b3cd4.addTo(map_6b4ef95038d3acec18368c582786eb34);
+        
+    
+            var polygon_f38a64d7157d05ba928115dcaadf857c = L.polygon(
+                [[23.7815, 86.391], [23.7815, 86.3955], [23.778, 86.3965], [23.7775, 86.392]],
+                {"bubblingMouseEvents": true, "color": "purple", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "purple", "fillOpacity": 0.25, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 3}
+            ).addTo(map_6b4ef95038d3acec18368c582786eb34);
+        
+    
+        var popup_e944c3833ace51d2966c1e1128abc629 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_ec164de6d422afad1e3643a230e0edb5 = $(`<div id="html_ec164de6d422afad1e3643a230e0edb5" style="width: 100.0%; height: 100.0%;">Gas Monitoring Zone - Prototype</div>`)[0];
+                popup_e944c3833ace51d2966c1e1128abc629.setContent(html_ec164de6d422afad1e3643a230e0edb5);
+            
+        
+
+        polygon_f38a64d7157d05ba928115dcaadf857c.bindPopup(popup_e944c3833ace51d2966c1e1128abc629)
+        ;
+
+        
+    
+    
+            var polygon_764e65f16fcb28aa667c6dd38a215c07 = L.polygon(
+                [[23.784, 86.397], [23.7855, 86.4], [23.7815, 86.401], [23.7805, 86.398]],
+                {"bubblingMouseEvents": true, "color": "darkred", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 3}
+            ).addTo(map_6b4ef95038d3acec18368c582786eb34);
+        
+    
+        var popup_9de05481c3632b886c8c9f1e570ebad9 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_657bdb3af0d9f36e97c6a409372a7ae5 = $(`<div id="html_657bdb3af0d9f36e97c6a409372a7ae5" style="width: 100.0%; height: 100.0%;">Potential Fire/Thermal Risk Zone - Prototype</div>`)[0];
+                popup_9de05481c3632b886c8c9f1e570ebad9.setContent(html_657bdb3af0d9f36e97c6a409372a7ae5);
+            
+        
+
+        polygon_764e65f16fcb28aa667c6dd38a215c07.bindPopup(popup_9de05481c3632b886c8c9f1e570ebad9)
+        ;
+
+        
+    
+    
+            var polygon_a46e8e3f10fc4e4559c49fba576b5cae = L.polygon(
+                [[23.779, 86.397], [23.781, 86.4005], [23.778, 86.402], [23.7765, 86.399]],
+                {"bubblingMouseEvents": true, "color": "black", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "black", "fillOpacity": 0.45, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 3}
+            ).addTo(map_6b4ef95038d3acec18368c582786eb34);
+        
+    
+        var popup_bd319cc8210ddcdb41ddb93b2cb3e57b = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_a6114c6afab54d2192e93a4b9ce05ac1 = $(`<div id="html_a6114c6afab54d2192e93a4b9ce05ac1" style="width: 100.0%; height: 100.0%;">Restricted Area - Prototype</div>`)[0];
+                popup_bd319cc8210ddcdb41ddb93b2cb3e57b.setContent(html_a6114c6afab54d2192e93a4b9ce05ac1);
+            
+        
+
+        polygon_a46e8e3f10fc4e4559c49fba576b5cae.bindPopup(popup_bd319cc8210ddcdb41ddb93b2cb3e57b)
+        ;
+
+        
+    
+    
+            var layer_control_9e600ea2d20da585512af18efdecc535_layers = {
+                base_layers : {
+                    "openstreetmap" : tile_layer_ef536aeea9ed14a2710fda2b65b702e6,
+                },
+                overlays :  {
+                    "Sensor Locations" : feature_group_b50d39a52ec294c33768d9be5c7b3cd4,
+                },
+            };
+            let layer_control_9e600ea2d20da585512af18efdecc535 = L.control.layers(
+                layer_control_9e600ea2d20da585512af18efdecc535_layers.base_layers,
+                layer_control_9e600ea2d20da585512af18efdecc535_layers.overlays,
+                {
+  "position": "topright",
+  "collapsed": true,
+  "autoZIndex": true,
+}
+            ).addTo(map_6b4ef95038d3acec18368c582786eb34);
+
+        
+</script>
+</html>
