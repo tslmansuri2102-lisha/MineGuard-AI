@@ -143,12 +143,11 @@ local_explanation = xai.explain_prediction(
 if sample_probability <= 0.25:
     risk_level = "LOW"
 elif sample_probability <= 0.50:
-    risk_level = "MEDIUM"
+    risk_level = "MODERATE"
 elif sample_probability <= 0.75:
     risk_level = "HIGH"
 else:
     risk_level = "CRITICAL"
-
 
 # ============================================================
 # Build report
