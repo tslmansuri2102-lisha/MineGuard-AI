@@ -3,7 +3,7 @@
   "actual_label": 0,
   "predicted_label": 0,
   "rockfall_probability": 0.4649,
-  "risk_level": "MEDIUM",
+  "risk_level": "MODERATE",
   "top_contributors": [
     {
       "feature": "landslide_size_medium",
