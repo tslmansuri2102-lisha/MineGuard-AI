@@ -17,7 +17,7 @@
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_6b4ef95038d3acec18368c582786eb34 {
+                #map_5b7805eedc8fecbb71cfca802c4316d0 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -50,71 +50,1190 @@
             </script>
 
         
+    
+                    <style>
+                        .foliumtooltip {
+                            
+                        }
+                       .foliumtooltip table{
+                            margin: auto;
+                        }
+                        .foliumtooltip tr{
+                            text-align: left;
+                        }
+                        .foliumtooltip th{
+                            padding: 2px; padding-right: 8px;
+                        }
+                    </style>
+            
+    
+                    <style>
+                        .foliumtooltip {
+                            
+                        }
+                       .foliumtooltip table{
+                            margin: auto;
+                        }
+                        .foliumtooltip tr{
+                            text-align: left;
+                        }
+                        .foliumtooltip th{
+                            padding: 2px; padding-right: 8px;
+                        }
+                    </style>
+            
 </head>
 <body>
     
     
-<div style="
-position: fixed;
-bottom: 30px;
-left: 30px;
-width: 220px;
-background-color: white;
-border: 2px solid grey;
-z-index: 9999;
-padding: 12px;
-font-size: 14px;
-">
+<style>
 
-<b>Jharia Mine Risk Map</b><br><br>
+#mineguard-header {
+    position:fixed;
+    top:18px;
+    left:60px;
+    z-index:9998;
+    background:linear-gradient(135deg,#0f172a,#1e293b);
+    color:white;
+    padding:14px 20px;
+    border-radius:14px;
+    box-shadow:0 8px 25px rgba(0,0,0,.25);
+    font-family:Arial,sans-serif;
+    min-width:300px;
+}
 
-<span style="color:green;">■</span>
-Low Risk<br>
+#mineguard-header .title {
+    font-size:20px;
+    font-weight:800;
+}
 
-<span style="color:orange;">■</span>
-Medium Risk<br>
+#mineguard-header .subtitle {
+    font-size:11px;
+    color:#cbd5e1;
+    margin-top:4px;
+}
 
-<span style="color:red;">■</span>
-High Risk<br>
+#mineguard-status {
+    position:fixed;
+    top:18px;
+    right:65px;
+    z-index:9998;
+    background:rgba(255,255,255,.96);
+    padding:9px 15px;
+    border-radius:20px;
+    font-family:Arial,sans-serif;
+    font-size:12px;
+    font-weight:600;
+    box-shadow:0 4px 15px rgba(0,0,0,.18);
+}
 
-<span style="color:purple;">■</span>
-Gas Monitoring<br>
+.status-dot {
+    display:inline-block;
+    width:9px;
+    height:9px;
+    background:#22c55e;
+    border-radius:50%;
+    margin-right:6px;
+}
 
-<span style="color:darkred;">■</span>
-Fire/Thermal Risk<br>
+#zone-dashboard {
+    position:fixed;
+    top:80px;
+    right:18px;
+    z-index:10000;
+    width:350px;
+    max-height:calc(100vh - 105px);
+    overflow-y:auto;
+    background:rgba(255,255,255,.98);
+    border-radius:18px;
+    box-shadow:0 15px 45px rgba(0,0,0,.25);
+    font-family:Arial,sans-serif;
+    display:none;
+}
 
-<span style="color:black;">■</span>
-Restricted Area<br>
+.dashboard-header {
+    position:relative;
+    background:linear-gradient(135deg,#0f172a,#1e293b);
+    color:white;
+    padding:18px;
+    border-radius:18px 18px 0 0;
+}
 
-📍 Sensor Location
+.dashboard-header .zone {
+    font-size:22px;
+    font-weight:800;
+}
+
+.dashboard-header .mine {
+    color:#cbd5e1;
+    font-size:12px;
+    margin-top:4px;
+}
+
+.close-dashboard {
+    position:absolute;
+    top:10px;
+    right:15px;
+    cursor:pointer;
+    color:white;
+    font-size:24px;
+    line-height:1;
+}
+
+.dashboard-body {
+    padding:16px;
+}
+
+.section {
+    margin-bottom:18px;
+}
+
+.section-title {
+    font-size:10px;
+    font-weight:800;
+    color:#64748b;
+    letter-spacing:1px;
+    margin-bottom:9px;
+}
+
+.condition {
+    padding:12px;
+    border-radius:12px;
+    font-size:18px;
+    font-weight:800;
+    text-align:center;
+}
+
+.metrics {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+}
+
+.metric {
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:10px;
+    padding:10px;
+}
+
+.metric-label {
+    color:#64748b;
+    font-size:10px;
+}
+
+.metric-value {
+    color:#0f172a;
+    font-size:14px;
+    font-weight:700;
+    margin-top:3px;
+}
+
+.sensor-grid {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:7px;
+}
+
+.sensor {
+    background:#eff6ff;
+    border-radius:9px;
+    padding:9px;
+    font-size:10px;
+    color:#475569;
+}
+
+.sensor-value {
+    font-size:13px;
+    font-weight:700;
+    color:#1e3a8a;
+    margin-top:3px;
+}
+
+.risk-box {
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    padding:13px;
+    text-align:center;
+}
+
+.risk-level {
+    font-size:22px;
+    font-weight:900;
+    color:#64748b;
+}
+
+#mineguard-search {
+    position:fixed;
+    bottom:25px;
+    left:25px;
+    z-index:9998;
+    background:white;
+    padding:9px 12px;
+    border-radius:12px;
+    box-shadow:0 5px 20px rgba(0,0,0,.18);
+    font-family:Arial,sans-serif;
+}
+
+#mineguard-search input {
+    border:none;
+    outline:none;
+    width:180px;
+    font-size:13px;
+}
+
+#mineguard-legend {
+    position:fixed;
+    bottom:25px;
+    right:385px;
+    z-index:9998;
+    background:rgba(255,255,255,.97);
+    padding:12px 15px;
+    border-radius:12px;
+    box-shadow:0 5px 20px rgba(0,0,0,.15);
+    font-family:Arial,sans-serif;
+    font-size:11px;
+}
+
+.legend-item {
+    margin:5px 0;
+}
+
+.legend-dot {
+    display:inline-block;
+    width:10px;
+    height:10px;
+    border-radius:3px;
+    margin-right:6px;
+}
+
+@media(max-width:900px) {
+
+    #zone-dashboard {
+        width:310px;
+        right:10px;
+    }
+
+    #mineguard-header {
+        left:55px;
+        min-width:230px;
+    }
+
+    #mineguard-status {
+        display:none;
+    }
+
+    #mineguard-legend {
+        display:none;
+    }
+
+}
+
+</style>
+    
+<div id="mineguard-header">
+
+    <div class="title">
+        ⛏ MineGuard AI
+    </div>
+
+    <div class="subtitle">
+        Intelligent Mine Safety & Terrain Monitoring
+    </div>
+
+</div>
+
+<div id="mineguard-status">
+
+    <span class="status-dot"></span>
+
+    GIS SYSTEM ONLINE
 
 </div>
     
-            <div class="folium-map" id="map_6b4ef95038d3acec18368c582786eb34" ></div>
+<div id="zone-dashboard">
+
+    <div class="dashboard-header">
+
+        <span
+            class="close-dashboard"
+            onclick="closeZoneDashboard()"
+        >
+            ×
+        </span>
+
+        <div
+            id="dashboard-zone"
+            class="zone"
+        >
+            ZONE-001
+        </div>
+
+        <div
+            id="dashboard-mine"
+            class="mine"
+        >
+            MINE-001
+        </div>
+
+    </div>
+
+    <div class="dashboard-body">
+
+        <div class="section">
+
+            <div class="section-title">
+                GIS TERRAIN CONDITION
+            </div>
+
+            <div
+                id="terrain-condition"
+                class="condition"
+            >
+                UNKNOWN
+            </div>
+
+        </div>
+
+        <div class="section">
+
+            <div class="section-title">
+                TERRAIN PROFILE
+            </div>
+
+            <div class="metrics">
+
+                <div class="metric">
+                    <div class="metric-label">
+                        Elevation
+                    </div>
+                    <div
+                        id="elevation"
+                        class="metric-value"
+                    >
+                        —
+                    </div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-label">
+                        Mean Slope
+                    </div>
+                    <div
+                        id="slope"
+                        class="metric-value"
+                    >
+                        —
+                    </div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-label">
+                        Max Slope
+                    </div>
+                    <div
+                        id="max-slope"
+                        class="metric-value"
+                    >
+                        —
+                    </div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-label">
+                        Aspect
+                    </div>
+                    <div
+                        id="aspect"
+                        class="metric-value"
+                    >
+                        —
+                    </div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-label">
+                        Curvature
+                    </div>
+                    <div
+                        id="curvature"
+                        class="metric-value"
+                    >
+                        —
+                    </div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-label">
+                        Roughness
+                    </div>
+                    <div
+                        id="roughness"
+                        class="metric-value"
+                    >
+                        —
+                    </div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-label">
+                        Roads
+                    </div>
+                    <div
+                        id="roads"
+                        class="metric-value"
+                    >
+                        —
+                    </div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-label">
+                        Road Length
+                    </div>
+                    <div
+                        id="road-length"
+                        class="metric-value"
+                    >
+                        —
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="section">
+
+            <div class="section-title">
+                GIS TERRAIN INDICATORS
+            </div>
+
+            <div class="metrics">
+
+                <div class="metric">
+                    <div class="metric-label">
+                        Slope Indicator
+                    </div>
+                    <div
+                        id="slope-indicator"
+                        class="metric-value"
+                    >
+                        —
+                    </div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-label">
+                        Roughness Indicator
+                    </div>
+                    <div
+                        id="roughness-indicator"
+                        class="metric-value"
+                    >
+                        —
+                    </div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-label">
+                        Terrain Variability
+                    </div>
+                    <div
+                        id="terrain-variability"
+                        class="metric-value"
+                    >
+                        —
+                    </div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-label">
+                        GIS Indicator
+                    </div>
+                    <div
+                        id="gis-indicator"
+                        class="metric-value"
+                    >
+                        —
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="section">
+
+            <div class="section-title">
+                LIVE SENSOR DATA
+            </div>
+
+            <div class="sensor-grid">
+
+                <div class="sensor">
+                    Displacement
+                    <div
+                        id="displacement"
+                        class="sensor-value"
+                    >
+                        Waiting
+                    </div>
+                </div>
+
+                <div class="sensor">
+                    Strain
+                    <div
+                        id="strain"
+                        class="sensor-value"
+                    >
+                        Waiting
+                    </div>
+                </div>
+
+                <div class="sensor">
+                    Pore Pressure
+                    <div
+                        id="pressure"
+                        class="sensor-value"
+                    >
+                        Waiting
+                    </div>
+                </div>
+
+                <div class="sensor">
+                    Rainfall
+                    <div
+                        id="rainfall"
+                        class="sensor-value"
+                    >
+                        Waiting
+                    </div>
+                </div>
+
+                <div class="sensor">
+                    Temperature
+                    <div
+                        id="temperature"
+                        class="sensor-value"
+                    >
+                        Waiting
+                    </div>
+                </div>
+
+                <div class="sensor">
+                    Vibration
+                    <div
+                        id="vibration"
+                        class="sensor-value"
+                    >
+                        Waiting
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="section">
+
+            <div class="section-title">
+                AI RISK ENGINE
+            </div>
+
+            <div class="risk-box">
+
+                <div
+                    id="risk-level"
+                    class="risk-level"
+                >
+                    UNKNOWN
+                </div>
+
+                <div
+                    style="
+                    margin-top:7px;
+                    color:#64748b;
+                    font-size:12px;
+                    "
+                >
+                    Probability:
+                    <span id="risk-probability">
+                        Waiting for ML
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+    
+<div id="mineguard-search">
+
+    🔎
+
+    <input
+        id="zone-search"
+        type="text"
+        placeholder="Search ZONE-001"
+    >
+
+</div>
+    
+<div id="mineguard-legend">
+
+    <b>Terrain Condition</b>
+
+    <div class="legend-item">
+        <span
+            class="legend-dot"
+            style="background:#22c55e"
+        ></span>
+        Low
+    </div>
+
+    <div class="legend-item">
+        <span
+            class="legend-dot"
+            style="background:#f59e0b"
+        ></span>
+        Moderate
+    </div>
+
+    <div class="legend-item">
+        <span
+            class="legend-dot"
+            style="background:#ef4444"
+        ></span>
+        High
+    </div>
+
+    <div class="legend-item">
+        <span
+            class="legend-dot"
+            style="background:#3b82f6"
+        ></span>
+        Sensor
+    </div>
+
+</div>
+    
+<script>
+
+window.addEventListener("load", function() {
+
+    setTimeout(function() {
+
+        const mapInstance = map_5b7805eedc8fecbb71cfca802c4316d0;
+        const zoneLayer = geo_json_c92385999827b8eca39995a105aa5fd9;
+
+
+        function formatValue(value, suffix) {
+
+            if (
+                value === null ||
+                value === undefined ||
+                value === ""
+            ) {
+                return "—";
+            }
+
+            if (
+                typeof value === "number"
+            ) {
+                return value.toFixed(3) + (suffix || "");
+            }
+
+            return value + (suffix || "");
+        }
+
+
+        function setElement(id, value) {
+
+            const element =
+                document.getElementById(id);
+
+            if (element) {
+                element.innerHTML = value;
+            }
+        }
+
+
+        function showZoneDashboard(properties) {
+
+            const dashboard =
+                document.getElementById(
+                    "zone-dashboard"
+                );
+
+            if (!dashboard) {
+                return;
+            }
+
+
+            dashboard.style.display = "block";
+
+
+            setElement(
+                "dashboard-zone",
+                properties.zone_id || "UNKNOWN"
+            );
+
+
+            setElement(
+                "dashboard-mine",
+                properties.mine_id || "MINE-001"
+            );
+
+
+            setElement(
+                "terrain-condition",
+                properties.terrain_condition || "UNKNOWN"
+            );
+
+
+            setElement(
+                "elevation",
+                formatValue(
+                    properties.elevation,
+                    " m"
+                )
+            );
+
+
+            setElement(
+                "slope",
+                formatValue(
+                    properties.slope,
+                    "°"
+                )
+            );
+
+
+            setElement(
+                "max-slope",
+                formatValue(
+                    properties.max_slope,
+                    "°"
+                )
+            );
+
+
+            setElement(
+                "aspect",
+                formatValue(
+                    properties.aspect,
+                    "°"
+                )
+            );
+
+
+            setElement(
+                "curvature",
+                formatValue(
+                    properties.curvature,
+                    ""
+                )
+            );
+
+
+            setElement(
+                "roughness",
+                formatValue(
+                    properties.roughness,
+                    " m"
+                )
+            );
+
+
+            setElement(
+                "roads",
+                formatValue(
+                    properties.road_count,
+                    ""
+                )
+            );
+
+
+            setElement(
+                "road-length",
+                formatValue(
+                    properties.road_length,
+                    " km"
+                )
+            );
+
+
+            setElement(
+                "slope-indicator",
+                formatValue(
+                    properties.slope_indicator,
+                    ""
+                )
+            );
+
+
+            setElement(
+                "roughness-indicator",
+                formatValue(
+                    properties.roughness_indicator,
+                    ""
+                )
+            );
+
+
+            setElement(
+                "terrain-variability",
+                formatValue(
+                    properties.terrain_variability,
+                    ""
+                )
+            );
+
+
+            setElement(
+                "gis-indicator",
+                formatValue(
+                    properties.gis_indicator,
+                    ""
+                )
+            );
+
+
+            setElement(
+                "displacement",
+                properties.displacement !== null &&
+                properties.displacement !== undefined
+                    ? formatValue(
+                        properties.displacement,
+                        " mm"
+                    )
+                    : "Waiting"
+            );
+
+
+            setElement(
+                "strain",
+                properties.strain !== null &&
+                properties.strain !== undefined
+                    ? formatValue(
+                        properties.strain,
+                        ""
+                    )
+                    : "Waiting"
+            );
+
+
+            setElement(
+                "pressure",
+                properties.pressure !== null &&
+                properties.pressure !== undefined
+                    ? formatValue(
+                        properties.pressure,
+                        " kPa"
+                    )
+                    : "Waiting"
+            );
+
+
+            setElement(
+                "rainfall",
+                properties.rainfall !== null &&
+                properties.rainfall !== undefined
+                    ? formatValue(
+                        properties.rainfall,
+                        " mm"
+                    )
+                    : "Waiting"
+            );
+
+
+            setElement(
+                "temperature",
+                properties.temperature !== null &&
+                properties.temperature !== undefined
+                    ? formatValue(
+                        properties.temperature,
+                        " °C"
+                    )
+                    : "Waiting"
+            );
+
+
+            setElement(
+                "vibration",
+                properties.vibration !== null &&
+                properties.vibration !== undefined
+                    ? formatValue(
+                        properties.vibration,
+                        " g"
+                    )
+                    : "Waiting"
+            );
+
+
+            setElement(
+                "risk-level",
+                properties.risk_level || "UNKNOWN"
+            );
+
+
+            if (
+                properties.risk_probability !== null &&
+                properties.risk_probability !== undefined
+            ) {
+
+                setElement(
+                    "risk-probability",
+                    (
+                        Number(
+                            properties.risk_probability
+                        ) * 100
+                    ).toFixed(1) + "%"
+                );
+
+            } else {
+
+                setElement(
+                    "risk-probability",
+                    "Waiting for ML"
+                );
+            }
+
+
+            const condition =
+                String(
+                    properties.terrain_condition ||
+                    "UNKNOWN"
+                ).toUpperCase();
+
+
+            const conditionBox =
+                document.getElementById(
+                    "terrain-condition"
+                );
+
+
+            if (conditionBox) {
+
+                if (condition === "HIGH") {
+
+                    conditionBox.style.background =
+                        "#fee2e2";
+
+                    conditionBox.style.color =
+                        "#b91c1c";
+
+                } else if (
+                    condition === "MODERATE"
+                ) {
+
+                    conditionBox.style.background =
+                        "#fef3c7";
+
+                    conditionBox.style.color =
+                        "#b45309";
+
+                } else if (
+                    condition === "LOW"
+                ) {
+
+                    conditionBox.style.background =
+                        "#dcfce7";
+
+                    conditionBox.style.color =
+                        "#15803d";
+
+                } else {
+
+                    conditionBox.style.background =
+                        "#f1f5f9";
+
+                    conditionBox.style.color =
+                        "#475569";
+                }
+            }
+        }
+
+
+        window.closeZoneDashboard = function() {
+
+            const dashboard =
+                document.getElementById(
+                    "zone-dashboard"
+                );
+
+            if (dashboard) {
+
+                dashboard.style.display =
+                    "none";
+            }
+        };
+
+
+        function openZone(layer) {
+
+            if (
+                !layer ||
+                !layer.feature ||
+                !layer.feature.properties
+            ) {
+                return;
+            }
+
+
+            showZoneDashboard(
+                layer.feature.properties
+            );
+
+
+            if (
+                layer.getBounds
+            ) {
+
+                mapInstance.fitBounds(
+                    layer.getBounds(),
+                    {
+                        padding: [
+                            80,
+                            80
+                        ],
+                        maxZoom: 16
+                    }
+                );
+            }
+        }
+
+
+        window.searchZone = function() {
+
+            const input =
+                document.getElementById(
+                    "zone-search"
+                );
+
+            if (!input) {
+                return;
+            }
+
+
+            const query =
+                input.value
+                .trim()
+                .toUpperCase();
+
+
+            if (!query) {
+                return;
+            }
+
+
+            zoneLayer.eachLayer(
+                function(layer) {
+
+                    if (
+                        !layer.feature ||
+                        !layer.feature.properties
+                    ) {
+                        return;
+                    }
+
+
+                    const zoneId =
+                        String(
+                            layer.feature.properties.zone_id ||
+                            ""
+                        ).toUpperCase();
+
+
+                    if (
+                        zoneId === query
+                    ) {
+
+                        openZone(
+                            layer
+                        );
+                    }
+                }
+            );
+        };
+
+
+        zoneLayer.eachLayer(
+            function(layer) {
+
+                layer.on(
+                    "click",
+                    function() {
+
+                        openZone(
+                            layer
+                        );
+                    }
+                );
+
+            }
+        );
+
+
+        const searchInput =
+            document.getElementById(
+                "zone-search"
+            );
+
+
+        if (searchInput) {
+
+            searchInput.addEventListener(
+                "keydown",
+                function(event) {
+
+                    if (
+                        event.key === "Enter"
+                    ) {
+
+                        window.searchZone();
+                    }
+                }
+            );
+        }
+
+    }, 800);
+
+});
+
+</script>
+    
+            <div class="folium-map" id="map_5b7805eedc8fecbb71cfca802c4316d0" ></div>
         
 </body>
 <script>
     
     
-            var map_6b4ef95038d3acec18368c582786eb34 = L.map(
-                "map_6b4ef95038d3acec18368c582786eb34",
+            var map_5b7805eedc8fecbb71cfca802c4316d0 = L.map(
+                "map_5b7805eedc8fecbb71cfca802c4316d0",
                 {
                     center: [23.7822, 86.3933],
                     crs: L.CRS.EPSG3857,
                     ...{
-  "zoom": 14,
+  "zoom": 15,
   "zoomControl": true,
   "preferCanvas": false,
 }
 
                 }
             );
+            L.control.scale().addTo(map_5b7805eedc8fecbb71cfca802c4316d0);
 
             
 
         
     
-            var tile_layer_ef536aeea9ed14a2710fda2b65b702e6 = L.tileLayer(
+            var tile_layer_aac359d3d83d6acafc48e1bd7a4bde6c = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {
   "minZoom": 0,
@@ -131,145 +1250,242 @@ Restricted Area<br>
             );
         
     
-            tile_layer_ef536aeea9ed14a2710fda2b65b702e6.addTo(map_6b4ef95038d3acec18368c582786eb34);
+            tile_layer_aac359d3d83d6acafc48e1bd7a4bde6c.addTo(map_5b7805eedc8fecbb71cfca802c4316d0);
         
     
-            var polygon_acd2533ed02e75f0ab47abcffe618ddb = L.polygon(
+            var feature_group_caa889794f7ef5fae9599a9006665466 = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var polygon_1d42118a89261f8a680dd92499877779 = L.polygon(
                 [[23.787, 86.387], [23.787, 86.401], [23.779, 86.402], [23.777, 86.389]],
-                {"bubblingMouseEvents": true, "color": "black", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "black", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 3}
-            ).addTo(map_6b4ef95038d3acec18368c582786eb34);
+                {"bubblingMouseEvents": true, "color": "#111827", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#111827", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 3}
+            ).addTo(feature_group_caa889794f7ef5fae9599a9006665466);
         
     
-        var popup_145fdcaf9c27d6148e3a374c48e1d38c = L.popup({
+        var popup_320a5cc4e1d930d871ca0d356389402f = L.popup({
   "maxWidth": "100%",
 });
 
         
             
-                var html_ce9fb046acf589258a2ac1c720d180cf = $(`<div id="html_ce9fb046acf589258a2ac1c720d180cf" style="width: 100.0%; height: 100.0%;">Kusunda Study Area</div>`)[0];
-                popup_145fdcaf9c27d6148e3a374c48e1d38c.setContent(html_ce9fb046acf589258a2ac1c720d180cf);
+                var html_6c87b3d3cf340b94aea37a5734adbd7c = $(`<div id="html_6c87b3d3cf340b94aea37a5734adbd7c" style="width: 100.0%; height: 100.0%;">Kusunda Mine Study Area</div>`)[0];
+                popup_320a5cc4e1d930d871ca0d356389402f.setContent(html_6c87b3d3cf340b94aea37a5734adbd7c);
             
         
 
-        polygon_acd2533ed02e75f0ab47abcffe618ddb.bindPopup(popup_145fdcaf9c27d6148e3a374c48e1d38c)
+        polygon_1d42118a89261f8a680dd92499877779.bindPopup(popup_320a5cc4e1d930d871ca0d356389402f)
         ;
 
         
     
     
-            var polygon_cfa7c4cd2f9c227e826b06322347bd6a = L.polygon(
-                [[23.7865, 86.3875], [23.7865, 86.3935], [23.782, 86.394], [23.781, 86.3885]],
-                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.35, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 3}
-            ).addTo(map_6b4ef95038d3acec18368c582786eb34);
+            feature_group_caa889794f7ef5fae9599a9006665466.addTo(map_5b7805eedc8fecbb71cfca802c4316d0);
         
     
-        var popup_7637c3aafd65f81e6beea1e396f19fa2 = L.popup({
-  "maxWidth": "100%",
-});
-
-        
-            
-                var html_51ace34233c21d84ecc33c57e1bdbe50 = $(`<div id="html_51ace34233c21d84ecc33c57e1bdbe50" style="width: 100.0%; height: 100.0%;">Zone A - Low Risk | Risk: LOW</div>`)[0];
-                popup_7637c3aafd65f81e6beea1e396f19fa2.setContent(html_51ace34233c21d84ecc33c57e1bdbe50);
-            
-        
-
-        polygon_cfa7c4cd2f9c227e826b06322347bd6a.bindPopup(popup_7637c3aafd65f81e6beea1e396f19fa2)
-        ;
-
-        
-    
-    
-            var polygon_043ef08b32078a7a5e79be450a21effe = L.polygon(
-                [[23.7865, 86.3935], [23.7865, 86.4005], [23.7815, 86.401], [23.782, 86.394]],
-                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "orange", "fillOpacity": 0.35, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 3}
-            ).addTo(map_6b4ef95038d3acec18368c582786eb34);
-        
-    
-        var popup_097cd332bcd9775de4b0987f1241d456 = L.popup({
-  "maxWidth": "100%",
-});
-
-        
-            
-                var html_7832ea4da4b33e6d58640af81c1c4ff2 = $(`<div id="html_7832ea4da4b33e6d58640af81c1c4ff2" style="width: 100.0%; height: 100.0%;">Zone B - Medium Risk | Risk: MEDIUM</div>`)[0];
-                popup_097cd332bcd9775de4b0987f1241d456.setContent(html_7832ea4da4b33e6d58640af81c1c4ff2);
-            
-        
-
-        polygon_043ef08b32078a7a5e79be450a21effe.bindPopup(popup_097cd332bcd9775de4b0987f1241d456)
-        ;
-
-        
-    
-    
-            var polygon_bd9de236fead57492a7cd18400100cbd = L.polygon(
-                [[23.781, 86.3885], [23.782, 86.394], [23.7775, 86.397], [23.7775, 86.39]],
-                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.35, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 3}
-            ).addTo(map_6b4ef95038d3acec18368c582786eb34);
-        
-    
-        var popup_40b3cd8f112720f48506a8bfaf4a28c0 = L.popup({
-  "maxWidth": "100%",
-});
-
-        
-            
-                var html_571f591bb25c0ccea0acb736fd996c8d = $(`<div id="html_571f591bb25c0ccea0acb736fd996c8d" style="width: 100.0%; height: 100.0%;">Zone C - High Risk | Risk: HIGH</div>`)[0];
-                popup_40b3cd8f112720f48506a8bfaf4a28c0.setContent(html_571f591bb25c0ccea0acb736fd996c8d);
-            
-        
-
-        polygon_bd9de236fead57492a7cd18400100cbd.bindPopup(popup_40b3cd8f112720f48506a8bfaf4a28c0)
-        ;
-
-        
-    
-    
-            var feature_group_b50d39a52ec294c33768d9be5c7b3cd4 = L.featureGroup(
+            var feature_group_33499c590d6b1af9373c5628d9e751e6 = L.featureGroup(
                 {
 }
             );
         
     
-            var marker_79f0725317cf7ca04d5ecf50644bc574 = L.marker(
-                [23.7845, 86.3905],
-                {
+        function geo_json_7d06c76510f14aa5ae779c0e819b4c7a_styler(feature) {
+            switch(feature.id) {
+                default:
+                    return {"color": "#555555", "opacity": 0.75, "weight": 2};
+            }
+        }
+
+        function geo_json_7d06c76510f14aa5ae779c0e819b4c7a_onEachFeature(feature, layer) {
+
+            layer.on({
+            });
+        };
+        var geo_json_7d06c76510f14aa5ae779c0e819b4c7a = L.geoJson(null, {
+                onEachFeature: geo_json_7d06c76510f14aa5ae779c0e819b4c7a_onEachFeature,
+            
+                style: geo_json_7d06c76510f14aa5ae779c0e819b4c7a_styler,
+            ...{
 }
-            ).addTo(feature_group_b50d39a52ec294c33768d9be5c7b3cd4);
+        });
+
+        function geo_json_7d06c76510f14aa5ae779c0e819b4c7a_add (data) {
+            geo_json_7d06c76510f14aa5ae779c0e819b4c7a
+                .addData(data);
+        }
+            geo_json_7d06c76510f14aa5ae779c0e819b4c7a_add({"features": [{"geometry": {"coordinates": [[86.3916323, 23.7842158], [86.3918522, 23.7841397], [86.392048, 23.7840317], [86.392276, 23.7838943], [86.3926875, 23.7836446]], "type": "LineString"}, "id": "0", "properties": {"highway": "trunk", "key": 0, "length": 125.2027825030172, "oneway": true, "osmid": 117695861, "ref": "NH18", "reversed": false, "u": 2466491371, "v": 9507564880}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3952264, 23.7838206], [86.39561, 23.784071], [86.3959184, 23.7842722], [86.3960129, 23.7843282]], "type": "LineString"}, "id": "1", "properties": {"highway": "trunk", "key": 0, "length": 97.93961456974557, "oneway": true, "osmid": 117695861, "ref": "NH18", "reversed": false, "u": 9445014254, "v": 9503984325}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3952264, 23.7838206], [86.3949057, 23.7840977], [86.3947321, 23.7842421], [86.3947163, 23.7842875], [86.3947275, 23.7843433], [86.3947691, 23.7844816], [86.3947668, 23.7845085], [86.3947573, 23.7845324], [86.3947254, 23.7845655], [86.394615, 23.7846265], [86.3945561, 23.7846384], [86.3944637, 23.7846384], [86.3939473, 23.7846135], [86.3938457, 23.7846178], [86.3937651, 23.78463], [86.3935569, 23.7847007]], "type": "LineString"}, "id": "2", "properties": {"highway": "residential", "key": 0, "length": 229.57995104841845, "oneway": false, "osmid": 1031625796, "ref": null, "reversed": false, "u": 9445014254, "v": 9507614858}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3944902, 23.7833408], [86.3946846, 23.7834598], [86.394918, 23.7836071], [86.3952264, 23.7838206]], "type": "LineString"}, "id": "3", "properties": {"highway": "trunk", "key": 0, "length": 91.99632955382843, "oneway": true, "osmid": 117695861, "ref": "NH18", "reversed": false, "u": 9445014256, "v": 9445014254}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3944902, 23.7833408], [86.3941364, 23.783437], [86.3940269, 23.7834605], [86.3939343, 23.7834929], [86.3931478, 23.7839513]], "type": "LineString"}, "id": "4", "properties": {"highway": "residential", "key": 0, "length": 153.9690491516272, "oneway": false, "osmid": 1031621824, "ref": null, "reversed": true, "u": 9445014256, "v": 9507564884}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3926875, 23.7836446], [86.3930163, 23.7834451], [86.3932537, 23.7833064], [86.3934696, 23.7832156], [86.3936198, 23.7831677], [86.3937686, 23.7831432], [86.3939095, 23.7831371], [86.394061, 23.7831493], [86.3941924, 23.7831849], [86.3943239, 23.7832377], [86.3944902, 23.7833408]], "type": "LineString"}, "id": "5", "properties": {"highway": "trunk", "key": 0, "length": 203.37077518653476, "oneway": true, "osmid": 117695861, "ref": "NH18", "reversed": false, "u": 9507564880, "v": 9445014256}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3926875, 23.7836446], [86.392947, 23.7839162], [86.3929989, 23.7839493], [86.3930666, 23.7839637], [86.3931478, 23.7839513]], "type": "LineString"}, "id": "6", "properties": {"highway": "residential", "key": 0, "length": 62.001470897101285, "oneway": false, "osmid": 1031621824, "ref": null, "reversed": false, "u": 9507564880, "v": 9507564884}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3931478, 23.7839513], [86.3935569, 23.7847007]], "type": "LineString"}, "id": "7", "properties": {"highway": "residential", "key": 0, "length": 93.14817787461877, "oneway": false, "osmid": 1031625797, "ref": null, "reversed": false, "u": 9507564884, "v": 9507614858}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3931478, 23.7839513], [86.3939343, 23.7834929], [86.3940269, 23.7834605], [86.3941364, 23.783437], [86.3944902, 23.7833408]], "type": "LineString"}, "id": "8", "properties": {"highway": "residential", "key": 0, "length": 153.9690491516272, "oneway": false, "osmid": 1031621824, "ref": null, "reversed": false, "u": 9507564884, "v": 9445014256}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3931478, 23.7839513], [86.3930666, 23.7839637], [86.3929989, 23.7839493], [86.392947, 23.7839162], [86.3926875, 23.7836446]], "type": "LineString"}, "id": "9", "properties": {"highway": "residential", "key": 0, "length": 62.001470897101285, "oneway": false, "osmid": 1031621824, "ref": null, "reversed": true, "u": 9507564884, "v": 9507564880}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3901232, 23.7845382], [86.3903012, 23.7841453]], "type": "LineString"}, "id": "10", "properties": {"highway": "residential", "key": 0, "length": 47.2940157016978, "oneway": false, "osmid": 1031594633, "ref": null, "reversed": false, "u": 9507566189, "v": 9507568957}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3903698, 23.7839939], [86.3903012, 23.7841453]], "type": "LineString"}, "id": "11", "properties": {"highway": "residential", "key": 0, "length": 18.2246421996772, "oneway": false, "osmid": 1031594633, "ref": null, "reversed": true, "u": 9507566190, "v": 9507568957}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3903698, 23.7839939], [86.3904467, 23.7840464], [86.3906559, 23.784152], [86.3908491, 23.7842133], [86.391077, 23.7842489], [86.3912621, 23.78426], [86.3913676, 23.7842519]], "type": "LineString"}, "id": "12", "properties": {"highway": "trunk", "key": 0, "length": 108.05092692012605, "oneway": true, "osmid": 117695861, "ref": "NH18", "reversed": false, "u": 9507566190, "v": 9507614888}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3903012, 23.7841453], [86.3903698, 23.7839939]], "type": "LineString"}, "id": "13", "properties": {"highway": "residential", "key": 0, "length": 18.2246421996772, "oneway": false, "osmid": 1031594633, "ref": null, "reversed": false, "u": 9507568957, "v": 9507566190}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3903012, 23.7841453], [86.3901232, 23.7845382]], "type": "LineString"}, "id": "14", "properties": {"highway": "residential", "key": 0, "length": 47.2940157016978, "oneway": false, "osmid": 1031594633, "ref": null, "reversed": true, "u": 9507568957, "v": 9507566189}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3903012, 23.7841453], [86.390207, 23.7838742]], "type": "LineString"}, "id": "15", "properties": {"highway": "residential", "key": 0, "length": 31.63214150705147, "oneway": false, "osmid": 1122288143, "ref": null, "reversed": false, "u": 9507568957, "v": 10264886525}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3935569, 23.7847007], [86.3931478, 23.7839513]], "type": "LineString"}, "id": "16", "properties": {"highway": "residential", "key": 0, "length": 93.14817787461877, "oneway": false, "osmid": 1031625797, "ref": null, "reversed": true, "u": 9507614858, "v": 9507564884}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3935569, 23.7847007], [86.3937651, 23.78463], [86.3938457, 23.7846178], [86.3939473, 23.7846135], [86.3944637, 23.7846384], [86.3945561, 23.7846384], [86.394615, 23.7846265], [86.3947254, 23.7845655], [86.3947573, 23.7845324], [86.3947668, 23.7845085], [86.3947691, 23.7844816], [86.3947275, 23.7843433], [86.3947163, 23.7842875], [86.3947321, 23.7842421], [86.3949057, 23.7840977], [86.3952264, 23.7838206]], "type": "LineString"}, "id": "17", "properties": {"highway": "residential", "key": 0, "length": 229.57995104841848, "oneway": false, "osmid": 1031625796, "ref": null, "reversed": true, "u": 9507614858, "v": 9445014254}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3913676, 23.7842519], [86.3914217, 23.7842477], [86.3916323, 23.7842158]], "type": "LineString"}, "id": "18", "properties": {"highway": "trunk", "key": 0, "length": 27.244954458874965, "oneway": true, "osmid": 117695861, "ref": "NH18", "reversed": false, "u": 9507614888, "v": 2466491371}, "type": "Feature"}, {"geometry": {"coordinates": [[86.390207, 23.7838742], [86.3903012, 23.7841453]], "type": "LineString"}, "id": "19", "properties": {"highway": "residential", "key": 0, "length": 31.63214150705147, "oneway": false, "osmid": 1122288143, "ref": null, "reversed": true, "u": 10264886525, "v": 9507568957}, "type": "Feature"}, {"geometry": {"coordinates": [[86.390207, 23.7838742], [86.390267, 23.7839237], [86.3903698, 23.7839939]], "type": "LineString"}, "id": "20", "properties": {"highway": "trunk", "key": 0, "length": 21.271596987244074, "oneway": true, "osmid": 117695861, "ref": "NH18", "reversed": false, "u": 10264886525, "v": 9507566190}, "type": "Feature"}], "type": "FeatureCollection"});
+
         
     
-            var icon_812e2cc92b8f8758f09e53a6434b4233 = L.AwesomeMarkers.icon(
+    geo_json_7d06c76510f14aa5ae779c0e819b4c7a.bindTooltip(
+    function(layer){
+    let div = L.DomUtil.create('div');
+    
+    let handleObject = feature => {
+        if (feature === null) {
+            return '';
+        } else if (typeof(feature)=='object') {
+            return JSON.stringify(feature);
+        } else {
+            return feature;
+        }
+    }
+    let fields = ["highway"];
+    let aliases = ["Road Type:"];
+    let table = '<table>' +
+        String(
+        fields.map(
+        (v,i)=>
+        `<tr>
+            <th>${aliases[i].toLocaleString()}</th>
+            
+            <td>${handleObject(layer.feature.properties[v]).toLocaleString()}</td>
+        </tr>`).join(''))
+    +'</table>';
+    div.innerHTML=table;
+    
+    return div
+    }
+    ,{
+  "sticky": true,
+  "className": "foliumtooltip",
+});
+                     
+    
+            geo_json_7d06c76510f14aa5ae779c0e819b4c7a.addTo(feature_group_33499c590d6b1af9373c5628d9e751e6);
+        
+    
+            feature_group_33499c590d6b1af9373c5628d9e751e6.addTo(map_5b7805eedc8fecbb71cfca802c4316d0);
+        
+    
+            var feature_group_93b7603f0294b88a8240f230394eb57d = L.featureGroup(
                 {
-  "markerColor": "blue",
-  "iconColor": "white",
-  "icon": "info-sign",
-  "prefix": "glyphicon",
-  "extraClasses": "fa-rotate-0",
 }
             );
         
     
-        var popup_b65ab1d7ad004e13482bd658fde5e58a = L.popup({
-  "maxWidth": "100%",
+        function geo_json_c92385999827b8eca39995a105aa5fd9_styler(feature) {
+            switch(feature.properties.zone_id) {
+                case "ZONE-001": case "ZONE-004": case "ZONE-007": 
+                    return {"color": "#ef4444", "fillColor": "#ef4444", "fillOpacity": 0.3, "weight": 3};
+                default:
+                    return {"color": "#22c55e", "fillColor": "#22c55e", "fillOpacity": 0.3, "weight": 3};
+            }
+        }
+        function geo_json_c92385999827b8eca39995a105aa5fd9_highlighter(feature) {
+            switch(feature.properties.zone_id) {
+                default:
+                    return {"fillOpacity": 0.5, "weight": 5};
+            }
+        }
+
+        function geo_json_c92385999827b8eca39995a105aa5fd9_onEachFeature(feature, layer) {
+
+            layer.on({
+                mouseout: function(e) {
+                    if(typeof e.target.setStyle === "function"){
+                            geo_json_c92385999827b8eca39995a105aa5fd9.resetStyle(e.target);
+                    }
+                },
+                mouseover: function(e) {
+                    if(typeof e.target.setStyle === "function"){
+                        const highlightStyle = geo_json_c92385999827b8eca39995a105aa5fd9_highlighter(e.target.feature)
+                        e.target.setStyle(highlightStyle);
+                    }
+                },
+            });
+        };
+        var geo_json_c92385999827b8eca39995a105aa5fd9 = L.geoJson(null, {
+                onEachFeature: geo_json_c92385999827b8eca39995a105aa5fd9_onEachFeature,
+            
+                style: geo_json_c92385999827b8eca39995a105aa5fd9_styler,
+            ...{
+}
+        });
+
+        function geo_json_c92385999827b8eca39995a105aa5fd9_add (data) {
+            geo_json_c92385999827b8eca39995a105aa5fd9
+                .addData(data);
+        }
+            geo_json_c92385999827b8eca39995a105aa5fd9_add({"features": [{"geometry": {"coordinates": [[[86.39208643333333, 23.7831371], [86.39208643333333, 23.7836583], [86.3901232, 23.7836583], [86.3901232, 23.7831371], [86.39208643333333, 23.7831371]]], "type": "Polygon"}, "properties": {"area": 0.011542, "aspect": 214.184, "curvature": 0.005964, "displacement": null, "elevation": 219.792, "gis_indicator": 0.9911978972067969, "max_elevation": 225.322, "max_roughness": 156.689, "max_slope": 69.49, "min_elevation": 216.63, "mine_id": "MINE-001", "pressure": null, "rainfall": null, "risk_level": "UNKNOWN", "risk_probability": null, "road_count": 0, "road_length": 0.0, "roughness": 33.414, "roughness_indicator": 0.987137151303582, "slope": 18.16, "slope_indicator": 0.98083952364108, "strain": null, "temperature": null, "terrain_condition": "HIGH", "terrain_variability": 0.9927863166139576, "vibration": null, "zone_id": "ZONE-001"}, "type": "Feature"}, {"geometry": {"coordinates": [[[86.39404966666667, 23.7831371], [86.39404966666667, 23.7836583], [86.39208643333333, 23.7836583], [86.39208643333333, 23.7831371], [86.39404966666667, 23.7831371]]], "type": "Polygon"}, "properties": {"area": 0.011542, "aspect": 194.506, "curvature": 0.000694, "displacement": null, "elevation": 220.676, "gis_indicator": 0.0582243095158224, "max_elevation": 224.439, "max_roughness": 3.022, "max_slope": 2.427, "min_elevation": 217.427, "mine_id": "MINE-001", "pressure": null, "rainfall": null, "risk_level": "UNKNOWN", "risk_probability": null, "road_count": 6, "road_length": 0.2535, "roughness": 2.026, "roughness_indicator": 0.0, "slope": 1.523, "slope_indicator": 0.0, "strain": null, "temperature": null, "terrain_condition": "LOW", "terrain_variability": 0.1565434446050848, "vibration": null, "zone_id": "ZONE-002"}, "type": "Feature"}, {"geometry": {"coordinates": [[[86.3960129, 23.7831371], [86.3960129, 23.7836583], [86.39404966666667, 23.7836583], [86.39404966666667, 23.7831371], [86.3960129, 23.7831371]]], "type": "Polygon"}, "properties": {"area": 0.011542, "aspect": 310.772, "curvature": 0.001803, "displacement": null, "elevation": 219.375, "gis_indicator": 0.2233825517937802, "max_elevation": 225.315, "max_roughness": 10.425, "max_slope": 7.797, "min_elevation": 215.851, "mine_id": "MINE-001", "pressure": null, "rainfall": null, "risk_level": "UNKNOWN", "risk_probability": null, "road_count": 4, "road_length": 0.2055, "roughness": 6.077, "roughness_indicator": 0.1274019561593861, "slope": 4.48, "slope_indicator": 0.1743308572102347, "strain": null, "temperature": null, "terrain_condition": "LOW", "terrain_variability": 0.3794610330325342, "vibration": null, "zone_id": "ZONE-003"}, "type": "Feature"}, {"geometry": {"coordinates": [[[86.39208643333333, 23.7836583], [86.39208643333333, 23.7841795], [86.3901232, 23.7841795], [86.3901232, 23.7836583], [86.39208643333333, 23.7836583]]], "type": "Polygon"}, "properties": {"area": 0.011542, "aspect": 215.92, "curvature": 0.004601, "displacement": null, "elevation": 219.029, "gis_indicator": 0.8585717162657034, "max_elevation": 221.047, "max_roughness": 157.326, "max_slope": 69.35, "min_elevation": 217.098, "mine_id": "MINE-001", "pressure": null, "rainfall": null, "risk_level": "UNKNOWN", "risk_probability": null, "road_count": 9, "road_length": 0.2127, "roughness": 33.039, "roughness_indicator": 0.9753435858728812, "slope": 17.592, "slope_indicator": 0.9473529064968752, "strain": null, "temperature": null, "terrain_condition": "HIGH", "terrain_variability": 0.6672629501085087, "vibration": null, "zone_id": "ZONE-004"}, "type": "Feature"}, {"geometry": {"coordinates": [[[86.39404966666667, 23.7836583], [86.39404966666667, 23.7841795], [86.39208643333333, 23.7841795], [86.39208643333333, 23.7836583], [86.39404966666667, 23.7836583]]], "type": "Polygon"}, "properties": {"area": 0.011542, "aspect": 149.498, "curvature": 0.000162, "displacement": null, "elevation": 219.258, "gis_indicator": 0.0095947589920623, "max_elevation": 222.914, "max_roughness": 3.846, "max_slope": 2.794, "min_elevation": 217.738, "mine_id": "MINE-001", "pressure": null, "rainfall": null, "risk_level": "UNKNOWN", "risk_probability": null, "road_count": 7, "road_length": 0.3682, "roughness": 2.356, "roughness_indicator": 0.0103783375790168, "slope": 1.68, "slope_indicator": 0.0092559839641551, "strain": null, "temperature": null, "terrain_condition": "LOW", "terrain_variability": 0.0093431414935781, "vibration": null, "zone_id": "ZONE-005"}, "type": "Feature"}, {"geometry": {"coordinates": [[[86.3960129, 23.7836583], [86.3960129, 23.7841795], [86.39404966666667, 23.7841795], [86.39404966666667, 23.7836583], [86.3960129, 23.7836583]]], "type": "Polygon"}, "properties": {"area": 0.011542, "aspect": 24.59, "curvature": 0.000326, "displacement": null, "elevation": 218.517, "gis_indicator": 0.1079347705893669, "max_elevation": 222.737, "max_roughness": 4.004, "max_slope": 3.403, "min_elevation": 214.334, "mine_id": "MINE-001", "pressure": null, "rainfall": null, "risk_level": "UNKNOWN", "risk_probability": null, "road_count": 4, "road_length": 0.2152, "roughness": 2.619, "roughness_indicator": 0.0186495581344152, "slope": 2.091, "slope_indicator": 0.0334866171442047, "strain": null, "temperature": null, "terrain_condition": "LOW", "terrain_variability": 0.2942355566228482, "vibration": null, "zone_id": "ZONE-006"}, "type": "Feature"}, {"geometry": {"coordinates": [[[86.39208643333333, 23.7841795], [86.39208643333333, 23.7847007], [86.3901232, 23.7847007], [86.3901232, 23.7841795], [86.39208643333333, 23.7841795]]], "type": "Polygon"}, "properties": {"area": 0.011542, "aspect": 204.36, "curvature": 0.005673, "displacement": null, "elevation": 220.902, "gis_indicator": 0.9277644999364144, "max_elevation": 223.947, "max_roughness": 156.739, "max_slope": 69.513, "min_elevation": 217.769, "mine_id": "MINE-001", "pressure": null, "rainfall": null, "risk_level": "UNKNOWN", "risk_probability": null, "road_count": 5, "road_length": 0.1895, "roughness": 33.823, "roughness_indicator": 1.0, "slope": 18.485, "slope_indicator": 1.0, "strain": null, "temperature": null, "terrain_condition": "HIGH", "terrain_variability": 0.775892159541233, "vibration": null, "zone_id": "ZONE-007"}, "type": "Feature"}, {"geometry": {"coordinates": [[[86.39404966666667, 23.7841795], [86.39404966666667, 23.7847007], [86.39208643333333, 23.7847007], [86.39208643333333, 23.7841795], [86.39404966666667, 23.7841795]]], "type": "Polygon"}, "properties": {"area": 0.011542, "aspect": 110.788, "curvature": 0.000392, "displacement": null, "elevation": 219.41, "gis_indicator": 0.0099198834765177, "max_elevation": 221.022, "max_roughness": 3.244, "max_slope": 2.675, "min_elevation": 217.344, "mine_id": "MINE-001", "pressure": null, "rainfall": null, "risk_level": "UNKNOWN", "risk_probability": null, "road_count": 4, "road_length": 0.2326, "roughness": 2.209, "roughness_indicator": 0.0057552599301821, "slope": 1.599, "slope_indicator": 0.0044806037023935, "strain": null, "temperature": null, "terrain_condition": "LOW", "terrain_variability": 0.0046723655333421, "vibration": null, "zone_id": "ZONE-008"}, "type": "Feature"}, {"geometry": {"coordinates": [[[86.3960129, 23.7841795], [86.3960129, 23.7847007], [86.39404966666667, 23.7847007], [86.39404966666667, 23.7841795], [86.3960129, 23.7841795]]], "type": "Polygon"}, "properties": {"area": 0.011542, "aspect": 30.6, "curvature": 2e-06, "displacement": null, "elevation": 217.633, "gis_indicator": 0.1021714091982852, "max_elevation": 221.049, "max_roughness": 3.823, "max_slope": 2.89, "min_elevation": 213.656, "mine_id": "MINE-001", "pressure": null, "rainfall": null, "risk_level": "UNKNOWN", "risk_probability": null, "road_count": 3, "road_length": 0.268, "roughness": 2.982, "roughness_indicator": 0.0300657294713337, "slope": 2.252, "slope_indicator": 0.0429784223558542, "strain": null, "temperature": null, "terrain_condition": "LOW", "terrain_variability": 0.2812396220008997, "vibration": null, "zone_id": "ZONE-009"}, "type": "Feature"}], "type": "FeatureCollection"});
+
+        
+    
+    geo_json_c92385999827b8eca39995a105aa5fd9.bindTooltip(
+    function(layer){
+    let div = L.DomUtil.create('div');
+    
+    let handleObject = feature => {
+        if (feature === null) {
+            return '';
+        } else if (typeof(feature)=='object') {
+            return JSON.stringify(feature);
+        } else {
+            return feature;
+        }
+    }
+    let fields = ["zone_id", "terrain_condition"];
+    let aliases = ["Zone:", "Terrain:"];
+    let table = '<table>' +
+        String(
+        fields.map(
+        (v,i)=>
+        `<tr>
+            <th>${aliases[i]}</th>
+            
+            <td>${handleObject(layer.feature.properties[v])}</td>
+        </tr>`).join(''))
+    +'</table>';
+    div.innerHTML=table;
+    
+    return div
+    }
+    ,{
+  "sticky": true,
+  "className": "foliumtooltip",
+});
+                     
+    
+            geo_json_c92385999827b8eca39995a105aa5fd9.addTo(feature_group_93b7603f0294b88a8240f230394eb57d);
+        
+    
+            feature_group_93b7603f0294b88a8240f230394eb57d.addTo(map_5b7805eedc8fecbb71cfca802c4316d0);
+        
+    
+            var feature_group_a7c7df0b20360b509e272fea25c4516a = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var circle_marker_d315256f061642bb0512b823298223d8 = L.circleMarker(
+                [23.7833977, 86.3911048166667],
+                {"bubblingMouseEvents": true, "color": "#2563eb", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3b82f6", "fillOpacity": 0.95, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(feature_group_a7c7df0b20360b509e272fea25c4516a);
+        
+    
+        var popup_c462d967d5ddb259e4ad70e293e30f43 = L.popup({
+  "maxWidth": 280,
 });
 
         
             
-                var html_945c956daf8f8a65fced36b0f587aad7 = $(`<div id="html_945c956daf8f8a65fced36b0f587aad7" style="width: 100.0%; height: 100.0%;">     <b>SENSOR-01</b><br>     Type: Environmental<br>     Parameters: Temperature, Humidity, Rainfall     </div>`)[0];
-                popup_b65ab1d7ad004e13482bd658fde5e58a.setContent(html_945c956daf8f8a65fced36b0f587aad7);
+                var html_7dcf407b4ef39c7fd2ca9fb9c027fbc2 = $(`<div id="html_7dcf407b4ef39c7fd2ca9fb9c027fbc2" style="width: 100.0%; height: 100.0%;">         <div style="font-family:Arial;width:220px">         <h4>MineGuard Sensor</h4>         <b>Sensor ID:</b> SENSOR-001<br>         <b>Type:</b> Environmental<br>         <b>Status:</b> Ready for IoT         </div>         </div>`)[0];
+                popup_c462d967d5ddb259e4ad70e293e30f43.setContent(html_7dcf407b4ef39c7fd2ca9fb9c027fbc2);
             
         
 
-        marker_79f0725317cf7ca04d5ecf50644bc574.bindPopup(popup_b65ab1d7ad004e13482bd658fde5e58a)
+        circle_marker_d315256f061642bb0512b823298223d8.bindPopup(popup_c462d967d5ddb259e4ad70e293e30f43)
         ;
 
         
     
     
-            marker_79f0725317cf7ca04d5ecf50644bc574.bindTooltip(
+            circle_marker_d315256f061642bb0512b823298223d8.bindTooltip(
                 `<div>
-                     SENSOR-01
+                     SENSOR-001
                  </div>`,
                 {
   "sticky": true,
@@ -277,47 +1493,32 @@ Restricted Area<br>
             );
         
     
-                marker_79f0725317cf7ca04d5ecf50644bc574.setIcon(icon_812e2cc92b8f8758f09e53a6434b4233);
-            
-    
-            var marker_2082449506e0ca6ed59000ea484c126f = L.marker(
-                [23.783, 86.396],
-                {
-}
-            ).addTo(feature_group_b50d39a52ec294c33768d9be5c7b3cd4);
+            var circle_marker_a46dcf34aa11ee9b79a6e55b0ccde488 = L.circleMarker(
+                [23.7833977, 86.39306805000001],
+                {"bubblingMouseEvents": true, "color": "#2563eb", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3b82f6", "fillOpacity": 0.95, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(feature_group_a7c7df0b20360b509e272fea25c4516a);
         
     
-            var icon_ce6b32bf086593075e326de3e9f38858 = L.AwesomeMarkers.icon(
-                {
-  "markerColor": "blue",
-  "iconColor": "white",
-  "icon": "info-sign",
-  "prefix": "glyphicon",
-  "extraClasses": "fa-rotate-0",
-}
-            );
-        
-    
-        var popup_e5c179eec192c2c214fdfc4f11d9899c = L.popup({
-  "maxWidth": "100%",
+        var popup_e185a2410afdf30068504dc54a5bf5af = L.popup({
+  "maxWidth": 280,
 });
 
         
             
-                var html_6076de154ff7eab1d227dc0e8e885acd = $(`<div id="html_6076de154ff7eab1d227dc0e8e885acd" style="width: 100.0%; height: 100.0%;">     <b>SENSOR-02</b><br>     Type: Ground Movement<br>     Parameters: Displacement, Vibration     </div>`)[0];
-                popup_e5c179eec192c2c214fdfc4f11d9899c.setContent(html_6076de154ff7eab1d227dc0e8e885acd);
+                var html_d91f28444038502bd7ffbf9ba0e79e42 = $(`<div id="html_d91f28444038502bd7ffbf9ba0e79e42" style="width: 100.0%; height: 100.0%;">         <div style="font-family:Arial;width:220px">         <h4>MineGuard Sensor</h4>         <b>Sensor ID:</b> SENSOR-002<br>         <b>Type:</b> Environmental<br>         <b>Status:</b> Ready for IoT         </div>         </div>`)[0];
+                popup_e185a2410afdf30068504dc54a5bf5af.setContent(html_d91f28444038502bd7ffbf9ba0e79e42);
             
         
 
-        marker_2082449506e0ca6ed59000ea484c126f.bindPopup(popup_e5c179eec192c2c214fdfc4f11d9899c)
+        circle_marker_a46dcf34aa11ee9b79a6e55b0ccde488.bindPopup(popup_e185a2410afdf30068504dc54a5bf5af)
         ;
 
         
     
     
-            marker_2082449506e0ca6ed59000ea484c126f.bindTooltip(
+            circle_marker_a46dcf34aa11ee9b79a6e55b0ccde488.bindTooltip(
                 `<div>
-                     SENSOR-02
+                     SENSOR-002
                  </div>`,
                 {
   "sticky": true,
@@ -325,47 +1526,32 @@ Restricted Area<br>
             );
         
     
-                marker_2082449506e0ca6ed59000ea484c126f.setIcon(icon_ce6b32bf086593075e326de3e9f38858);
-            
-    
-            var marker_685146a2b56e3981ba796f9ee8e085e2 = L.marker(
-                [23.7795, 86.3935],
-                {
-}
-            ).addTo(feature_group_b50d39a52ec294c33768d9be5c7b3cd4);
+            var circle_marker_2f475793f1549c587fdfddaa31712683 = L.circleMarker(
+                [23.7833977, 86.39503128333334],
+                {"bubblingMouseEvents": true, "color": "#2563eb", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3b82f6", "fillOpacity": 0.95, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(feature_group_a7c7df0b20360b509e272fea25c4516a);
         
     
-            var icon_afafe9be69a7d7bbb2c05eedc7a256cb = L.AwesomeMarkers.icon(
-                {
-  "markerColor": "blue",
-  "iconColor": "white",
-  "icon": "info-sign",
-  "prefix": "glyphicon",
-  "extraClasses": "fa-rotate-0",
-}
-            );
-        
-    
-        var popup_a4708020c6971632eb83d1a284525135 = L.popup({
-  "maxWidth": "100%",
+        var popup_c873c93ce8d04a59c29fc437caa76639 = L.popup({
+  "maxWidth": 280,
 });
 
         
             
-                var html_518459ef02c1a18b341b64def16a77d1 = $(`<div id="html_518459ef02c1a18b341b64def16a77d1" style="width: 100.0%; height: 100.0%;">     <b>SENSOR-03</b><br>     Type: Gas Monitoring<br>     Parameters: CO, CO2, CH4     </div>`)[0];
-                popup_a4708020c6971632eb83d1a284525135.setContent(html_518459ef02c1a18b341b64def16a77d1);
+                var html_d453c138c6baab501f9407417f80b47e = $(`<div id="html_d453c138c6baab501f9407417f80b47e" style="width: 100.0%; height: 100.0%;">         <div style="font-family:Arial;width:220px">         <h4>MineGuard Sensor</h4>         <b>Sensor ID:</b> SENSOR-003<br>         <b>Type:</b> Environmental<br>         <b>Status:</b> Ready for IoT         </div>         </div>`)[0];
+                popup_c873c93ce8d04a59c29fc437caa76639.setContent(html_d453c138c6baab501f9407417f80b47e);
             
         
 
-        marker_685146a2b56e3981ba796f9ee8e085e2.bindPopup(popup_a4708020c6971632eb83d1a284525135)
+        circle_marker_2f475793f1549c587fdfddaa31712683.bindPopup(popup_c873c93ce8d04a59c29fc437caa76639)
         ;
 
         
     
     
-            marker_685146a2b56e3981ba796f9ee8e085e2.bindTooltip(
+            circle_marker_2f475793f1549c587fdfddaa31712683.bindTooltip(
                 `<div>
-                     SENSOR-03
+                     SENSOR-003
                  </div>`,
                 {
   "sticky": true,
@@ -373,47 +1559,32 @@ Restricted Area<br>
             );
         
     
-                marker_685146a2b56e3981ba796f9ee8e085e2.setIcon(icon_afafe9be69a7d7bbb2c05eedc7a256cb);
-            
-    
-            var marker_9cad0be9d2ac7dd3b3aa1223579f0d2e = L.marker(
-                [23.785, 86.399],
-                {
-}
-            ).addTo(feature_group_b50d39a52ec294c33768d9be5c7b3cd4);
+            var circle_marker_fff35e0892ea33d28cac2b37269aec38 = L.circleMarker(
+                [23.7839189, 86.39110481666668],
+                {"bubblingMouseEvents": true, "color": "#2563eb", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3b82f6", "fillOpacity": 0.95, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(feature_group_a7c7df0b20360b509e272fea25c4516a);
         
     
-            var icon_6073442bd235605599f76019a79c3e6e = L.AwesomeMarkers.icon(
-                {
-  "markerColor": "blue",
-  "iconColor": "white",
-  "icon": "info-sign",
-  "prefix": "glyphicon",
-  "extraClasses": "fa-rotate-0",
-}
-            );
-        
-    
-        var popup_2de2db4fe0cc29209af1cba5f9343ae0 = L.popup({
-  "maxWidth": "100%",
+        var popup_636531b11cd565c7b9ac9b7271283c21 = L.popup({
+  "maxWidth": 280,
 });
 
         
             
-                var html_9465437f791edb5b31649517a329420a = $(`<div id="html_9465437f791edb5b31649517a329420a" style="width: 100.0%; height: 100.0%;">     <b>SENSOR-04</b><br>     Type: Environmental<br>     Parameters: Temperature, Humidity     </div>`)[0];
-                popup_2de2db4fe0cc29209af1cba5f9343ae0.setContent(html_9465437f791edb5b31649517a329420a);
+                var html_008a4cc59500f8508df9afb588790465 = $(`<div id="html_008a4cc59500f8508df9afb588790465" style="width: 100.0%; height: 100.0%;">         <div style="font-family:Arial;width:220px">         <h4>MineGuard Sensor</h4>         <b>Sensor ID:</b> SENSOR-004<br>         <b>Type:</b> Environmental<br>         <b>Status:</b> Ready for IoT         </div>         </div>`)[0];
+                popup_636531b11cd565c7b9ac9b7271283c21.setContent(html_008a4cc59500f8508df9afb588790465);
             
         
 
-        marker_9cad0be9d2ac7dd3b3aa1223579f0d2e.bindPopup(popup_2de2db4fe0cc29209af1cba5f9343ae0)
+        circle_marker_fff35e0892ea33d28cac2b37269aec38.bindPopup(popup_636531b11cd565c7b9ac9b7271283c21)
         ;
 
         
     
     
-            marker_9cad0be9d2ac7dd3b3aa1223579f0d2e.bindTooltip(
+            circle_marker_fff35e0892ea33d28cac2b37269aec38.bindTooltip(
                 `<div>
-                     SENSOR-04
+                     SENSOR-004
                  </div>`,
                 {
   "sticky": true,
@@ -421,98 +1592,284 @@ Restricted Area<br>
             );
         
     
-                marker_9cad0be9d2ac7dd3b3aa1223579f0d2e.setIcon(icon_6073442bd235605599f76019a79c3e6e);
-            
-    
-            feature_group_b50d39a52ec294c33768d9be5c7b3cd4.addTo(map_6b4ef95038d3acec18368c582786eb34);
+            var circle_marker_00acb57efb5699d60a3b04405656d24a = L.circleMarker(
+                [23.7839189, 86.39306805000002],
+                {"bubblingMouseEvents": true, "color": "#2563eb", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3b82f6", "fillOpacity": 0.95, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(feature_group_a7c7df0b20360b509e272fea25c4516a);
         
     
-            var polygon_f38a64d7157d05ba928115dcaadf857c = L.polygon(
+        var popup_f015ccec3f7f27027ea124b172c2a826 = L.popup({
+  "maxWidth": 280,
+});
+
+        
+            
+                var html_040085082bda46e8a83be8c3a7f5c285 = $(`<div id="html_040085082bda46e8a83be8c3a7f5c285" style="width: 100.0%; height: 100.0%;">         <div style="font-family:Arial;width:220px">         <h4>MineGuard Sensor</h4>         <b>Sensor ID:</b> SENSOR-005<br>         <b>Type:</b> Environmental<br>         <b>Status:</b> Ready for IoT         </div>         </div>`)[0];
+                popup_f015ccec3f7f27027ea124b172c2a826.setContent(html_040085082bda46e8a83be8c3a7f5c285);
+            
+        
+
+        circle_marker_00acb57efb5699d60a3b04405656d24a.bindPopup(popup_f015ccec3f7f27027ea124b172c2a826)
+        ;
+
+        
+    
+    
+            circle_marker_00acb57efb5699d60a3b04405656d24a.bindTooltip(
+                `<div>
+                     SENSOR-005
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_0f80d075c02878584c19639dafeec840 = L.circleMarker(
+                [23.7839189, 86.39503128333335],
+                {"bubblingMouseEvents": true, "color": "#2563eb", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3b82f6", "fillOpacity": 0.95, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(feature_group_a7c7df0b20360b509e272fea25c4516a);
+        
+    
+        var popup_5d59ebc181e70635bdd6746aa885c51c = L.popup({
+  "maxWidth": 280,
+});
+
+        
+            
+                var html_8f453d8b369d45ca35e1925e5412a66b = $(`<div id="html_8f453d8b369d45ca35e1925e5412a66b" style="width: 100.0%; height: 100.0%;">         <div style="font-family:Arial;width:220px">         <h4>MineGuard Sensor</h4>         <b>Sensor ID:</b> SENSOR-006<br>         <b>Type:</b> Environmental<br>         <b>Status:</b> Ready for IoT         </div>         </div>`)[0];
+                popup_5d59ebc181e70635bdd6746aa885c51c.setContent(html_8f453d8b369d45ca35e1925e5412a66b);
+            
+        
+
+        circle_marker_0f80d075c02878584c19639dafeec840.bindPopup(popup_5d59ebc181e70635bdd6746aa885c51c)
+        ;
+
+        
+    
+    
+            circle_marker_0f80d075c02878584c19639dafeec840.bindTooltip(
+                `<div>
+                     SENSOR-006
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_c8013db3992545b8768ee7f6ae11f2c1 = L.circleMarker(
+                [23.7844401, 86.3911048166667],
+                {"bubblingMouseEvents": true, "color": "#2563eb", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3b82f6", "fillOpacity": 0.95, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(feature_group_a7c7df0b20360b509e272fea25c4516a);
+        
+    
+        var popup_51afbb7beff86b73eafcdba0b2850c7a = L.popup({
+  "maxWidth": 280,
+});
+
+        
+            
+                var html_9ba7dabb8c96f6c670bc8c60b294be2f = $(`<div id="html_9ba7dabb8c96f6c670bc8c60b294be2f" style="width: 100.0%; height: 100.0%;">         <div style="font-family:Arial;width:220px">         <h4>MineGuard Sensor</h4>         <b>Sensor ID:</b> SENSOR-007<br>         <b>Type:</b> Environmental<br>         <b>Status:</b> Ready for IoT         </div>         </div>`)[0];
+                popup_51afbb7beff86b73eafcdba0b2850c7a.setContent(html_9ba7dabb8c96f6c670bc8c60b294be2f);
+            
+        
+
+        circle_marker_c8013db3992545b8768ee7f6ae11f2c1.bindPopup(popup_51afbb7beff86b73eafcdba0b2850c7a)
+        ;
+
+        
+    
+    
+            circle_marker_c8013db3992545b8768ee7f6ae11f2c1.bindTooltip(
+                `<div>
+                     SENSOR-007
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_f9c5261ae47a6d65ba1e4e5f6834904a = L.circleMarker(
+                [23.7844401, 86.39306805000001],
+                {"bubblingMouseEvents": true, "color": "#2563eb", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3b82f6", "fillOpacity": 0.95, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(feature_group_a7c7df0b20360b509e272fea25c4516a);
+        
+    
+        var popup_97271352502cfc2aa11934ce6d6911b5 = L.popup({
+  "maxWidth": 280,
+});
+
+        
+            
+                var html_339391d2b28d05882b708d3cd0642141 = $(`<div id="html_339391d2b28d05882b708d3cd0642141" style="width: 100.0%; height: 100.0%;">         <div style="font-family:Arial;width:220px">         <h4>MineGuard Sensor</h4>         <b>Sensor ID:</b> SENSOR-008<br>         <b>Type:</b> Environmental<br>         <b>Status:</b> Ready for IoT         </div>         </div>`)[0];
+                popup_97271352502cfc2aa11934ce6d6911b5.setContent(html_339391d2b28d05882b708d3cd0642141);
+            
+        
+
+        circle_marker_f9c5261ae47a6d65ba1e4e5f6834904a.bindPopup(popup_97271352502cfc2aa11934ce6d6911b5)
+        ;
+
+        
+    
+    
+            circle_marker_f9c5261ae47a6d65ba1e4e5f6834904a.bindTooltip(
+                `<div>
+                     SENSOR-008
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_3ff0f5bd28cfcd6dba0b09ac3f2ba0b8 = L.circleMarker(
+                [23.7844401, 86.39503128333334],
+                {"bubblingMouseEvents": true, "color": "#2563eb", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3b82f6", "fillOpacity": 0.95, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 3}
+            ).addTo(feature_group_a7c7df0b20360b509e272fea25c4516a);
+        
+    
+        var popup_3c31ef915262b53c66d1d5a59a5006a3 = L.popup({
+  "maxWidth": 280,
+});
+
+        
+            
+                var html_699afd83c35068b9433703ca19a04492 = $(`<div id="html_699afd83c35068b9433703ca19a04492" style="width: 100.0%; height: 100.0%;">         <div style="font-family:Arial;width:220px">         <h4>MineGuard Sensor</h4>         <b>Sensor ID:</b> SENSOR-009<br>         <b>Type:</b> Environmental<br>         <b>Status:</b> Ready for IoT         </div>         </div>`)[0];
+                popup_3c31ef915262b53c66d1d5a59a5006a3.setContent(html_699afd83c35068b9433703ca19a04492);
+            
+        
+
+        circle_marker_3ff0f5bd28cfcd6dba0b09ac3f2ba0b8.bindPopup(popup_3c31ef915262b53c66d1d5a59a5006a3)
+        ;
+
+        
+    
+    
+            circle_marker_3ff0f5bd28cfcd6dba0b09ac3f2ba0b8.bindTooltip(
+                `<div>
+                     SENSOR-009
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            feature_group_a7c7df0b20360b509e272fea25c4516a.addTo(map_5b7805eedc8fecbb71cfca802c4316d0);
+        
+    
+            var feature_group_d7d35bb90c66abd12bfd5b9316cc0d01 = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var polygon_59c06dff572c03b70589be13fb94222d = L.polygon(
                 [[23.7815, 86.391], [23.7815, 86.3955], [23.778, 86.3965], [23.7775, 86.392]],
-                {"bubblingMouseEvents": true, "color": "purple", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "purple", "fillOpacity": 0.25, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 3}
-            ).addTo(map_6b4ef95038d3acec18368c582786eb34);
+                {"bubblingMouseEvents": true, "color": "#8b5cf6", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8b5cf6", "fillOpacity": 0.15, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 2}
+            ).addTo(feature_group_d7d35bb90c66abd12bfd5b9316cc0d01);
         
     
-        var popup_e944c3833ace51d2966c1e1128abc629 = L.popup({
+        var popup_7cd54a0e9f93e958d61cb8e2772cd263 = L.popup({
   "maxWidth": "100%",
 });
 
         
             
-                var html_ec164de6d422afad1e3643a230e0edb5 = $(`<div id="html_ec164de6d422afad1e3643a230e0edb5" style="width: 100.0%; height: 100.0%;">Gas Monitoring Zone - Prototype</div>`)[0];
-                popup_e944c3833ace51d2966c1e1128abc629.setContent(html_ec164de6d422afad1e3643a230e0edb5);
+                var html_2ebc6a9ecdb9482f95460805b993a690 = $(`<div id="html_2ebc6a9ecdb9482f95460805b993a690" style="width: 100.0%; height: 100.0%;">Gas Monitoring Area</div>`)[0];
+                popup_7cd54a0e9f93e958d61cb8e2772cd263.setContent(html_2ebc6a9ecdb9482f95460805b993a690);
             
         
 
-        polygon_f38a64d7157d05ba928115dcaadf857c.bindPopup(popup_e944c3833ace51d2966c1e1128abc629)
+        polygon_59c06dff572c03b70589be13fb94222d.bindPopup(popup_7cd54a0e9f93e958d61cb8e2772cd263)
         ;
 
         
     
     
-            var polygon_764e65f16fcb28aa667c6dd38a215c07 = L.polygon(
+            var feature_group_5721aea27dd43ef0730991afbc1c68dc = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var polygon_fe520c3e19c08e3da982dde2dad4598a = L.polygon(
                 [[23.784, 86.397], [23.7855, 86.4], [23.7815, 86.401], [23.7805, 86.398]],
-                {"bubblingMouseEvents": true, "color": "darkred", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 3}
-            ).addTo(map_6b4ef95038d3acec18368c582786eb34);
+                {"bubblingMouseEvents": true, "color": "#dc2626", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ef4444", "fillOpacity": 0.15, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 2}
+            ).addTo(feature_group_5721aea27dd43ef0730991afbc1c68dc);
         
     
-        var popup_9de05481c3632b886c8c9f1e570ebad9 = L.popup({
+        var popup_b6601df2218d2cdef7a9167c57a73cbd = L.popup({
   "maxWidth": "100%",
 });
 
         
             
-                var html_657bdb3af0d9f36e97c6a409372a7ae5 = $(`<div id="html_657bdb3af0d9f36e97c6a409372a7ae5" style="width: 100.0%; height: 100.0%;">Potential Fire/Thermal Risk Zone - Prototype</div>`)[0];
-                popup_9de05481c3632b886c8c9f1e570ebad9.setContent(html_657bdb3af0d9f36e97c6a409372a7ae5);
+                var html_3c452910d55a7e9dc2daee4089d11b85 = $(`<div id="html_3c452910d55a7e9dc2daee4089d11b85" style="width: 100.0%; height: 100.0%;">Thermal / Fire Monitoring Area</div>`)[0];
+                popup_b6601df2218d2cdef7a9167c57a73cbd.setContent(html_3c452910d55a7e9dc2daee4089d11b85);
             
         
 
-        polygon_764e65f16fcb28aa667c6dd38a215c07.bindPopup(popup_9de05481c3632b886c8c9f1e570ebad9)
+        polygon_fe520c3e19c08e3da982dde2dad4598a.bindPopup(popup_b6601df2218d2cdef7a9167c57a73cbd)
         ;
 
         
     
     
-            var polygon_a46e8e3f10fc4e4559c49fba576b5cae = L.polygon(
+            var feature_group_26c1780f3066b42c461a515b5d9cf95e = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var polygon_e5bfdbd818efeff66c43ffdd06fda6a6 = L.polygon(
                 [[23.779, 86.397], [23.781, 86.4005], [23.778, 86.402], [23.7765, 86.399]],
-                {"bubblingMouseEvents": true, "color": "black", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "black", "fillOpacity": 0.45, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 3}
-            ).addTo(map_6b4ef95038d3acec18368c582786eb34);
+                {"bubblingMouseEvents": true, "color": "#111827", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#111827", "fillOpacity": 0.25, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 2}
+            ).addTo(feature_group_26c1780f3066b42c461a515b5d9cf95e);
         
     
-        var popup_bd319cc8210ddcdb41ddb93b2cb3e57b = L.popup({
+        var popup_cb1ad3a0802bcd20283fbc7163d093a8 = L.popup({
   "maxWidth": "100%",
 });
 
         
             
-                var html_a6114c6afab54d2192e93a4b9ce05ac1 = $(`<div id="html_a6114c6afab54d2192e93a4b9ce05ac1" style="width: 100.0%; height: 100.0%;">Restricted Area - Prototype</div>`)[0];
-                popup_bd319cc8210ddcdb41ddb93b2cb3e57b.setContent(html_a6114c6afab54d2192e93a4b9ce05ac1);
+                var html_99c35e55433ed23c327700a49f2bd992 = $(`<div id="html_99c35e55433ed23c327700a49f2bd992" style="width: 100.0%; height: 100.0%;">Restricted Area</div>`)[0];
+                popup_cb1ad3a0802bcd20283fbc7163d093a8.setContent(html_99c35e55433ed23c327700a49f2bd992);
             
         
 
-        polygon_a46e8e3f10fc4e4559c49fba576b5cae.bindPopup(popup_bd319cc8210ddcdb41ddb93b2cb3e57b)
+        polygon_e5bfdbd818efeff66c43ffdd06fda6a6.bindPopup(popup_cb1ad3a0802bcd20283fbc7163d093a8)
         ;
 
         
     
     
-            var layer_control_9e600ea2d20da585512af18efdecc535_layers = {
+            var layer_control_8152ade83aad84da126288cebed58cb8_layers = {
                 base_layers : {
-                    "openstreetmap" : tile_layer_ef536aeea9ed14a2710fda2b65b702e6,
+                    "openstreetmap" : tile_layer_aac359d3d83d6acafc48e1bd7a4bde6c,
                 },
                 overlays :  {
-                    "Sensor Locations" : feature_group_b50d39a52ec294c33768d9be5c7b3cd4,
+                    "Kusunda Study Area" : feature_group_caa889794f7ef5fae9599a9006665466,
+                    "Road Network" : feature_group_33499c590d6b1af9373c5628d9e751e6,
+                    "Mine Zones" : feature_group_93b7603f0294b88a8240f230394eb57d,
+                    "Sensor Locations" : feature_group_a7c7df0b20360b509e272fea25c4516a,
+                    "Gas Monitoring" : feature_group_d7d35bb90c66abd12bfd5b9316cc0d01,
+                    "Thermal Monitoring" : feature_group_5721aea27dd43ef0730991afbc1c68dc,
+                    "Restricted Area" : feature_group_26c1780f3066b42c461a515b5d9cf95e,
                 },
             };
-            let layer_control_9e600ea2d20da585512af18efdecc535 = L.control.layers(
-                layer_control_9e600ea2d20da585512af18efdecc535_layers.base_layers,
-                layer_control_9e600ea2d20da585512af18efdecc535_layers.overlays,
+            let layer_control_8152ade83aad84da126288cebed58cb8 = L.control.layers(
+                layer_control_8152ade83aad84da126288cebed58cb8_layers.base_layers,
+                layer_control_8152ade83aad84da126288cebed58cb8_layers.overlays,
                 {
   "position": "topright",
-  "collapsed": true,
+  "collapsed": false,
   "autoZIndex": true,
 }
-            ).addTo(map_6b4ef95038d3acec18368c582786eb34);
+            ).addTo(map_5b7805eedc8fecbb71cfca802c4316d0);
 
         
 </script>
