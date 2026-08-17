@@ -23,17 +23,12 @@ print("MineGuard AI - GIS Dashboard")
 print("==========================================")
 
 
-required_files = [
+for file_path in [
     ZONE_FILE,
     ROAD_FILE,
     ZONE_DATA_FILE
-]
-
-
-for file_path in required_files:
-
+]:
     if not file_path.exists():
-
         raise FileNotFoundError(
             f"Required file not found:\n{file_path}"
         )
@@ -44,7 +39,6 @@ with open(
     "r",
     encoding="utf-8"
 ) as file:
-
     zone_api_data = json.load(file)
 
 
@@ -92,7 +86,9 @@ folium.Polygon(
     weight=3,
     fill=False,
     popup="Kusunda Mine Study Area"
-).add_to(study_layer)
+).add_to(
+    study_layer
+)
 
 
 study_layer.add_to(
@@ -106,7 +102,7 @@ road_layer = folium.FeatureGroup(
 )
 
 
-road_style = {
+road_options = {
     "style_function": lambda feature: {
         "color": "#555555",
         "weight": 2,
@@ -116,8 +112,7 @@ road_style = {
 
 
 if "highway" in roads.columns:
-
-    road_style["tooltip"] = folium.GeoJsonTooltip(
+    road_options["tooltip"] = folium.GeoJsonTooltip(
         fields=["highway"],
         aliases=["Road Type:"],
         localize=True
@@ -126,8 +121,10 @@ if "highway" in roads.columns:
 
 folium.GeoJson(
     roads.to_json(),
-    **road_style
-).add_to(road_layer)
+    **road_options
+).add_to(
+    road_layer
+)
 
 
 road_layer.add_to(
@@ -185,8 +182,12 @@ for _, zone in zones.iterrows():
         {}
     )
 
-    properties = {
+    explanation = risk.get(
+        "explanation",
+        {}
+    )
 
+    properties = {
         "zone_id": zone_id,
 
         "mine_id": record.get(
@@ -294,17 +295,24 @@ for _, zone in zones.iterrows():
 
         "risk_probability": risk.get(
             "probability"
+        ),
+
+        "risk_factors": explanation.get(
+            "primary_factors",
+            []
+        ),
+
+        "risk_recommendation": explanation.get(
+            "recommendation",
+            "Continue monitoring."
         )
     }
-
 
     zone_features.append(
         {
             "type": "Feature",
-            "geometry":
-                zone.geometry.__geo_interface__,
-            "properties":
-                properties
+            "geometry": zone.geometry.__geo_interface__,
+            "properties": properties
         }
     )
 
@@ -329,46 +337,34 @@ def zone_style(feature):
     )
 
     return {
-
         "color": color,
-
         "weight": 3,
-
         "fillColor": color,
-
         "fillOpacity": 0.30
     }
 
 
 zone_geojson = folium.GeoJson(
-
     {
         "type": "FeatureCollection",
-
         "features": zone_features
     },
-
     style_function=zone_style,
-
     highlight_function=lambda feature: {
-
         "weight": 5,
-
         "fillOpacity": 0.50
     },
-
     tooltip=folium.GeoJsonTooltip(
-
         fields=[
             "zone_id",
-            "terrain_condition"
+            "terrain_condition",
+            "risk_level"
         ],
-
         aliases=[
             "Zone:",
-            "Terrain:"
+            "Terrain:",
+            "AI Risk:"
         ],
-
         sticky=True
     )
 )
@@ -395,7 +391,6 @@ if SENSOR_FILE.exists():
     sensors = gpd.read_file(
         SENSOR_FILE
     ).to_crs("EPSG:4326")
-
 
     for _, sensor in sensors.iterrows():
 
@@ -424,33 +419,23 @@ if SENSOR_FILE.exists():
         """
 
         folium.CircleMarker(
-
             location=[
                 sensor.geometry.y,
                 sensor.geometry.x
             ],
-
             radius=7,
-
             color="#2563eb",
-
             fill=True,
-
             fill_color="#3b82f6",
-
             fill_opacity=0.95,
-
             tooltip=str(sensor_id),
-
             popup=folium.Popup(
                 popup,
                 max_width=280
             )
-
         ).add_to(
             sensor_layer
         )
-
 
 else:
 
@@ -485,7 +470,6 @@ else:
         }
     ]
 
-
     for sensor in prototype_sensors:
 
         popup = f"""
@@ -498,29 +482,20 @@ else:
         """
 
         folium.CircleMarker(
-
             location=[
                 sensor["lat"],
                 sensor["lon"]
             ],
-
             radius=7,
-
             color="#2563eb",
-
             fill=True,
-
             fill_color="#3b82f6",
-
             fill_opacity=0.95,
-
             tooltip=sensor["id"],
-
             popup=folium.Popup(
                 popup,
                 max_width=280
             )
-
         ).add_to(
             sensor_layer
         )
@@ -538,26 +513,18 @@ gas_layer = folium.FeatureGroup(
 
 
 folium.Polygon(
-
     locations=[
         [23.7815, 86.3910],
         [23.7815, 86.3955],
         [23.7780, 86.3965],
         [23.7775, 86.3920]
     ],
-
     color="#8b5cf6",
-
     weight=2,
-
     fill=True,
-
     fill_color="#8b5cf6",
-
     fill_opacity=0.15,
-
     popup="Gas Monitoring Area"
-
 ).add_to(
     gas_layer
 )
@@ -575,26 +542,18 @@ thermal_layer = folium.FeatureGroup(
 
 
 folium.Polygon(
-
     locations=[
         [23.7840, 86.3970],
         [23.7855, 86.4000],
         [23.7815, 86.4010],
         [23.7805, 86.3980]
     ],
-
     color="#dc2626",
-
     weight=2,
-
     fill=True,
-
     fill_color="#ef4444",
-
     fill_opacity=0.15,
-
     popup="Thermal / Fire Monitoring Area"
-
 ).add_to(
     thermal_layer
 )
@@ -612,26 +571,18 @@ restricted_layer = folium.FeatureGroup(
 
 
 folium.Polygon(
-
     locations=[
         [23.7790, 86.3970],
         [23.7810, 86.4005],
         [23.7780, 86.4020],
         [23.7765, 86.3990]
     ],
-
     color="#111827",
-
     weight=2,
-
     fill=True,
-
     fill_color="#111827",
-
     fill_opacity=0.25,
-
     popup="Restricted Area"
-
 ).add_to(
     restricted_layer
 )
@@ -698,7 +649,7 @@ css = """
     top:80px;
     right:18px;
     z-index:10000;
-    width:350px;
+    width:370px;
     max-height:calc(100vh - 105px);
     overflow-y:auto;
     background:rgba(255,255,255,.98);
@@ -816,9 +767,40 @@ css = """
 }
 
 .risk-level {
-    font-size:22px;
+    font-size:26px;
     font-weight:900;
+}
+
+.explanation-box {
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    padding:12px;
+}
+
+.explanation-list {
+    margin:0;
+    padding-left:20px;
+    color:#334155;
+    font-size:12px;
+    line-height:1.8;
+}
+
+.recommendation {
+    margin-top:12px;
+    background:#eef2ff;
+    border-radius:10px;
+    padding:11px;
+    color:#334155;
+    font-size:12px;
+    line-height:1.5;
+}
+
+.recommendation-title {
+    font-size:10px;
+    font-weight:800;
     color:#64748b;
+    margin-bottom:5px;
 }
 
 #mineguard-search {
@@ -843,7 +825,7 @@ css = """
 #mineguard-legend {
     position:fixed;
     bottom:25px;
-    right:385px;
+    right:400px;
     z-index:9998;
     background:rgba(255,255,255,.97);
     padding:12px 15px;
@@ -884,7 +866,6 @@ css = """
     #mineguard-legend {
         display:none;
     }
-
 }
 
 </style>
@@ -898,7 +879,6 @@ mine_map.get_root().html.add_child(
 
 header = """
 <div id="mineguard-header">
-
     <div class="title">
         ⛏ MineGuard AI
     </div>
@@ -906,15 +886,11 @@ header = """
     <div class="subtitle">
         Intelligent Mine Safety & Terrain Monitoring
     </div>
-
 </div>
 
 <div id="mineguard-status">
-
     <span class="status-dot"></span>
-
     GIS SYSTEM ONLINE
-
 </div>
 """
 
@@ -981,6 +957,7 @@ dashboard = """
                     <div class="metric-label">
                         Elevation
                     </div>
+
                     <div
                         id="elevation"
                         class="metric-value"
@@ -993,6 +970,7 @@ dashboard = """
                     <div class="metric-label">
                         Mean Slope
                     </div>
+
                     <div
                         id="slope"
                         class="metric-value"
@@ -1005,6 +983,7 @@ dashboard = """
                     <div class="metric-label">
                         Max Slope
                     </div>
+
                     <div
                         id="max-slope"
                         class="metric-value"
@@ -1017,6 +996,7 @@ dashboard = """
                     <div class="metric-label">
                         Aspect
                     </div>
+
                     <div
                         id="aspect"
                         class="metric-value"
@@ -1029,6 +1009,7 @@ dashboard = """
                     <div class="metric-label">
                         Curvature
                     </div>
+
                     <div
                         id="curvature"
                         class="metric-value"
@@ -1041,6 +1022,7 @@ dashboard = """
                     <div class="metric-label">
                         Roughness
                     </div>
+
                     <div
                         id="roughness"
                         class="metric-value"
@@ -1053,6 +1035,7 @@ dashboard = """
                     <div class="metric-label">
                         Roads
                     </div>
+
                     <div
                         id="roads"
                         class="metric-value"
@@ -1065,6 +1048,7 @@ dashboard = """
                     <div class="metric-label">
                         Road Length
                     </div>
+
                     <div
                         id="road-length"
                         class="metric-value"
@@ -1089,6 +1073,7 @@ dashboard = """
                     <div class="metric-label">
                         Slope Indicator
                     </div>
+
                     <div
                         id="slope-indicator"
                         class="metric-value"
@@ -1101,6 +1086,7 @@ dashboard = """
                     <div class="metric-label">
                         Roughness Indicator
                     </div>
+
                     <div
                         id="roughness-indicator"
                         class="metric-value"
@@ -1113,6 +1099,7 @@ dashboard = """
                     <div class="metric-label">
                         Terrain Variability
                     </div>
+
                     <div
                         id="terrain-variability"
                         class="metric-value"
@@ -1125,6 +1112,7 @@ dashboard = """
                     <div class="metric-label">
                         GIS Indicator
                     </div>
+
                     <div
                         id="gis-indicator"
                         class="metric-value"
@@ -1147,6 +1135,7 @@ dashboard = """
 
                 <div class="sensor">
                     Displacement
+
                     <div
                         id="displacement"
                         class="sensor-value"
@@ -1157,6 +1146,7 @@ dashboard = """
 
                 <div class="sensor">
                     Strain
+
                     <div
                         id="strain"
                         class="sensor-value"
@@ -1167,6 +1157,7 @@ dashboard = """
 
                 <div class="sensor">
                     Pore Pressure
+
                     <div
                         id="pressure"
                         class="sensor-value"
@@ -1177,6 +1168,7 @@ dashboard = """
 
                 <div class="sensor">
                     Rainfall
+
                     <div
                         id="rainfall"
                         class="sensor-value"
@@ -1187,6 +1179,7 @@ dashboard = """
 
                 <div class="sensor">
                     Temperature
+
                     <div
                         id="temperature"
                         class="sensor-value"
@@ -1197,6 +1190,7 @@ dashboard = """
 
                 <div class="sensor">
                     Vibration
+
                     <div
                         id="vibration"
                         class="sensor-value"
@@ -1235,6 +1229,39 @@ dashboard = """
                     <span id="risk-probability">
                         Waiting for ML
                     </span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="section">
+
+            <div class="section-title">
+                WHY THIS ZONE IS AT RISK
+            </div>
+
+            <div class="explanation-box">
+
+                <ul
+                    id="risk-factors"
+                    class="explanation-list"
+                >
+                    <li>
+                        Waiting for risk analysis
+                    </li>
+                </ul>
+
+                <div class="recommendation">
+
+                    <div class="recommendation-title">
+                        RECOMMENDED ACTION
+                    </div>
+
+                    <div id="risk-recommendation">
+                        Continue monitoring.
+                    </div>
+
                 </div>
 
             </div>
@@ -1319,424 +1346,487 @@ mine_map.get_root().html.add_child(
 
 
 map_name = mine_map.get_name()
+
 zone_geojson_name = zone_geojson.get_name()
 
 
 javascript = """
 <script>
 
-window.addEventListener("load", function() {
+window.addEventListener(
+    "load",
+    function() {
 
-    setTimeout(function() {
+        setTimeout(
+            function() {
 
-        const mapInstance = __MAP_NAME__;
-        const zoneLayer = __ZONE_GEOJSON__;
+                const mapInstance =
+                    __MAP_NAME__;
 
+                const zoneLayer =
+                    __ZONE_GEOJSON__;
 
-        function formatValue(value, suffix) {
 
-            if (
-                value === null ||
-                value === undefined ||
-                value === ""
-            ) {
-                return "—";
-            }
-
-            if (
-                typeof value === "number"
-            ) {
-                return value.toFixed(3) + (suffix || "");
-            }
-
-            return value + (suffix || "");
-        }
-
-
-        function setElement(id, value) {
-
-            const element =
-                document.getElementById(id);
-
-            if (element) {
-                element.innerHTML = value;
-            }
-        }
-
-
-        function showZoneDashboard(properties) {
-
-            const dashboard =
-                document.getElementById(
-                    "zone-dashboard"
-                );
-
-            if (!dashboard) {
-                return;
-            }
-
-
-            dashboard.style.display = "block";
-
-
-            setElement(
-                "dashboard-zone",
-                properties.zone_id || "UNKNOWN"
-            );
-
-
-            setElement(
-                "dashboard-mine",
-                properties.mine_id || "MINE-001"
-            );
-
-
-            setElement(
-                "terrain-condition",
-                properties.terrain_condition || "UNKNOWN"
-            );
-
-
-            setElement(
-                "elevation",
-                formatValue(
-                    properties.elevation,
-                    " m"
-                )
-            );
-
-
-            setElement(
-                "slope",
-                formatValue(
-                    properties.slope,
-                    "°"
-                )
-            );
-
-
-            setElement(
-                "max-slope",
-                formatValue(
-                    properties.max_slope,
-                    "°"
-                )
-            );
-
-
-            setElement(
-                "aspect",
-                formatValue(
-                    properties.aspect,
-                    "°"
-                )
-            );
-
-
-            setElement(
-                "curvature",
-                formatValue(
-                    properties.curvature,
-                    ""
-                )
-            );
-
-
-            setElement(
-                "roughness",
-                formatValue(
-                    properties.roughness,
-                    " m"
-                )
-            );
-
-
-            setElement(
-                "roads",
-                formatValue(
-                    properties.road_count,
-                    ""
-                )
-            );
-
-
-            setElement(
-                "road-length",
-                formatValue(
-                    properties.road_length,
-                    " km"
-                )
-            );
-
-
-            setElement(
-                "slope-indicator",
-                formatValue(
-                    properties.slope_indicator,
-                    ""
-                )
-            );
-
-
-            setElement(
-                "roughness-indicator",
-                formatValue(
-                    properties.roughness_indicator,
-                    ""
-                )
-            );
-
-
-            setElement(
-                "terrain-variability",
-                formatValue(
-                    properties.terrain_variability,
-                    ""
-                )
-            );
-
-
-            setElement(
-                "gis-indicator",
-                formatValue(
-                    properties.gis_indicator,
-                    ""
-                )
-            );
-
-
-            setElement(
-                "displacement",
-                properties.displacement !== null &&
-                properties.displacement !== undefined
-                    ? formatValue(
-                        properties.displacement,
-                        " mm"
-                    )
-                    : "Waiting"
-            );
-
-
-            setElement(
-                "strain",
-                properties.strain !== null &&
-                properties.strain !== undefined
-                    ? formatValue(
-                        properties.strain,
-                        ""
-                    )
-                    : "Waiting"
-            );
-
-
-            setElement(
-                "pressure",
-                properties.pressure !== null &&
-                properties.pressure !== undefined
-                    ? formatValue(
-                        properties.pressure,
-                        " kPa"
-                    )
-                    : "Waiting"
-            );
-
-
-            setElement(
-                "rainfall",
-                properties.rainfall !== null &&
-                properties.rainfall !== undefined
-                    ? formatValue(
-                        properties.rainfall,
-                        " mm"
-                    )
-                    : "Waiting"
-            );
-
-
-            setElement(
-                "temperature",
-                properties.temperature !== null &&
-                properties.temperature !== undefined
-                    ? formatValue(
-                        properties.temperature,
-                        " °C"
-                    )
-                    : "Waiting"
-            );
-
-
-            setElement(
-                "vibration",
-                properties.vibration !== null &&
-                properties.vibration !== undefined
-                    ? formatValue(
-                        properties.vibration,
-                        " g"
-                    )
-                    : "Waiting"
-            );
-
-
-            setElement(
-                "risk-level",
-                properties.risk_level || "UNKNOWN"
-            );
-
-
-            if (
-                properties.risk_probability !== null &&
-                properties.risk_probability !== undefined
-            ) {
-
-                setElement(
-                    "risk-probability",
-                    (
-                        Number(
-                            properties.risk_probability
-                        ) * 100
-                    ).toFixed(1) + "%"
-                );
-
-            } else {
-
-                setElement(
-                    "risk-probability",
-                    "Waiting for ML"
-                );
-            }
-
-
-            const condition =
-                String(
-                    properties.terrain_condition ||
-                    "UNKNOWN"
-                ).toUpperCase();
-
-
-            const conditionBox =
-                document.getElementById(
-                    "terrain-condition"
-                );
-
-
-            if (conditionBox) {
-
-                if (condition === "HIGH") {
-
-                    conditionBox.style.background =
-                        "#fee2e2";
-
-                    conditionBox.style.color =
-                        "#b91c1c";
-
-                } else if (
-                    condition === "MODERATE"
+                function formatValue(
+                    value,
+                    suffix
                 ) {
-
-                    conditionBox.style.background =
-                        "#fef3c7";
-
-                    conditionBox.style.color =
-                        "#b45309";
-
-                } else if (
-                    condition === "LOW"
-                ) {
-
-                    conditionBox.style.background =
-                        "#dcfce7";
-
-                    conditionBox.style.color =
-                        "#15803d";
-
-                } else {
-
-                    conditionBox.style.background =
-                        "#f1f5f9";
-
-                    conditionBox.style.color =
-                        "#475569";
-                }
-            }
-        }
-
-
-        window.closeZoneDashboard = function() {
-
-            const dashboard =
-                document.getElementById(
-                    "zone-dashboard"
-                );
-
-            if (dashboard) {
-
-                dashboard.style.display =
-                    "none";
-            }
-        };
-
-
-        function openZone(layer) {
-
-            if (
-                !layer ||
-                !layer.feature ||
-                !layer.feature.properties
-            ) {
-                return;
-            }
-
-
-            showZoneDashboard(
-                layer.feature.properties
-            );
-
-
-            if (
-                layer.getBounds
-            ) {
-
-                mapInstance.fitBounds(
-                    layer.getBounds(),
-                    {
-                        padding: [
-                            80,
-                            80
-                        ],
-                        maxZoom: 16
-                    }
-                );
-            }
-        }
-
-
-        window.searchZone = function() {
-
-            const input =
-                document.getElementById(
-                    "zone-search"
-                );
-
-            if (!input) {
-                return;
-            }
-
-
-            const query =
-                input.value
-                .trim()
-                .toUpperCase();
-
-
-            if (!query) {
-                return;
-            }
-
-
-            zoneLayer.eachLayer(
-                function(layer) {
 
                     if (
+                        value === null ||
+                        value === undefined ||
+                        value === ""
+                    ) {
+                        return "—";
+                    }
+
+                    if (
+                        typeof value === "number"
+                    ) {
+
+                        return value.toFixed(3)
+                            + (suffix || "");
+
+                    }
+
+                    return value
+                        + (suffix || "");
+                }
+
+
+                function setElement(
+                    id,
+                    value
+                ) {
+
+                    const element =
+                        document.getElementById(
+                            id
+                        );
+
+                    if (element) {
+                        element.innerHTML =
+                            value;
+                    }
+                }
+
+
+                function showZoneDashboard(
+                    properties
+                ) {
+
+                    const dashboard =
+                        document.getElementById(
+                            "zone-dashboard"
+                        );
+
+                    if (!dashboard) {
+                        return;
+                    }
+
+
+                    dashboard.style.display =
+                        "block";
+
+
+                    setElement(
+                        "dashboard-zone",
+                        properties.zone_id ||
+                        "UNKNOWN"
+                    );
+
+
+                    setElement(
+                        "dashboard-mine",
+                        properties.mine_id ||
+                        "MINE-001"
+                    );
+
+
+                    setElement(
+                        "terrain-condition",
+                        properties.terrain_condition ||
+                        "UNKNOWN"
+                    );
+
+
+                    setElement(
+                        "elevation",
+                        formatValue(
+                            properties.elevation,
+                            " m"
+                        )
+                    );
+
+
+                    setElement(
+                        "slope",
+                        formatValue(
+                            properties.slope,
+                            "°"
+                        )
+                    );
+
+
+                    setElement(
+                        "max-slope",
+                        formatValue(
+                            properties.max_slope,
+                            "°"
+                        )
+                    );
+
+
+                    setElement(
+                        "aspect",
+                        formatValue(
+                            properties.aspect,
+                            "°"
+                        )
+                    );
+
+
+                    setElement(
+                        "curvature",
+                        formatValue(
+                            properties.curvature
+                        )
+                    );
+
+
+                    setElement(
+                        "roughness",
+                        formatValue(
+                            properties.roughness,
+                            " m"
+                        )
+                    );
+
+
+                    setElement(
+                        "roads",
+                        formatValue(
+                            properties.road_count
+                        )
+                    );
+
+
+                    setElement(
+                        "road-length",
+                        formatValue(
+                            properties.road_length,
+                            " km"
+                        )
+                    );
+
+
+                    setElement(
+                        "slope-indicator",
+                        formatValue(
+                            properties.slope_indicator
+                        )
+                    );
+
+
+                    setElement(
+                        "roughness-indicator",
+                        formatValue(
+                            properties.roughness_indicator
+                        )
+                    );
+
+
+                    setElement(
+                        "terrain-variability",
+                        formatValue(
+                            properties.terrain_variability
+                        )
+                    );
+
+
+                    setElement(
+                        "gis-indicator",
+                        formatValue(
+                            properties.gis_indicator
+                        )
+                    );
+
+
+                    setElement(
+                        "displacement",
+                        properties.displacement !== null &&
+                        properties.displacement !== undefined
+                            ? formatValue(
+                                properties.displacement,
+                                " mm"
+                            )
+                            : "Waiting"
+                    );
+
+
+                    setElement(
+                        "strain",
+                        properties.strain !== null &&
+                        properties.strain !== undefined
+                            ? formatValue(
+                                properties.strain
+                            )
+                            : "Waiting"
+                    );
+
+
+                    setElement(
+                        "pressure",
+                        properties.pressure !== null &&
+                        properties.pressure !== undefined
+                            ? formatValue(
+                                properties.pressure,
+                                " kPa"
+                            )
+                            : "Waiting"
+                    );
+
+
+                    setElement(
+                        "rainfall",
+                        properties.rainfall !== null &&
+                        properties.rainfall !== undefined
+                            ? formatValue(
+                                properties.rainfall,
+                                " mm"
+                            )
+                            : "Waiting"
+                    );
+
+
+                    setElement(
+                        "temperature",
+                        properties.temperature !== null &&
+                        properties.temperature !== undefined
+                            ? formatValue(
+                                properties.temperature,
+                                " °C"
+                            )
+                            : "Waiting"
+                    );
+
+
+                    setElement(
+                        "vibration",
+                        properties.vibration !== null &&
+                        properties.vibration !== undefined
+                            ? formatValue(
+                                properties.vibration,
+                                " g"
+                            )
+                            : "Waiting"
+                    );
+
+
+                    const riskLevel =
+                        properties.risk_level ||
+                        "UNKNOWN";
+
+
+                    setElement(
+                        "risk-level",
+                        riskLevel
+                    );
+
+
+                    if (
+                        properties.risk_probability !== null &&
+                        properties.risk_probability !== undefined
+                    ) {
+
+                        setElement(
+                            "risk-probability",
+                            (
+                                Number(
+                                    properties.risk_probability
+                                ) * 100
+                            ).toFixed(2)
+                            + "%"
+                        );
+
+                    } else {
+
+                        setElement(
+                            "risk-probability",
+                            "Waiting for ML"
+                        );
+                    }
+
+
+                    const riskFactors =
+                        properties.risk_factors ||
+                        [];
+
+
+                    const factorsElement =
+                        document.getElementById(
+                            "risk-factors"
+                        );
+
+
+                    if (factorsElement) {
+
+                        factorsElement.innerHTML =
+                            "";
+
+
+                        if (
+                            riskFactors.length === 0
+                        ) {
+
+                            factorsElement.innerHTML =
+                                "<li>No significant terrain factors detected.</li>";
+
+                        } else {
+
+                            riskFactors.forEach(
+                                function(factor) {
+
+                                    const li =
+                                        document.createElement(
+                                            "li"
+                                        );
+
+                                    li.textContent =
+                                        factor;
+
+                                    factorsElement.appendChild(
+                                        li
+                                    );
+                                }
+                            );
+                        }
+                    }
+
+
+                    setElement(
+                        "risk-recommendation",
+                        properties.risk_recommendation ||
+                        "Continue monitoring."
+                    );
+
+
+                    const condition =
+                        String(
+                            properties.terrain_condition ||
+                            "UNKNOWN"
+                        ).toUpperCase();
+
+
+                    const conditionBox =
+                        document.getElementById(
+                            "terrain-condition"
+                        );
+
+
+                    if (conditionBox) {
+
+                        if (
+                            condition === "HIGH"
+                        ) {
+
+                            conditionBox.style.background =
+                                "#fee2e2";
+
+                            conditionBox.style.color =
+                                "#b91c1c";
+
+                        } else if (
+                            condition === "MODERATE"
+                        ) {
+
+                            conditionBox.style.background =
+                                "#fef3c7";
+
+                            conditionBox.style.color =
+                                "#b45309";
+
+                        } else if (
+                            condition === "LOW"
+                        ) {
+
+                            conditionBox.style.background =
+                                "#dcfce7";
+
+                            conditionBox.style.color =
+                                "#15803d";
+
+                        } else {
+
+                            conditionBox.style.background =
+                                "#f1f5f9";
+
+                            conditionBox.style.color =
+                                "#475569";
+                        }
+                    }
+
+
+                    const riskBox =
+                        document.getElementById(
+                            "risk-level"
+                        );
+
+
+                    if (riskBox) {
+
+                        if (
+                            riskLevel === "HIGH"
+                        ) {
+
+                            riskBox.style.color =
+                                "#dc2626";
+
+                        } else if (
+                            riskLevel === "MODERATE"
+                        ) {
+
+                            riskBox.style.color =
+                                "#d97706";
+
+                        } else if (
+                            riskLevel === "LOW"
+                        ) {
+
+                            riskBox.style.color =
+                                "#16a34a";
+
+                        } else {
+
+                            riskBox.style.color =
+                                "#64748b";
+                        }
+                    }
+                }
+
+
+                window.closeZoneDashboard =
+                    function() {
+
+                        const dashboard =
+                            document.getElementById(
+                                "zone-dashboard"
+                            );
+
+                        if (dashboard) {
+
+                            dashboard.style.display =
+                                "none";
+                        }
+                    };
+
+
+                function openZone(
+                    layer
+                ) {
+
+                    if (
+                        !layer ||
                         !layer.feature ||
                         !layer.feature.properties
                     ) {
@@ -1744,68 +1834,129 @@ window.addEventListener("load", function() {
                     }
 
 
-                    const zoneId =
-                        String(
-                            layer.feature.properties.zone_id ||
-                            ""
-                        ).toUpperCase();
+                    showZoneDashboard(
+                        layer.feature.properties
+                    );
 
 
                     if (
-                        zoneId === query
+                        layer.getBounds
                     ) {
 
-                        openZone(
-                            layer
+                        mapInstance.fitBounds(
+                            layer.getBounds(),
+                            {
+                                padding: [
+                                    80,
+                                    80
+                                ],
+                                maxZoom: 16
+                            }
                         );
                     }
                 }
-            );
-        };
 
 
-        zoneLayer.eachLayer(
-            function(layer) {
-
-                layer.on(
-                    "click",
+                window.searchZone =
                     function() {
 
-                        openZone(
-                            layer
+                        const input =
+                            document.getElementById(
+                                "zone-search"
+                            );
+
+                        if (!input) {
+                            return;
+                        }
+
+
+                        const query =
+                            input.value
+                                .trim()
+                                .toUpperCase();
+
+
+                        if (!query) {
+                            return;
+                        }
+
+
+                        zoneLayer.eachLayer(
+                            function(layer) {
+
+                                if (
+                                    !layer.feature ||
+                                    !layer.feature.properties
+                                ) {
+                                    return;
+                                }
+
+
+                                const zoneId =
+                                    String(
+                                        layer.feature.properties.zone_id ||
+                                        ""
+                                    ).toUpperCase();
+
+
+                                if (
+                                    zoneId === query
+                                ) {
+
+                                    openZone(
+                                        layer
+                                    );
+                                }
+                            }
                         );
+                    };
+
+
+                zoneLayer.eachLayer(
+                    function(layer) {
+
+                        layer.on(
+                            "click",
+                            function() {
+
+                                openZone(
+                                    layer
+                                );
+                            }
+                        );
+
                     }
                 );
 
-            }
+
+                const searchInput =
+                    document.getElementById(
+                        "zone-search"
+                    );
+
+
+                if (searchInput) {
+
+                    searchInput.addEventListener(
+                        "keydown",
+                        function(event) {
+
+                            if (
+                                event.key === "Enter"
+                            ) {
+
+                                window.searchZone();
+                            }
+                        }
+                    );
+                }
+
+            },
+            800
         );
 
-
-        const searchInput =
-            document.getElementById(
-                "zone-search"
-            );
-
-
-        if (searchInput) {
-
-            searchInput.addEventListener(
-                "keydown",
-                function(event) {
-
-                    if (
-                        event.key === "Enter"
-                    ) {
-
-                        window.searchZone();
-                    }
-                }
-            );
-        }
-
-    }, 800);
-
-});
+    }
+);
 
 </script>
 """
@@ -1854,6 +2005,8 @@ print(
     f"Zones integrated: {len(zone_data)}"
 )
 print("JSON integration: SUCCESS")
+print("AI risk integration: SUCCESS")
+print("Explainable AI: ENABLED")
 print("Interactive dashboard: ENABLED")
 print("Zone search: ENABLED")
 print("Sensor layer: ENABLED")
