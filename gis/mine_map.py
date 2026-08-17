@@ -8,10 +8,55 @@ import geopandas as gpd
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 
-ZONE_FILE = BASE_DIR / "data" / "processed" / "gis" / "zones.geojson"
-ROAD_FILE = BASE_DIR / "data" / "raw" / "gis" / "roads.geojson"
-ZONE_DATA_FILE = BASE_DIR / "data" / "processed" / "gis" / "zone_api_data.json"
-SENSOR_FILE = BASE_DIR / "data" / "processed" / "gis" / "sensors.geojson"
+ZONE_FILE = (
+    BASE_DIR
+    / "data"
+    / "processed"
+    / "gis"
+    / "zones.geojson"
+)
+
+ROAD_FILE = (
+    BASE_DIR
+    / "data"
+    / "raw"
+    / "gis"
+    / "roads.geojson"
+)
+
+ZONE_DATA_FILE = (
+    BASE_DIR
+    / "data"
+    / "processed"
+    / "gis"
+    / "zone_api_data.json"
+)
+
+SENSOR_FILE = (
+    BASE_DIR
+    / "data"
+    / "processed"
+    / "gis"
+    / "sensors.geojson"
+)
+
+ELEVATION_IMAGE = (
+    BASE_DIR
+    / "data"
+    / "processed"
+    / "gis"
+    / "map_layers"
+    / "elevation.png"
+)
+
+SLOPE_IMAGE = (
+    BASE_DIR
+    / "data"
+    / "processed"
+    / "gis"
+    / "map_layers"
+    / "slope.png"
+)
 
 OUTPUT_FILE = BASE_DIR / "mine_map.html"
 
@@ -23,11 +68,16 @@ print("MineGuard AI - GIS Dashboard")
 print("==========================================")
 
 
-for file_path in [
+required_files = [
     ZONE_FILE,
     ROAD_FILE,
-    ZONE_DATA_FILE
-]:
+    ZONE_DATA_FILE,
+    ELEVATION_IMAGE,
+    SLOPE_IMAGE
+]
+
+
+for file_path in required_files:
     if not file_path.exists():
         raise FileNotFoundError(
             f"Required file not found:\n{file_path}"
@@ -63,6 +113,70 @@ mine_map = folium.Map(
     zoom_start=15,
     tiles="OpenStreetMap",
     control_scale=True
+)
+
+
+elevation_layer = folium.FeatureGroup(
+    name="Elevation / DEM",
+    show=False
+)
+
+
+folium.raster_layers.ImageOverlay(
+    image=str(ELEVATION_IMAGE),
+    bounds=[
+        [
+            23.77875,
+            86.38986111111112
+        ],
+        [
+            23.785138888888888,
+            86.39819444444446
+        ]
+    ],
+    opacity=0.42,
+    interactive=True,
+    cross_origin=False,
+    zindex=1
+).add_to(
+    elevation_layer
+)
+
+
+elevation_layer.add_to(
+    mine_map
+)
+
+
+slope_layer = folium.FeatureGroup(
+    name="Slope Map",
+    show=False
+)
+
+
+folium.raster_layers.ImageOverlay(
+    image=str(SLOPE_IMAGE),
+    bounds=[
+        [
+            23.77877868536618,
+            86.3898312967052
+        ],
+        [
+            23.78517143564985,
+            86.39816966664041
+        ]
+    ],
+    opacity=0.42,
+    interactive=True,
+    cross_origin=False,
+    zindex=2
+).add_to(
+    slope_layer
+)
+
+
+slope_layer.add_to(
+    mine_map
 )
 
 
@@ -132,19 +246,16 @@ road_layer.add_to(
 )
 
 
-def terrain_color(condition):
+def risk_color(level):
+    level = str(level).upper()
 
-    condition = str(
-        condition
-    ).upper()
-
-    if condition == "HIGH":
+    if level == "HIGH":
         return "#ef4444"
 
-    if condition == "MODERATE":
+    if level == "MODERATE":
         return "#f59e0b"
 
-    if condition == "LOW":
+    if level == "LOW":
         return "#22c55e"
 
     return "#94a3b8"
@@ -318,29 +429,29 @@ for _, zone in zones.iterrows():
 
 
 zone_layer = folium.FeatureGroup(
-    name="Mine Zones",
+    name="AI Risk Heatmap",
     show=True
 )
 
 
 def zone_style(feature):
 
-    condition = feature[
+    risk_level = feature[
         "properties"
     ].get(
-        "terrain_condition",
+        "risk_level",
         "UNKNOWN"
     )
 
-    color = terrain_color(
-        condition
+    color = risk_color(
+        risk_level
     )
 
     return {
         "color": color,
         "weight": 3,
         "fillColor": color,
-        "fillOpacity": 0.30
+        "fillOpacity": 0.45
     }
 
 
@@ -352,17 +463,15 @@ zone_geojson = folium.GeoJson(
     style_function=zone_style,
     highlight_function=lambda feature: {
         "weight": 5,
-        "fillOpacity": 0.50
+        "fillOpacity": 0.60
     },
     tooltip=folium.GeoJsonTooltip(
         fields=[
             "zone_id",
-            "terrain_condition",
             "risk_level"
         ],
         aliases=[
             "Zone:",
-            "Terrain:",
             "AI Risk:"
         ],
         sticky=True
@@ -440,28 +549,24 @@ if SENSOR_FILE.exists():
 else:
 
     prototype_sensors = [
-
         {
             "id": "SENSOR-001",
             "lat": 23.7845,
             "lon": 86.3905,
             "type": "Environmental"
         },
-
         {
             "id": "SENSOR-002",
             "lat": 23.7830,
             "lon": 86.3960,
             "type": "Ground Movement"
         },
-
         {
             "id": "SENSOR-003",
             "lat": 23.7795,
             "lon": 86.3935,
             "type": "Gas Monitoring"
         },
-
         {
             "id": "SENSOR-004",
             "lat": 23.7850,
@@ -879,6 +984,7 @@ mine_map.get_root().html.add_child(
 
 header = """
 <div id="mineguard-header">
+
     <div class="title">
         ⛏ MineGuard AI
     </div>
@@ -886,11 +992,15 @@ header = """
     <div class="subtitle">
         Intelligent Mine Safety & Terrain Monitoring
     </div>
+
 </div>
 
 <div id="mineguard-status">
+
     <span class="status-dot"></span>
+
     GIS SYSTEM ONLINE
+
 </div>
 """
 
@@ -933,7 +1043,7 @@ dashboard = """
         <div class="section">
 
             <div class="section-title">
-                GIS TERRAIN CONDITION
+                AI RISK STATUS
             </div>
 
             <div
@@ -957,7 +1067,6 @@ dashboard = """
                     <div class="metric-label">
                         Elevation
                     </div>
-
                     <div
                         id="elevation"
                         class="metric-value"
@@ -970,7 +1079,6 @@ dashboard = """
                     <div class="metric-label">
                         Mean Slope
                     </div>
-
                     <div
                         id="slope"
                         class="metric-value"
@@ -983,7 +1091,6 @@ dashboard = """
                     <div class="metric-label">
                         Max Slope
                     </div>
-
                     <div
                         id="max-slope"
                         class="metric-value"
@@ -996,7 +1103,6 @@ dashboard = """
                     <div class="metric-label">
                         Aspect
                     </div>
-
                     <div
                         id="aspect"
                         class="metric-value"
@@ -1009,7 +1115,6 @@ dashboard = """
                     <div class="metric-label">
                         Curvature
                     </div>
-
                     <div
                         id="curvature"
                         class="metric-value"
@@ -1022,7 +1127,6 @@ dashboard = """
                     <div class="metric-label">
                         Roughness
                     </div>
-
                     <div
                         id="roughness"
                         class="metric-value"
@@ -1035,7 +1139,6 @@ dashboard = """
                     <div class="metric-label">
                         Roads
                     </div>
-
                     <div
                         id="roads"
                         class="metric-value"
@@ -1048,7 +1151,6 @@ dashboard = """
                     <div class="metric-label">
                         Road Length
                     </div>
-
                     <div
                         id="road-length"
                         class="metric-value"
@@ -1073,7 +1175,6 @@ dashboard = """
                     <div class="metric-label">
                         Slope Indicator
                     </div>
-
                     <div
                         id="slope-indicator"
                         class="metric-value"
@@ -1086,7 +1187,6 @@ dashboard = """
                     <div class="metric-label">
                         Roughness Indicator
                     </div>
-
                     <div
                         id="roughness-indicator"
                         class="metric-value"
@@ -1099,7 +1199,6 @@ dashboard = """
                     <div class="metric-label">
                         Terrain Variability
                     </div>
-
                     <div
                         id="terrain-variability"
                         class="metric-value"
@@ -1112,7 +1211,6 @@ dashboard = """
                     <div class="metric-label">
                         GIS Indicator
                     </div>
-
                     <div
                         id="gis-indicator"
                         class="metric-value"
@@ -1135,7 +1233,6 @@ dashboard = """
 
                 <div class="sensor">
                     Displacement
-
                     <div
                         id="displacement"
                         class="sensor-value"
@@ -1146,7 +1243,6 @@ dashboard = """
 
                 <div class="sensor">
                     Strain
-
                     <div
                         id="strain"
                         class="sensor-value"
@@ -1157,7 +1253,6 @@ dashboard = """
 
                 <div class="sensor">
                     Pore Pressure
-
                     <div
                         id="pressure"
                         class="sensor-value"
@@ -1168,7 +1263,6 @@ dashboard = """
 
                 <div class="sensor">
                     Rainfall
-
                     <div
                         id="rainfall"
                         class="sensor-value"
@@ -1179,7 +1273,6 @@ dashboard = """
 
                 <div class="sensor">
                     Temperature
-
                     <div
                         id="temperature"
                         class="sensor-value"
@@ -1190,7 +1283,6 @@ dashboard = """
 
                 <div class="sensor">
                     Vibration
-
                     <div
                         id="vibration"
                         class="sensor-value"
@@ -1302,14 +1394,14 @@ mine_map.get_root().html.add_child(
 legend = """
 <div id="mineguard-legend">
 
-    <b>Terrain Condition</b>
+    <b>AI Risk Heatmap</b>
 
     <div class="legend-item">
         <span
             class="legend-dot"
             style="background:#22c55e"
         ></span>
-        Low
+        LOW RISK
     </div>
 
     <div class="legend-item">
@@ -1317,7 +1409,7 @@ legend = """
             class="legend-dot"
             style="background:#f59e0b"
         ></span>
-        Moderate
+        MODERATE RISK
     </div>
 
     <div class="legend-item">
@@ -1325,15 +1417,17 @@ legend = """
             class="legend-dot"
             style="background:#ef4444"
         ></span>
-        High
+        HIGH RISK
     </div>
 
-    <div class="legend-item">
-        <span
-            class="legend-dot"
-            style="background:#3b82f6"
-        ></span>
-        Sensor
+    <div
+        style="
+        margin-top:8px;
+        color:#64748b;
+        font-size:10px;
+        "
+    >
+        Based on MineGuard AI prediction
     </div>
 
 </div>
@@ -1405,7 +1499,7 @@ window.addEventListener(
                         );
 
                     if (element) {
-                        element.innerHTML =
+                        element.textContent =
                             value;
                     }
                 }
@@ -1443,10 +1537,14 @@ window.addEventListener(
                     );
 
 
+                    const riskLevel =
+                        properties.risk_level ||
+                        "UNKNOWN";
+
+
                     setElement(
                         "terrain-condition",
-                        properties.terrain_condition ||
-                        "UNKNOWN"
+                        riskLevel
                     );
 
 
@@ -1623,17 +1721,6 @@ window.addEventListener(
                     );
 
 
-                    const riskLevel =
-                        properties.risk_level ||
-                        "UNKNOWN";
-
-
-                    setElement(
-                        "risk-level",
-                        riskLevel
-                    );
-
-
                     if (
                         properties.risk_probability !== null &&
                         properties.risk_probability !== undefined
@@ -1656,6 +1743,12 @@ window.addEventListener(
                             "Waiting for ML"
                         );
                     }
+
+
+                    setElement(
+                        "risk-level",
+                        riskLevel
+                    );
 
 
                     const riskFactors =
@@ -1711,13 +1804,6 @@ window.addEventListener(
                     );
 
 
-                    const condition =
-                        String(
-                            properties.terrain_condition ||
-                            "UNKNOWN"
-                        ).toUpperCase();
-
-
                     const conditionBox =
                         document.getElementById(
                             "terrain-condition"
@@ -1727,7 +1813,7 @@ window.addEventListener(
                     if (conditionBox) {
 
                         if (
-                            condition === "HIGH"
+                            riskLevel === "HIGH"
                         ) {
 
                             conditionBox.style.background =
@@ -1737,7 +1823,7 @@ window.addEventListener(
                                 "#b91c1c";
 
                         } else if (
-                            condition === "MODERATE"
+                            riskLevel === "MODERATE"
                         ) {
 
                             conditionBox.style.background =
@@ -1747,7 +1833,7 @@ window.addEventListener(
                                 "#b45309";
 
                         } else if (
-                            condition === "LOW"
+                            riskLevel === "LOW"
                         ) {
 
                             conditionBox.style.background =
@@ -2006,7 +2092,10 @@ print(
 )
 print("JSON integration: SUCCESS")
 print("AI risk integration: SUCCESS")
+print("AI RISK HEATMAP: ENABLED")
 print("Explainable AI: ENABLED")
+print("DEM visualization: ENABLED")
+print("Slope visualization: ENABLED")
 print("Interactive dashboard: ENABLED")
 print("Zone search: ENABLED")
 print("Sensor layer: ENABLED")
