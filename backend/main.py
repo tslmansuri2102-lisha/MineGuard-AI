@@ -117,6 +117,33 @@ async def get_latest_sensor_reading() -> Dict[str, Any]:
     validate_reading(reading)
     return reading
 
+@app.post(
+    "/api/v1/sensors/readings",
+    response_model=SensorTelemetryPayload,
+    summary="Ingest External IoT Sensor Reading",
+    tags=["Sensors"],
+    responses={
+        200: {"description": "External sensor telemetry accepted and processed."},
+        400: {"model": ErrorResponse, "description": "Invalid sensor telemetry payload."},
+    },
+)
+async def ingest_sensor_reading(
+    reading: SensorTelemetryPayload,
+) -> Dict[str, Any]:
+    """
+    Accepts an externally supplied IoT sensor reading.
+
+    The reading is validated, evaluated by the risk engine,
+    and passed through the alert system.
+    """
+    reading_dict = reading.model_dump()
+
+    validate_reading(reading_dict)
+
+    simulation_service.evaluate_external_reading(reading_dict)
+
+    return reading_dict
+
 
 @app.get(
     "/api/v1/sensors/{mine_id}/{zone_id}/{sensor_id}",
