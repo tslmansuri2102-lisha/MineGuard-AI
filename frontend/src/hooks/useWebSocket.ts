@@ -48,8 +48,9 @@ export function useWebSocket(url = DEFAULT_WS_URL) {
     timestamp: new Date().toISOString(),
     sensors: DEFAULT_SENSORS,
   });
-  const [risk, setRisk] = useState<NormalizedRiskAssessment>(DEFAULT_RISK);
-  const [history, setHistory] = useState<HistoricalTelemetryPoint[]>([]);
+ const [risk, setRisk] = useState<NormalizedRiskAssessment>(DEFAULT_RISK);
+const [scenario, setScenario] = useState<string>('NORMAL');
+const [history, setHistory] = useState<HistoricalTelemetryPoint[]>([]);
   const [messageCount, setMessageCount] = useState<number>(0);
   const [lastError, setLastError] = useState<string | null>(null);
 
@@ -73,7 +74,7 @@ export function useWebSocket(url = DEFAULT_WS_URL) {
         temperature_c: typeof rawSensors.temperature_c === 'number' ? rawSensors.temperature_c : 0.0,
         vibration_g: typeof rawSensors.vibration_g === 'number' ? rawSensors.vibration_g : 0.0,
       };
-
+      const cleanScenario: string = raw.scenario || 'NORMAL';
       const cleanTelemetry: SensorTelemetryPayload = {
         mine_id: raw.mine_id || rawTelemetry.mine_id || 'MINE-001',
         zone_id: raw.zone_id || rawTelemetry.zone_id || 'ZONE-003',
@@ -100,8 +101,9 @@ export function useWebSocket(url = DEFAULT_WS_URL) {
 
       // 3. Update state
       setTelemetry(cleanTelemetry);
-      setRisk(cleanRisk);
-      setMessageCount((c) => c + 1);
+setRisk(cleanRisk);
+setScenario(cleanScenario);
+setMessageCount((c) => c + 1);
 
       // 4. Update rolling history bounded to MAX_HISTORY_POINTS
       setHistory((prev) => {
@@ -204,12 +206,13 @@ export function useWebSocket(url = DEFAULT_WS_URL) {
   }, [connect, disconnect]);
 
   return {
-    connectionState,
-    telemetry,
-    risk,
-    history,
-    messageCount,
-    lastError,
-    reconnect: connect,
-  };
+  connectionState,
+  telemetry,
+  risk,
+  scenario,
+  history,
+  messageCount,
+  lastError,
+  reconnect: connect,
+};
 }

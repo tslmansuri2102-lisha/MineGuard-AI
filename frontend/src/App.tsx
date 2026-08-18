@@ -16,8 +16,14 @@ import { useAlerts } from './hooks/useAlerts';
 
 export const App: React.FC = () => {
   // 1. Live WebSocket Telemetry & Risk Stream
-  const { connectionState, telemetry, risk, history, lastError } = useWebSocket();
-
+  const {
+  connectionState,
+  telemetry,
+  risk,
+  scenario,
+  history,
+  lastError,
+} = useWebSocket();
   // 2. REST Simulation Controls & Backend Health Polling
   const {
     status: simStatus,
@@ -30,7 +36,7 @@ export const App: React.FC = () => {
   // 3. Historical & Real-Time Alert Store
   const { alerts, loading: alertsLoading, refreshAlerts } = useAlerts(risk, telemetry);
 
-  const activeScenario = simStatus?.scenario || 'NORMAL';
+const activeScenario = scenario || simStatus?.scenario || 'NORMAL';
 
   return (
     <div className="app-container">

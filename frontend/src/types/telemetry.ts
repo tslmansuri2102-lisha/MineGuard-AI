@@ -60,10 +60,10 @@ export interface NormalizedRiskAssessment {
 }
 
 export interface UnifiedStreamPayload extends SensorTelemetryPayload {
+  scenario?: ScenarioType | string;
   telemetry?: SensorTelemetryPayload;
   risk?: RiskAssessment;
 }
-
 export interface AlertEvent {
   alert_id: string;
   timestamp: string;
