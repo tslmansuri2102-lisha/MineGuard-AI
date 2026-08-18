@@ -1,0 +1,2116 @@
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>
+MineGuard AI - 3D Terrain Intelligence
+</title>
+
+<link
+    href="https://cesium.com/downloads/cesiumjs/releases/1.139/Build/Cesium/Widgets/widgets.css"
+    rel="stylesheet"
+>
+
+<script src="https://cesium.com/downloads/cesiumjs/releases/1.139/Build/Cesium/Cesium.js"></script>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body,
+#cesiumContainer {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #07111f;
+}
+
+.cesium-viewer-toolbar,
+.cesium-viewer-animationContainer,
+.cesium-viewer-timelineContainer,
+.cesium-viewer-bottom {
+    display: none !important;
+}
+
+#topbar {
+    position: fixed;
+    top: 18px;
+    left: 22px;
+    right: 22px;
+    z-index: 1000;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 13px 17px;
+
+    border: 1px solid rgba(148,163,184,.20);
+    border-radius: 16px;
+
+    background: rgba(7,17,31,.90);
+
+    backdrop-filter: blur(18px);
+
+    box-shadow:
+        0 15px 45px rgba(0,0,0,.35);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.brand-icon {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #22c7a5,
+            #0891b2
+        );
+
+    color: #042f2e;
+
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.brand-name {
+    color: #f8fafc;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.brand-subtitle {
+    margin-top: 2px;
+    color: #64748b;
+    font-size: 8px;
+    letter-spacing: 1.1px;
+}
+
+.mode {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.mode-badge {
+    padding: 7px 11px;
+
+    border: 1px solid rgba(34,199,165,.22);
+    border-radius: 999px;
+
+    background: rgba(34,199,165,.07);
+
+    color: #5eead4;
+
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .8px;
+}
+
+.status-dot {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #22c7a5;
+
+    box-shadow:
+        0 0 12px rgba(34,199,165,.8);
+}
+
+#side-panel {
+    position: fixed;
+
+    top: 90px;
+    right: 22px;
+    bottom: 22px;
+
+    width: 355px;
+
+    z-index: 1000;
+
+    overflow-y: auto;
+
+    border:
+        1px solid
+        rgba(148,163,184,.18);
+
+    border-radius: 19px;
+
+    background:
+        rgba(7,17,31,.94);
+
+    backdrop-filter:
+        blur(22px);
+
+    box-shadow:
+        0 25px 70px
+        rgba(0,0,0,.42);
+
+    color: #e2e8f0;
+
+    transform:
+        translateX(380px);
+
+    transition:
+        transform .28s ease;
+}
+
+#side-panel.open {
+    transform:
+        translateX(0);
+}
+
+#side-panel::-webkit-scrollbar {
+    width: 5px;
+}
+
+#side-panel::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 10px;
+}
+
+.panel-header {
+    padding: 19px;
+
+    border-bottom:
+        1px solid
+        rgba(148,163,184,.13);
+}
+
+.panel-eyebrow {
+    color: #22c7a5;
+
+    font-size: 8px;
+    font-weight: 800;
+
+    letter-spacing: 1.6px;
+}
+
+.panel-zone {
+    margin-top: 5px;
+
+    color: #f8fafc;
+
+    font-size: 23px;
+    font-weight: 800;
+}
+
+.panel-mine {
+    margin-top: 4px;
+
+    color: #64748b;
+
+    font-size: 10px;
+}
+
+.panel-body {
+    padding: 15px;
+}
+
+.section {
+    margin-bottom: 18px;
+}
+
+.section-title {
+    margin-bottom: 8px;
+
+    color: #64748b;
+
+    font-size: 8px;
+    font-weight: 800;
+
+    letter-spacing: 1.4px;
+}
+
+.risk-card {
+    padding: 14px;
+
+    border:
+        1px solid
+        rgba(148,163,184,.13);
+
+    border-radius: 13px;
+
+    background:
+        rgba(30,41,59,.45);
+}
+
+.risk-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.risk-label {
+    color: #64748b;
+
+    font-size: 8px;
+    font-weight: 700;
+}
+
+#risk-level {
+    margin-top: 3px;
+
+    font-size: 23px;
+    font-weight: 800;
+}
+
+#risk-percent {
+    color: #f8fafc;
+
+    font-size: 21px;
+    font-weight: 800;
+
+    text-align: right;
+}
+
+.risk-percent-label {
+    color: #64748b;
+
+    font-size: 7px;
+
+    text-align: right;
+}
+
+.progress {
+    height: 5px;
+
+    margin-top: 13px;
+
+    overflow: hidden;
+
+    border-radius: 20px;
+
+    background: #1e293b;
+}
+
+#risk-progress {
+    width: 0%;
+    height: 100%;
+
+    border-radius: 20px;
+
+    transition:
+        width .5s ease;
+}
+
+.metrics {
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 7px;
+}
+
+.metric {
+    padding: 10px;
+
+    border:
+        1px solid
+        rgba(148,163,184,.10);
+
+    border-radius: 10px;
+
+    background:
+        rgba(30,41,59,.38);
+}
+
+.metric-name {
+    color: #64748b;
+
+    font-size: 7px;
+    font-weight: 700;
+
+    letter-spacing: .7px;
+
+    text-transform: uppercase;
+}
+
+.metric-value {
+    margin-top: 4px;
+
+    color: #f1f5f9;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.factor {
+    display: flex;
+    gap: 8px;
+
+    margin-bottom: 7px;
+
+    color: #cbd5e1;
+
+    font-size: 9px;
+    line-height: 1.5;
+}
+
+.factor-dot {
+    flex: 0 0 auto;
+
+    width: 5px;
+    height: 5px;
+
+    margin-top: 5px;
+
+    border-radius: 50%;
+
+    background: #22c7a5;
+
+    box-shadow:
+        0 0 7px
+        rgba(34,199,165,.65);
+}
+
+.recommendation {
+    margin-top: 12px;
+
+    padding: 11px;
+
+    border-left:
+        3px solid
+        #22c7a5;
+
+    border-radius: 8px;
+
+    background:
+        rgba(34,199,165,.05);
+
+    color: #cbd5e1;
+
+    font-size: 9px;
+
+    line-height: 1.55;
+}
+
+.recommendation-title {
+    margin-bottom: 5px;
+
+    color: #22c7a5;
+
+    font-size: 7px;
+    font-weight: 800;
+
+    letter-spacing: 1px;
+}
+
+.sensor-status {
+    margin-bottom: 8px;
+
+    padding: 9px;
+
+    border:
+        1px solid
+        rgba(245,185,66,.14);
+
+    border-radius: 8px;
+
+    background:
+        rgba(245,185,66,.05);
+
+    color: #f5b942;
+
+    font-size: 8px;
+}
+
+.sensor-grid {
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 7px;
+}
+
+.sensor {
+    padding: 9px;
+
+    border:
+        1px solid
+        rgba(103,232,249,.10);
+
+    border-radius: 9px;
+
+    background:
+        rgba(8,47,73,.22);
+
+    color: #64748b;
+
+    font-size: 8px;
+}
+
+.sensor-value {
+    margin-top: 4px;
+
+    color: #67e8f9;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+#bottom-panel {
+    position: fixed;
+
+    left: 22px;
+    bottom: 22px;
+
+    z-index: 1000;
+
+    display: flex;
+
+    gap: 7px;
+}
+
+.control-button {
+    padding: 9px 13px;
+
+    border:
+        1px solid
+        rgba(148,163,184,.20);
+
+    border-radius: 10px;
+
+    background:
+        rgba(7,17,31,.90);
+
+    backdrop-filter:
+        blur(14px);
+
+    color: #cbd5e1;
+
+    cursor: pointer;
+
+    font-size: 9px;
+    font-weight: 700;
+
+    transition:
+        all .2s ease;
+}
+
+.control-button:hover {
+    border-color:
+        rgba(34,199,165,.35);
+
+    color: #5eead4;
+
+    transform:
+        translateY(-1px);
+}
+
+#terrain-badge {
+    position: fixed;
+
+    left: 22px;
+    top: 90px;
+
+    z-index: 1000;
+
+    padding: 10px 13px;
+
+    border:
+        1px solid
+        rgba(148,163,184,.18);
+
+    border-radius: 11px;
+
+    background:
+        rgba(7,17,31,.82);
+
+    backdrop-filter:
+        blur(14px);
+
+    color: #94a3b8;
+
+    font-size: 8px;
+
+    letter-spacing: .6px;
+}
+
+#terrain-badge strong {
+    color: #f8fafc;
+}
+
+#loading {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 5000;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background:
+        #07111f;
+
+    color: #cbd5e1;
+
+    font-size: 12px;
+}
+
+.loading-box {
+    text-align: center;
+}
+
+.loading-spinner {
+    width: 32px;
+    height: 32px;
+
+    margin:
+        0 auto 13px;
+
+    border:
+        2px solid
+        #1e293b;
+
+    border-top-color:
+        #22c7a5;
+
+    border-radius: 50%;
+
+    animation:
+        spin .8s linear infinite;
+}
+
+@keyframes spin {
+
+    to {
+        transform:
+            rotate(360deg);
+    }
+
+}
+
+@media(max-width:900px) {
+
+    #side-panel {
+        width:
+            calc(100vw - 20px);
+
+        right: 10px;
+
+        top: 72px;
+
+        bottom: 10px;
+    }
+
+    #topbar {
+        left: 10px;
+        right: 10px;
+    }
+
+    #terrain-badge {
+        display: none;
+    }
+
+    .brand-subtitle {
+        display: none;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="loading">
+
+    <div class="loading-box">
+
+        <div class="loading-spinner"></div>
+
+        Initializing MineGuard 3D Terrain Intelligence
+
+    </div>
+
+</div>
+
+<div id="cesiumContainer"></div>
+
+<div id="topbar">
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            ⛏
+        </div>
+
+        <div>
+
+            <div class="brand-name">
+                MineGuard AI
+            </div>
+
+            <div class="brand-subtitle">
+                3D TERRAIN INTELLIGENCE
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="mode">
+
+        <span class="status-dot"></span>
+
+        <span class="mode-badge">
+            3D TERRAIN MODE
+        </span>
+
+    </div>
+
+</div>
+
+<div id="terrain-badge">
+
+    TERRAIN EXAGGERATION
+    <strong>1.8×</strong>
+
+    &nbsp; • &nbsp;
+
+    AI RISK LAYERS
+
+</div>
+
+<div id="side-panel">
+
+    <div class="panel-header">
+
+        <div class="panel-eyebrow">
+            MINE SAFETY INTELLIGENCE
+        </div>
+
+        <div
+            id="panel-zone"
+            class="panel-zone"
+        >
+            Select Zone
+        </div>
+
+        <div
+            id="panel-mine"
+            class="panel-mine"
+        >
+            MINE-001
+        </div>
+
+    </div>
+
+    <div class="panel-body">
+
+        <div class="section">
+
+            <div class="section-title">
+                AI RISK ASSESSMENT
+            </div>
+
+            <div class="risk-card">
+
+                <div class="risk-row">
+
+                    <div>
+
+                        <div class="risk-label">
+                            CURRENT RISK
+                        </div>
+
+                        <div id="risk-level">
+                            —
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <div id="risk-percent">
+                            —
+                        </div>
+
+                        <div class="risk-percent-label">
+                            PROBABILITY
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="progress">
+
+                    <div id="risk-progress"></div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="section">
+
+            <div class="section-title">
+                TERRAIN PROFILE
+            </div>
+
+            <div class="metrics">
+
+                <div class="metric">
+
+                    <div class="metric-name">
+                        Elevation
+                    </div>
+
+                    <div
+                        id="elevation"
+                        class="metric-value"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+                <div class="metric">
+
+                    <div class="metric-name">
+                        Mean Slope
+                    </div>
+
+                    <div
+                        id="slope"
+                        class="metric-value"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+                <div class="metric">
+
+                    <div class="metric-name">
+                        Max Slope
+                    </div>
+
+                    <div
+                        id="max-slope"
+                        class="metric-value"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+                <div class="metric">
+
+                    <div class="metric-name">
+                        Roughness
+                    </div>
+
+                    <div
+                        id="roughness"
+                        class="metric-value"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+                <div class="metric">
+
+                    <div class="metric-name">
+                        Aspect
+                    </div>
+
+                    <div
+                        id="aspect"
+                        class="metric-value"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+                <div class="metric">
+
+                    <div class="metric-name">
+                        GIS Indicator
+                    </div>
+
+                    <div
+                        id="gis-indicator"
+                        class="metric-value"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="section">
+
+            <div class="section-title">
+                WHY THIS ZONE IS AT RISK
+            </div>
+
+            <div id="factors"></div>
+
+            <div class="recommendation">
+
+                <div class="recommendation-title">
+                    RECOMMENDED ACTION
+                </div>
+
+                <div id="recommendation">
+                    Select a zone.
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="section">
+
+            <div class="section-title">
+                LIVE SENSOR TELEMETRY
+            </div>
+
+            <div class="sensor-status">
+                ⏳ Awaiting IoT sensor integration
+            </div>
+
+            <div class="sensor-grid">
+
+                <div class="sensor">
+                    Displacement
+
+                    <div
+                        id="displacement"
+                        class="sensor-value"
+                    >
+                        Waiting
+                    </div>
+
+                </div>
+
+                <div class="sensor">
+                    Strain
+
+                    <div
+                        id="strain"
+                        class="sensor-value"
+                    >
+                        Waiting
+                    </div>
+
+                </div>
+
+                <div class="sensor">
+                    Pore Pressure
+
+                    <div
+                        id="pressure"
+                        class="sensor-value"
+                    >
+                        Waiting
+                    </div>
+
+                </div>
+
+                <div class="sensor">
+                    Rainfall
+
+                    <div
+                        id="rainfall"
+                        class="sensor-value"
+                    >
+                        Waiting
+                    </div>
+
+                </div>
+
+                <div class="sensor">
+                    Temperature
+
+                    <div
+                        id="temperature"
+                        class="sensor-value"
+                    >
+                        Waiting
+                    </div>
+
+                </div>
+
+                <div class="sensor">
+                    Vibration
+
+                    <div
+                        id="vibration"
+                        class="sensor-value"
+                    >
+                        Waiting
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div id="bottom-panel">
+
+    <button
+        class="control-button"
+        onclick="resetCamera()"
+    >
+        ⌂ Reset View
+    </button>
+
+    <button
+        class="control-button"
+        onclick="togglePanel()"
+    >
+        ◫ Zone Intelligence
+    </button>
+
+    <button
+        class="control-button"
+        onclick="toggleExaggeration()"
+    >
+        ⛰ Terrain Depth
+    </button>
+
+</div>
+
+<script>
+
+const zoneData =
+    {"type": "FeatureCollection", "features": [{"type": "Feature", "geometry": {"type": "Polygon", "coordinates": [[[86.39208643333333, 23.7831371], [86.39208643333333, 23.7836583], [86.3901232, 23.7836583], [86.3901232, 23.7831371], [86.39208643333333, 23.7831371]]]}, "properties": {"zone_id": "ZONE-001", "mine_id": "MINE-001", "elevation": 219.792, "min_elevation": 216.63, "max_elevation": 225.322, "slope": 18.16, "max_slope": 69.49, "roughness": 33.414, "aspect": 214.184, "gis_indicator": 0.9911978972067969, "terrain_condition": "HIGH", "risk_level": "HIGH", "risk_probability": 0.9833, "risk_factors": ["High terrain slope", "High terrain roughness", "High terrain variability", "Very steep local slope", "High local surface roughness"], "risk_recommendation": "Prioritize inspection and continuous monitoring of this zone.", "displacement": null, "strain": null, "pressure": null, "rainfall": null, "temperature": null, "vibration": null}}, {"type": "Feature", "geometry": {"type": "Polygon", "coordinates": [[[86.39404966666667, 23.7831371], [86.39404966666667, 23.7836583], [86.39208643333333, 23.7836583], [86.39208643333333, 23.7831371], [86.39404966666667, 23.7831371]]]}, "properties": {"zone_id": "ZONE-002", "mine_id": "MINE-001", "elevation": 220.676, "min_elevation": 217.427, "max_elevation": 224.439, "slope": 1.523, "max_slope": 2.427, "roughness": 2.026, "aspect": 194.506, "gis_indicator": 0.0582243095158224, "terrain_condition": "LOW", "risk_level": "LOW", "risk_probability": 0.0433, "risk_factors": ["Terrain indicators are currently low"], "risk_recommendation": "Continue routine monitoring.", "displacement": null, "strain": null, "pressure": null, "rainfall": null, "temperature": null, "vibration": null}}, {"type": "Feature", "geometry": {"type": "Polygon", "coordinates": [[[86.3960129, 23.7831371], [86.3960129, 23.7836583], [86.39404966666667, 23.7836583], [86.39404966666667, 23.7831371], [86.3960129, 23.7831371]]]}, "properties": {"zone_id": "ZONE-003", "mine_id": "MINE-001", "elevation": 219.375, "min_elevation": 215.851, "max_elevation": 225.315, "slope": 4.48, "max_slope": 7.797, "roughness": 6.077, "aspect": 310.772, "gis_indicator": 0.2233825517937802, "terrain_condition": "LOW", "risk_level": "LOW", "risk_probability": 0.0767, "risk_factors": ["Moderate terrain variability"], "risk_recommendation": "Continue routine monitoring.", "displacement": null, "strain": null, "pressure": null, "rainfall": null, "temperature": null, "vibration": null}}, {"type": "Feature", "geometry": {"type": "Polygon", "coordinates": [[[86.39208643333333, 23.7836583], [86.39208643333333, 23.7841795], [86.3901232, 23.7841795], [86.3901232, 23.7836583], [86.39208643333333, 23.7836583]]]}, "properties": {"zone_id": "ZONE-004", "mine_id": "MINE-001", "elevation": 219.029, "min_elevation": 217.098, "max_elevation": 221.047, "slope": 17.592, "max_slope": 69.35, "roughness": 33.039, "aspect": 215.92, "gis_indicator": 0.8585717162657034, "terrain_condition": "HIGH", "risk_level": "HIGH", "risk_probability": 0.9533, "risk_factors": ["High terrain slope", "High terrain roughness", "Moderate terrain variability", "Very steep local slope", "High local surface roughness"], "risk_recommendation": "Prioritize inspection and continuous monitoring of this zone.", "displacement": null, "strain": null, "pressure": null, "rainfall": null, "temperature": null, "vibration": null}}, {"type": "Feature", "geometry": {"type": "Polygon", "coordinates": [[[86.39404966666667, 23.7836583], [86.39404966666667, 23.7841795], [86.39208643333333, 23.7841795], [86.39208643333333, 23.7836583], [86.39404966666667, 23.7836583]]]}, "properties": {"zone_id": "ZONE-005", "mine_id": "MINE-001", "elevation": 219.258, "min_elevation": 217.738, "max_elevation": 222.914, "slope": 1.68, "max_slope": 2.794, "roughness": 2.356, "aspect": 149.498, "gis_indicator": 0.0095947589920623, "terrain_condition": "LOW", "risk_level": "LOW", "risk_probability": 0.01, "risk_factors": ["Terrain indicators are currently low"], "risk_recommendation": "Continue routine monitoring.", "displacement": null, "strain": null, "pressure": null, "rainfall": null, "temperature": null, "vibration": null}}, {"type": "Feature", "geometry": {"type": "Polygon", "coordinates": [[[86.3960129, 23.7836583], [86.3960129, 23.7841795], [86.39404966666667, 23.7841795], [86.39404966666667, 23.7836583], [86.3960129, 23.7836583]]]}, "properties": {"zone_id": "ZONE-006", "mine_id": "MINE-001", "elevation": 218.517, "min_elevation": 214.334, "max_elevation": 222.737, "slope": 2.091, "max_slope": 3.403, "roughness": 2.619, "aspect": 24.59, "gis_indicator": 0.1079347705893669, "terrain_condition": "LOW", "risk_level": "LOW", "risk_probability": 0.0167, "risk_factors": ["Terrain indicators are currently low"], "risk_recommendation": "Continue routine monitoring.", "displacement": null, "strain": null, "pressure": null, "rainfall": null, "temperature": null, "vibration": null}}, {"type": "Feature", "geometry": {"type": "Polygon", "coordinates": [[[86.39208643333333, 23.7841795], [86.39208643333333, 23.7847007], [86.3901232, 23.7847007], [86.3901232, 23.7841795], [86.39208643333333, 23.7841795]]]}, "properties": {"zone_id": "ZONE-007", "mine_id": "MINE-001", "elevation": 220.902, "min_elevation": 217.769, "max_elevation": 223.947, "slope": 18.485, "max_slope": 69.513, "roughness": 33.823, "aspect": 204.36, "gis_indicator": 0.9277644999364144, "terrain_condition": "HIGH", "risk_level": "HIGH", "risk_probability": 0.99, "risk_factors": ["High terrain slope", "High terrain roughness", "High terrain variability", "Very steep local slope", "High local surface roughness"], "risk_recommendation": "Prioritize inspection and continuous monitoring of this zone.", "displacement": null, "strain": null, "pressure": null, "rainfall": null, "temperature": null, "vibration": null}}, {"type": "Feature", "geometry": {"type": "Polygon", "coordinates": [[[86.39404966666667, 23.7841795], [86.39404966666667, 23.7847007], [86.39208643333333, 23.7847007], [86.39208643333333, 23.7841795], [86.39404966666667, 23.7841795]]]}, "properties": {"zone_id": "ZONE-008", "mine_id": "MINE-001", "elevation": 219.41, "min_elevation": 217.344, "max_elevation": 221.022, "slope": 1.599, "max_slope": 2.675, "roughness": 2.209, "aspect": 110.788, "gis_indicator": 0.0099198834765177, "terrain_condition": "LOW", "risk_level": "LOW", "risk_probability": 0.0067, "risk_factors": ["Terrain indicators are currently low"], "risk_recommendation": "Continue routine monitoring.", "displacement": null, "strain": null, "pressure": null, "rainfall": null, "temperature": null, "vibration": null}}, {"type": "Feature", "geometry": {"type": "Polygon", "coordinates": [[[86.3960129, 23.7841795], [86.3960129, 23.7847007], [86.39404966666667, 23.7847007], [86.39404966666667, 23.7841795], [86.3960129, 23.7841795]]]}, "properties": {"zone_id": "ZONE-009", "mine_id": "MINE-001", "elevation": 217.633, "min_elevation": 213.656, "max_elevation": 221.049, "slope": 2.252, "max_slope": 2.89, "roughness": 2.982, "aspect": 30.6, "gis_indicator": 0.1021714091982852, "terrain_condition": "LOW", "risk_level": "LOW", "risk_probability": 0.0067, "risk_factors": ["Terrain indicators are currently low"], "risk_recommendation": "Continue routine monitoring.", "displacement": null, "strain": null, "pressure": null, "rainfall": null, "temperature": null, "vibration": null}}]};
+
+const sensorData =
+    [{"id": "SENSOR-001", "type": "Environmental", "lat": 23.7833977, "lon": 86.3911048166667}, {"id": "SENSOR-002", "type": "Environmental", "lat": 23.7833977, "lon": 86.39306805000001}, {"id": "SENSOR-003", "type": "Environmental", "lat": 23.7833977, "lon": 86.39503128333334}, {"id": "SENSOR-004", "type": "Environmental", "lat": 23.7839189, "lon": 86.39110481666668}, {"id": "SENSOR-005", "type": "Environmental", "lat": 23.7839189, "lon": 86.39306805000002}, {"id": "SENSOR-006", "type": "Environmental", "lat": 23.7839189, "lon": 86.39503128333335}, {"id": "SENSOR-007", "type": "Environmental", "lat": 23.7844401, "lon": 86.3911048166667}, {"id": "SENSOR-008", "type": "Environmental", "lat": 23.7844401, "lon": 86.39306805000001}, {"id": "SENSOR-009", "type": "Environmental", "lat": 23.7844401, "lon": 86.39503128333334}];
+
+const MINEGUARD_LAT =
+    23.7822;
+
+const MINEGUARD_LON =
+    86.3933;
+
+
+const viewer =
+    new Cesium.Viewer(
+        "cesiumContainer",
+        {
+            animation: false,
+            timeline: false,
+            fullscreenButton: false,
+            navigationHelpButton: false,
+            sceneModePicker: false,
+            geocoder: false,
+            homeButton: false,
+            infoBox: false,
+            selectionIndicator: false,
+            baseLayerPicker: false,
+            shouldAnimate: false
+        }
+    );
+
+
+viewer.scene.backgroundColor =
+    Cesium.Color.fromCssColorString(
+        "#07111f"
+    );
+
+
+viewer.scene.globe.baseColor =
+    Cesium.Color.fromCssColorString(
+        "#172235"
+    );
+
+
+viewer.scene.globe.enableLighting =
+    true;
+
+
+viewer.scene.globe.showGroundAtmosphere =
+    true;
+
+
+viewer.scene.globe.depthTestAgainstTerrain =
+    false;
+
+
+viewer.scene.globe.terrainExaggeration =
+    1.8;
+
+
+let currentExaggeration =
+    1.8;
+
+
+function riskColor(level) {
+
+    level =
+        String(level)
+            .toUpperCase();
+
+
+    if (level === "HIGH") {
+        return "#ff4d67";
+    }
+
+
+    if (level === "MODERATE") {
+        return "#f5b942";
+    }
+
+
+    if (level === "LOW") {
+        return "#22c7a5";
+    }
+
+
+    return "#94a3b8";
+}
+
+
+function hexToCesium(
+    hex,
+    alpha
+) {
+
+    return Cesium.Color
+        .fromCssColorString(
+            hex
+        )
+        .withAlpha(
+            alpha
+        );
+}
+
+
+function getPolygonCenter(
+    points
+) {
+
+    let longitude = 0;
+
+    let latitude = 0;
+
+
+    points.forEach(
+        function(point) {
+
+            longitude +=
+                point[0];
+
+            latitude +=
+                point[1];
+
+        }
+    );
+
+
+    return [
+        longitude / points.length,
+        latitude / points.length
+    ];
+}
+
+
+function getProperty(
+    entity,
+    name
+) {
+
+    if (
+        !entity.properties ||
+        !entity.properties[name]
+    ) {
+
+        return null;
+
+    }
+
+
+    return entity.properties[name].getValue(
+        Cesium.JulianDate.now()
+    );
+}
+
+
+zoneData.features.forEach(
+    function(feature) {
+
+        if (
+            !feature.geometry ||
+            !feature.geometry.coordinates
+        ) {
+
+            return;
+
+        }
+
+
+        let coordinates =
+            feature.geometry.coordinates;
+
+
+        let rings;
+
+
+        if (
+            feature.geometry.type ===
+            "Polygon"
+        ) {
+
+            rings = coordinates;
+
+        } else if (
+            feature.geometry.type ===
+            "MultiPolygon"
+        ) {
+
+            rings =
+                coordinates[0];
+
+        } else {
+
+            return;
+
+        }
+
+
+        if (
+            !rings ||
+            !rings[0] ||
+            rings[0].length < 3
+        ) {
+
+            return;
+
+        }
+
+
+        const properties =
+            feature.properties;
+
+
+        const level =
+            properties.risk_level ||
+            "UNKNOWN";
+
+
+        const color =
+            riskColor(level);
+
+
+        const elevation =
+            Number(
+                properties.elevation || 0
+            );
+
+
+        const baseHeight =
+            Math.max(
+                0,
+                elevation - 20
+            );
+
+
+        const positions =
+            rings[0].map(
+                function(point) {
+
+                    return Cesium
+                        .Cartesian3
+                        .fromDegrees(
+                            point[0],
+                            point[1],
+                            baseHeight
+                        );
+
+                }
+            );
+
+
+        const entity =
+            viewer.entities.add(
+                {
+                    name:
+                        properties.zone_id,
+
+                    polygon:
+                        {
+                            hierarchy:
+                                positions,
+
+                            height:
+                                baseHeight,
+
+                            extrudedHeight:
+                                baseHeight + 45,
+
+                            material:
+                                hexToCesium(
+                                    color,
+                                    0.18
+                                ),
+
+                            outline:
+                                true,
+
+                            outlineColor:
+                                hexToCesium(
+                                    color,
+                                    0.95
+                                ),
+
+                            outlineWidth:
+                                2
+                        },
+
+                    properties:
+                        properties
+                }
+            );
+
+
+        const center =
+            getPolygonCenter(
+                rings[0]
+            );
+
+
+        viewer.entities.add(
+            {
+                position:
+                    Cesium
+                        .Cartesian3
+                        .fromDegrees(
+                            center[0],
+                            center[1],
+                            baseHeight + 70
+                        ),
+
+                label:
+                    {
+                        text:
+                            properties.zone_id +
+                            "  •  " +
+                            level,
+
+                        font:
+                            "700 11px Arial",
+
+                        fillColor:
+                            Cesium.Color.WHITE,
+
+                        outlineColor:
+                            Cesium.Color.BLACK,
+
+                        outlineWidth:
+                            3,
+
+                        style:
+                            Cesium
+                                .LabelStyle
+                                .FILL_AND_OUTLINE,
+
+                        verticalOrigin:
+                            Cesium
+                                .VerticalOrigin
+                                .BOTTOM,
+
+                        pixelOffset:
+                            new Cesium.Cartesian2(
+                                0,
+                                -8
+                            ),
+
+                        disableDepthTestDistance:
+                            Number.POSITIVE_INFINITY
+                    }
+            }
+        );
+
+    }
+);
+
+
+sensorData.forEach(
+    function(sensor) {
+
+        const position =
+            Cesium
+                .Cartesian3
+                .fromDegrees(
+                    Number(sensor.lon),
+                    Number(sensor.lat),
+                    60
+                );
+
+
+        viewer.entities.add(
+            {
+                position:
+                    position,
+
+                point:
+                    {
+                        pixelSize:
+                            9,
+
+                        color:
+                            Cesium
+                                .Color
+                                .fromCssColorString(
+                                    "#67e8f9"
+                                ),
+
+                        outlineColor:
+                            Cesium.Color.WHITE,
+
+                        outlineWidth:
+                            1,
+
+                        heightReference:
+                            Cesium
+                                .HeightReference
+                                .RELATIVE_TO_GROUND,
+
+                        disableDepthTestDistance:
+                            Number.POSITIVE_INFINITY
+                    },
+
+                label:
+                    {
+                        text:
+                            String(
+                                sensor.id
+                            ),
+
+                        font:
+                            "600 9px Arial",
+
+                        fillColor:
+                            Cesium
+                                .Color
+                                .fromCssColorString(
+                                    "#67e8f9"
+                                ),
+
+                        pixelOffset:
+                            new Cesium.Cartesian2(
+                                0,
+                                -18
+                            ),
+
+                        disableDepthTestDistance:
+                            Number.POSITIVE_INFINITY
+                    }
+            }
+        );
+
+    }
+);
+
+
+const handler =
+    new Cesium.ScreenSpaceEventHandler(
+        viewer.scene.canvas
+    );
+
+
+handler.setInputAction(
+    function(click) {
+
+        const picked =
+            viewer.scene.pick(
+                click.position
+            );
+
+
+        if (
+            !Cesium.defined(picked) ||
+            !picked.id
+        ) {
+
+            return;
+
+        }
+
+
+        const entity =
+            picked.id;
+
+
+        if (
+            !entity.properties ||
+            !entity.properties.zone_id
+        ) {
+
+            return;
+
+        }
+
+
+        showZone(entity);
+
+    },
+    Cesium.ScreenSpaceEventType.LEFT_CLICK
+);
+
+
+function setText(
+    id,
+    value
+) {
+
+    const element =
+        document.getElementById(id);
+
+
+    if (element) {
+
+        element.textContent =
+            value;
+
+    }
+}
+
+
+function setMetric(
+    id,
+    value,
+    suffix
+) {
+
+    if (
+        value === null ||
+        value === undefined ||
+        value === ""
+    ) {
+
+        setText(
+            id,
+            "—"
+        );
+
+        return;
+
+    }
+
+
+    if (
+        typeof value ===
+        "number"
+    ) {
+
+        setText(
+            id,
+            value.toFixed(3) +
+            suffix
+        );
+
+        return;
+
+    }
+
+
+    setText(
+        id,
+        String(value) +
+        suffix
+    );
+}
+
+
+function setSensor(
+    id,
+    value,
+    suffix
+) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+
+        setText(
+            id,
+            "Waiting"
+        );
+
+        return;
+
+    }
+
+
+    if (
+        typeof value ===
+        "number"
+    ) {
+
+        setText(
+            id,
+            value.toFixed(3) +
+            suffix
+        );
+
+        return;
+
+    }
+
+
+    setText(
+        id,
+        String(value) +
+        suffix
+    );
+}
+
+
+function showZone(
+    entity
+) {
+
+    const zone =
+        getProperty(
+            entity,
+            "zone_id"
+        ) ||
+        "UNKNOWN";
+
+
+    const mine =
+        getProperty(
+            entity,
+            "mine_id"
+        ) ||
+        "MINE-001";
+
+
+    const risk =
+        getProperty(
+            entity,
+            "risk_level"
+        ) ||
+        "UNKNOWN";
+
+
+    const color =
+        riskColor(risk);
+
+
+    setText(
+        "panel-zone",
+        zone
+    );
+
+
+    setText(
+        "panel-mine",
+        mine
+    );
+
+
+    const riskElement =
+        document.getElementById(
+            "risk-level"
+        );
+
+
+    riskElement.textContent =
+        risk;
+
+
+    riskElement.style.color =
+        color;
+
+
+    let probability =
+        Number(
+            getProperty(
+                entity,
+                "risk_probability"
+            )
+        );
+
+
+    if (
+        Number.isFinite(
+            probability
+        )
+    ) {
+
+        if (
+            probability <= 1
+        ) {
+
+            probability *=
+                100;
+
+        }
+
+
+        probability =
+            Math.max(
+                0,
+                Math.min(
+                    100,
+                    probability
+                )
+            );
+
+
+        setText(
+            "risk-percent",
+            probability.toFixed(2) +
+            "%"
+        );
+
+
+        const progress =
+            document.getElementById(
+                "risk-progress"
+            );
+
+
+        progress.style.width =
+            probability +
+            "%";
+
+
+        progress.style.background =
+            color;
+
+    } else {
+
+        setText(
+            "risk-percent",
+            "—"
+        );
+
+
+        document.getElementById(
+            "risk-progress"
+        ).style.width =
+            "0%";
+    }
+
+
+    setMetric(
+        "elevation",
+        getProperty(
+            entity,
+            "elevation"
+        ),
+        " m"
+    );
+
+
+    setMetric(
+        "slope",
+        getProperty(
+            entity,
+            "slope"
+        ),
+        "°"
+    );
+
+
+    setMetric(
+        "max-slope",
+        getProperty(
+            entity,
+            "max_slope"
+        ),
+        "°"
+    );
+
+
+    setMetric(
+        "roughness",
+        getProperty(
+            entity,
+            "roughness"
+        ),
+        " m"
+    );
+
+
+    setMetric(
+        "aspect",
+        getProperty(
+            entity,
+            "aspect"
+        ),
+        "°"
+    );
+
+
+    setMetric(
+        "gis-indicator",
+        getProperty(
+            entity,
+            "gis_indicator"
+        ),
+        ""
+    );
+
+
+    const factors =
+        getProperty(
+            entity,
+            "risk_factors"
+        ) || [];
+
+
+    const factorsContainer =
+        document.getElementById(
+            "factors"
+        );
+
+
+    factorsContainer.innerHTML =
+        "";
+
+
+    if (
+        !Array.isArray(factors) ||
+        factors.length === 0
+    ) {
+
+        factorsContainer.innerHTML =
+            '<div class="factor">' +
+            '<span class="factor-dot"></span>' +
+            '<span>No significant terrain factors detected.</span>' +
+            '</div>';
+
+    } else {
+
+        factors.forEach(
+            function(factor) {
+
+                const item =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                item.className =
+                    "factor";
+
+
+                const dot =
+                    document.createElement(
+                        "span"
+                    );
+
+
+                dot.className =
+                    "factor-dot";
+
+
+                const text =
+                    document.createElement(
+                        "span"
+                    );
+
+
+                text.textContent =
+                    String(factor);
+
+
+                item.appendChild(
+                    dot
+                );
+
+
+                item.appendChild(
+                    text
+                );
+
+
+                factorsContainer.appendChild(
+                    item
+                );
+
+            }
+        );
+
+    }
+
+
+    setText(
+        "recommendation",
+        getProperty(
+            entity,
+            "risk_recommendation"
+        ) ||
+        "Continue monitoring."
+    );
+
+
+    setSensor(
+        "displacement",
+        getProperty(
+            entity,
+            "displacement"
+        ),
+        " mm"
+    );
+
+
+    setSensor(
+        "strain",
+        getProperty(
+            entity,
+            "strain"
+        ),
+        ""
+    );
+
+
+    setSensor(
+        "pressure",
+        getProperty(
+            entity,
+            "pressure"
+        ),
+        " kPa"
+    );
+
+
+    setSensor(
+        "rainfall",
+        getProperty(
+            entity,
+            "rainfall"
+        ),
+        " mm"
+    );
+
+
+    setSensor(
+        "temperature",
+        getProperty(
+            entity,
+            "temperature"
+        ),
+        " °C"
+    );
+
+
+    setSensor(
+        "vibration",
+        getProperty(
+            entity,
+            "vibration"
+        ),
+        " g"
+    );
+
+
+    document
+        .getElementById(
+            "side-panel"
+        )
+        .classList
+        .add(
+            "open"
+        );
+
+
+    viewer.flyTo(
+        entity,
+        {
+            duration:
+                1.2,
+
+            offset:
+                new Cesium
+                    .HeadingPitchRange(
+                        0,
+                        Cesium.Math.toRadians(
+                            -42
+                        ),
+                        750
+                    )
+        }
+    );
+}
+
+
+function togglePanel() {
+
+    document
+        .getElementById(
+            "side-panel"
+        )
+        .classList
+        .toggle(
+            "open"
+        );
+}
+
+
+function resetCamera() {
+
+    viewer.camera.flyTo(
+        {
+            destination:
+                Cesium
+                    .Cartesian3
+                    .fromDegrees(
+                        MINEGUARD_LON,
+                        MINEGUARD_LAT,
+                        900
+                    ),
+
+            orientation:
+                {
+                    heading:
+                        Cesium.Math.toRadians(
+                            0
+                        ),
+
+                    pitch:
+                        Cesium.Math.toRadians(
+                            -58
+                        ),
+
+                    roll:
+                        0
+                },
+
+            duration:
+                1.2
+        }
+    );
+}
+
+
+function toggleExaggeration() {
+
+    if (
+        currentExaggeration ===
+        1.8
+    ) {
+
+        currentExaggeration =
+            3.0;
+
+    } else {
+
+        currentExaggeration =
+            1.8;
+
+    }
+
+
+    viewer.scene.globe
+        .terrainExaggeration =
+        currentExaggeration;
+
+
+    document
+        .querySelector(
+            "#terrain-badge strong"
+        )
+        .textContent =
+        currentExaggeration +
+        "×";
+}
+
+
+viewer.camera.flyTo(
+    {
+        destination:
+            Cesium
+                .Cartesian3
+                .fromDegrees(
+                    MINEGUARD_LON,
+                    MINEGUARD_LAT,
+                    900
+                ),
+
+        orientation:
+            {
+                heading:
+                    Cesium.Math.toRadians(
+                        0
+                    ),
+
+                pitch:
+                    Cesium.Math.toRadians(
+                        -58
+                    ),
+
+                roll:
+                    0
+            },
+
+        duration:
+            1.5
+    }
+);
+
+
+document
+    .getElementById(
+        "loading"
+    )
+    .style
+    .display =
+    "none";
+
+</script>
+
+</body>
+
+</html>

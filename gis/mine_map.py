@@ -4,41 +4,15 @@ import html
 
 import folium
 import geopandas as gpd
+from branca.element import Element
 
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 
-ZONE_FILE = (
-    BASE_DIR
-    / "data"
-    / "processed"
-    / "gis"
-    / "zones.geojson"
-)
-
-ROAD_FILE = (
-    BASE_DIR
-    / "data"
-    / "raw"
-    / "gis"
-    / "roads.geojson"
-)
-
-ZONE_DATA_FILE = (
-    BASE_DIR
-    / "data"
-    / "processed"
-    / "gis"
-    / "zone_api_data.json"
-)
-
-SENSOR_FILE = (
-    BASE_DIR
-    / "data"
-    / "processed"
-    / "gis"
-    / "sensors.geojson"
-)
+ZONE_FILE = BASE_DIR / "data" / "processed" / "gis" / "zones.geojson"
+ROAD_FILE = BASE_DIR / "data" / "raw" / "gis" / "roads.geojson"
+ZONE_DATA_FILE = BASE_DIR / "data" / "processed" / "gis" / "zone_api_data.json"
+SENSOR_FILE = BASE_DIR / "data" / "processed" / "gis" / "sensors.geojson"
 
 ELEVATION_IMAGE = (
     BASE_DIR
@@ -64,7 +38,7 @@ KUSUNDA = [23.7822, 86.3933]
 
 
 print("==========================================")
-print("MineGuard AI - GIS Dashboard")
+print("MineGuard AI - Advanced GIS Dashboard")
 print("==========================================")
 
 
@@ -112,7 +86,8 @@ mine_map = folium.Map(
     location=KUSUNDA,
     zoom_start=15,
     tiles="OpenStreetMap",
-    control_scale=True
+    control_scale=True,
+    prefer_canvas=True
 )
 
 
@@ -125,31 +100,21 @@ elevation_layer = folium.FeatureGroup(
 folium.raster_layers.ImageOverlay(
     image=str(ELEVATION_IMAGE),
     bounds=[
-        [
-            23.77875,
-            86.38986111111112
-        ],
-        [
-            23.785138888888888,
-            86.39819444444446
-        ]
+        [23.77875, 86.38986111111112],
+        [23.785138888888888, 86.39819444444446]
     ],
     opacity=0.42,
     interactive=True,
     cross_origin=False,
     zindex=1
-).add_to(
-    elevation_layer
-)
+).add_to(elevation_layer)
 
 
-elevation_layer.add_to(
-    mine_map
-)
+elevation_layer.add_to(mine_map)
 
 
 slope_layer = folium.FeatureGroup(
-    name="Slope Map",
+    name="Slope Analysis",
     show=False
 )
 
@@ -157,27 +122,17 @@ slope_layer = folium.FeatureGroup(
 folium.raster_layers.ImageOverlay(
     image=str(SLOPE_IMAGE),
     bounds=[
-        [
-            23.77877868536618,
-            86.3898312967052
-        ],
-        [
-            23.78517143564985,
-            86.39816966664041
-        ]
+        [23.77877868536618, 86.3898312967052],
+        [23.78517143564985, 86.39816966664041]
     ],
     opacity=0.42,
     interactive=True,
     cross_origin=False,
     zindex=2
-).add_to(
-    slope_layer
-)
+).add_to(slope_layer)
 
 
-slope_layer.add_to(
-    mine_map
-)
+slope_layer.add_to(mine_map)
 
 
 study_area = [
@@ -196,18 +151,16 @@ study_layer = folium.FeatureGroup(
 
 folium.Polygon(
     locations=study_area,
-    color="#111827",
-    weight=3,
+    color="#64748b",
+    weight=2,
+    opacity=0.8,
     fill=False,
+    dash_array="7 7",
     popup="Kusunda Mine Study Area"
-).add_to(
-    study_layer
-)
+).add_to(study_layer)
 
 
-study_layer.add_to(
-    mine_map
-)
+study_layer.add_to(mine_map)
 
 
 road_layer = folium.FeatureGroup(
@@ -218,9 +171,9 @@ road_layer = folium.FeatureGroup(
 
 road_options = {
     "style_function": lambda feature: {
-        "color": "#555555",
-        "weight": 2,
-        "opacity": 0.75
+        "color": "#64748b",
+        "weight": 1.8,
+        "opacity": 0.65
     }
 }
 
@@ -236,27 +189,24 @@ if "highway" in roads.columns:
 folium.GeoJson(
     roads.to_json(),
     **road_options
-).add_to(
-    road_layer
-)
+).add_to(road_layer)
 
 
-road_layer.add_to(
-    mine_map
-)
+road_layer.add_to(mine_map)
 
 
 def risk_color(level):
+
     level = str(level).upper()
 
     if level == "HIGH":
-        return "#ef4444"
+        return "#ff4d67"
 
     if level == "MODERATE":
-        return "#f59e0b"
+        return "#f5b942"
 
     if level == "LOW":
-        return "#22c55e"
+        return "#22c7a5"
 
     return "#94a3b8"
 
@@ -304,15 +254,6 @@ for _, zone in zones.iterrows():
         "mine_id": record.get(
             "mine_id",
             "MINE-001"
-        ),
-
-        "terrain_condition": gis.get(
-            "gis_terrain_condition",
-            "UNKNOWN"
-        ),
-
-        "gis_indicator": gis.get(
-            "gis_terrain_indicator"
         ),
 
         "area": gis.get(
@@ -375,6 +316,15 @@ for _, zone in zones.iterrows():
             "terrain_variability_indicator"
         ),
 
+        "gis_indicator": gis.get(
+            "gis_terrain_indicator"
+        ),
+
+        "terrain_condition": gis.get(
+            "gis_terrain_condition",
+            "UNKNOWN"
+        ),
+
         "displacement": realtime.get(
             "displacement_mm"
         ),
@@ -429,29 +379,48 @@ for _, zone in zones.iterrows():
 
 
 zone_layer = folium.FeatureGroup(
-    name="AI Risk Heatmap",
+    name="AI Risk Intelligence",
     show=True
 )
 
 
 def zone_style(feature):
 
-    risk_level = feature[
+    level = feature[
         "properties"
     ].get(
         "risk_level",
         "UNKNOWN"
     )
 
-    color = risk_color(
-        risk_level
-    )
+    color = risk_color(level)
 
     return {
         "color": color,
-        "weight": 3,
+        "weight": 2,
+        "opacity": 0.9,
         "fillColor": color,
-        "fillOpacity": 0.45
+        "fillOpacity": 0.07
+    }
+
+
+def zone_highlight(feature):
+
+    level = feature[
+        "properties"
+    ].get(
+        "risk_level",
+        "UNKNOWN"
+    )
+
+    color = risk_color(level)
+
+    return {
+        "color": color,
+        "weight": 4,
+        "opacity": 1,
+        "fillColor": color,
+        "fillOpacity": 0.16
     }
 
 
@@ -461,32 +430,25 @@ zone_geojson = folium.GeoJson(
         "features": zone_features
     },
     style_function=zone_style,
-    highlight_function=lambda feature: {
-        "weight": 5,
-        "fillOpacity": 0.60
-    },
+    highlight_function=zone_highlight,
     tooltip=folium.GeoJsonTooltip(
         fields=[
             "zone_id",
             "risk_level"
         ],
         aliases=[
-            "Zone:",
-            "AI Risk:"
+            "ZONE",
+            "AI RISK"
         ],
         sticky=True
     )
 )
 
 
-zone_geojson.add_to(
-    zone_layer
-)
+zone_geojson.add_to(zone_layer)
 
 
-zone_layer.add_to(
-    mine_map
-)
+zone_layer.add_to(mine_map)
 
 
 sensor_layer = folium.FeatureGroup(
@@ -519,11 +481,33 @@ if SENSOR_FILE.exists():
         )
 
         popup = f"""
-        <div style="font-family:Arial;width:220px">
-        <h4>MineGuard Sensor</h4>
-        <b>Sensor ID:</b> {html.escape(str(sensor_id))}<br>
-        <b>Type:</b> {html.escape(str(sensor_type))}<br>
-        <b>Status:</b> Ready for IoT
+        <div style="
+            font-family:Inter,Arial,sans-serif;
+            width:220px;
+            color:#e2e8f0;
+            background:#0f172a;
+            padding:8px;
+        ">
+            <div style="
+                font-size:15px;
+                font-weight:700;
+                margin-bottom:8px;
+            ">
+                MineGuard Sensor
+            </div>
+
+            <b>Sensor ID:</b>
+            {html.escape(str(sensor_id))}
+            <br><br>
+
+            <b>Type:</b>
+            {html.escape(str(sensor_type))}
+            <br><br>
+
+            <b>Status:</b>
+            <span style="color:#22c7a5">
+                Ready
+            </span>
         </div>
         """
 
@@ -532,19 +516,18 @@ if SENSOR_FILE.exists():
                 sensor.geometry.y,
                 sensor.geometry.x
             ],
-            radius=7,
-            color="#2563eb",
+            radius=5,
+            color="#67e8f9",
             fill=True,
-            fill_color="#3b82f6",
-            fill_opacity=0.95,
+            fill_color="#22d3ee",
+            fill_opacity=0.9,
+            weight=2,
             tooltip=str(sensor_id),
             popup=folium.Popup(
                 popup,
                 max_width=280
             )
-        ).add_to(
-            sensor_layer
-        )
+        ).add_to(sensor_layer)
 
 else:
 
@@ -578,11 +561,37 @@ else:
     for sensor in prototype_sensors:
 
         popup = f"""
-        <div style="font-family:Arial;width:220px">
-        <h4>MineGuard Sensor</h4>
-        <b>Sensor ID:</b> {sensor["id"]}<br>
-        <b>Type:</b> {sensor["type"]}<br>
-        <b>Status:</b> Prototype
+        <div style="
+            font-family:Inter,Arial,sans-serif;
+            width:220px;
+            color:#e2e8f0;
+            background:#0f172a;
+            padding:8px;
+        ">
+
+            <div style="
+                font-size:15px;
+                font-weight:700;
+                margin-bottom:8px;
+            ">
+                MineGuard Sensor
+            </div>
+
+            <b>Sensor ID:</b>
+            {sensor["id"]}
+
+            <br><br>
+
+            <b>Type:</b>
+            {sensor["type"]}
+
+            <br><br>
+
+            <b>Status:</b>
+            <span style="color:#f5b942">
+                Prototype
+            </span>
+
         </div>
         """
 
@@ -591,24 +600,21 @@ else:
                 sensor["lat"],
                 sensor["lon"]
             ],
-            radius=7,
-            color="#2563eb",
+            radius=5,
+            color="#67e8f9",
             fill=True,
-            fill_color="#3b82f6",
-            fill_opacity=0.95,
+            fill_color="#22d3ee",
+            fill_opacity=0.9,
+            weight=2,
             tooltip=sensor["id"],
             popup=folium.Popup(
                 popup,
                 max_width=280
             )
-        ).add_to(
-            sensor_layer
-        )
+        ).add_to(sensor_layer)
 
 
-sensor_layer.add_to(
-    mine_map
-)
+sensor_layer.add_to(mine_map)
 
 
 gas_layer = folium.FeatureGroup(
@@ -624,20 +630,17 @@ folium.Polygon(
         [23.7780, 86.3965],
         [23.7775, 86.3920]
     ],
-    color="#8b5cf6",
+    color="#a78bfa",
     weight=2,
     fill=True,
     fill_color="#8b5cf6",
-    fill_opacity=0.15,
+    fill_opacity=0.08,
+    dash_array="5 5",
     popup="Gas Monitoring Area"
-).add_to(
-    gas_layer
-)
+).add_to(gas_layer)
 
 
-gas_layer.add_to(
-    mine_map
-)
+gas_layer.add_to(mine_map)
 
 
 thermal_layer = folium.FeatureGroup(
@@ -653,20 +656,17 @@ folium.Polygon(
         [23.7815, 86.4010],
         [23.7805, 86.3980]
     ],
-    color="#dc2626",
+    color="#fb7185",
     weight=2,
     fill=True,
-    fill_color="#ef4444",
-    fill_opacity=0.15,
+    fill_color="#fb7185",
+    fill_opacity=0.07,
+    dash_array="5 5",
     popup="Thermal / Fire Monitoring Area"
-).add_to(
-    thermal_layer
-)
+).add_to(thermal_layer)
 
 
-thermal_layer.add_to(
-    mine_map
-)
+thermal_layer.add_to(mine_map)
 
 
 restricted_layer = folium.FeatureGroup(
@@ -682,295 +682,536 @@ folium.Polygon(
         [23.7780, 86.4020],
         [23.7765, 86.3990]
     ],
-    color="#111827",
+    color="#94a3b8",
     weight=2,
     fill=True,
-    fill_color="#111827",
-    fill_opacity=0.25,
+    fill_color="#64748b",
+    fill_opacity=0.08,
+    dash_array="4 5",
     popup="Restricted Area"
-).add_to(
-    restricted_layer
-)
+).add_to(restricted_layer)
 
 
-restricted_layer.add_to(
-    mine_map
-)
+restricted_layer.add_to(mine_map)
 
 
 css = """
 <style>
 
+@import url(
+'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap'
+);
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Inter, Arial, sans-serif;
+}
+
 #mineguard-header {
-    position:fixed;
-    top:18px;
-    left:60px;
-    z-index:9998;
-    background:linear-gradient(135deg,#0f172a,#1e293b);
-    color:white;
-    padding:14px 20px;
-    border-radius:14px;
-    box-shadow:0 8px 25px rgba(0,0,0,.25);
-    font-family:Arial,sans-serif;
-    min-width:300px;
+    position: fixed;
+    top: 18px;
+    left: 60px;
+    z-index: 9998;
+    min-width: 310px;
+    padding: 15px 20px;
+    border: 1px solid rgba(148,163,184,.25);
+    border-radius: 16px;
+    background: rgba(15,23,42,.94);
+    backdrop-filter: blur(14px);
+    box-shadow:
+        0 12px 35px rgba(0,0,0,.30);
+    color: #f8fafc;
 }
 
 #mineguard-header .title {
-    font-size:20px;
-    font-weight:800;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -.4px;
 }
 
 #mineguard-header .subtitle {
-    font-size:11px;
-    color:#cbd5e1;
-    margin-top:4px;
+    margin-top: 5px;
+    color: #94a3b8;
+    font-size: 10px;
+    letter-spacing: .5px;
+}
+
+.brand-mark {
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: linear-gradient(
+        135deg,
+        #22c7a5,
+        #0891b2
+    );
+    color: #082f49;
+    font-size: 15px;
 }
 
 #mineguard-status {
-    position:fixed;
-    top:18px;
-    right:65px;
-    z-index:9998;
-    background:rgba(255,255,255,.96);
-    padding:9px 15px;
-    border-radius:20px;
-    font-family:Arial,sans-serif;
-    font-size:12px;
-    font-weight:600;
-    box-shadow:0 4px 15px rgba(0,0,0,.18);
+    position: fixed;
+    top: 18px;
+    right: 65px;
+    z-index: 9998;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 14px;
+    border: 1px solid rgba(148,163,184,.25);
+    border-radius: 999px;
+    background: rgba(15,23,42,.92);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 25px rgba(0,0,0,.20);
+    color: #cbd5e1;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .7px;
 }
 
 .status-dot {
-    display:inline-block;
-    width:9px;
-    height:9px;
-    background:#22c55e;
-    border-radius:50%;
-    margin-right:6px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #22c7a5;
+    box-shadow: 0 0 10px rgba(34,199,165,.8);
 }
 
 #zone-dashboard {
-    position:fixed;
-    top:80px;
-    right:18px;
-    z-index:10000;
-    width:370px;
-    max-height:calc(100vh - 105px);
-    overflow-y:auto;
-    background:rgba(255,255,255,.98);
-    border-radius:18px;
-    box-shadow:0 15px 45px rgba(0,0,0,.25);
-    font-family:Arial,sans-serif;
-    display:none;
+    position: fixed;
+    top: 78px;
+    right: 18px;
+    z-index: 10000;
+    width: 390px;
+    max-height: calc(100vh - 96px);
+    overflow-y: auto;
+    display: none;
+    border: 1px solid rgba(148,163,184,.20);
+    border-radius: 20px;
+    background: rgba(10,18,32,.96);
+    backdrop-filter: blur(20px);
+    box-shadow:
+        0 25px 70px rgba(0,0,0,.42);
+    color: #e2e8f0;
+    animation: panelIn .25s ease-out;
+}
+
+@keyframes panelIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+#zone-dashboard::-webkit-scrollbar {
+    width: 5px;
+}
+
+#zone-dashboard::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 10px;
 }
 
 .dashboard-header {
-    position:relative;
-    background:linear-gradient(135deg,#0f172a,#1e293b);
-    color:white;
-    padding:18px;
-    border-radius:18px 18px 0 0;
+    position: relative;
+    padding: 20px;
+    border-bottom: 1px solid rgba(148,163,184,.14);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(30,41,59,.95),
+            rgba(15,23,42,.96)
+        );
+}
+
+.dashboard-header .eyebrow {
+    margin-bottom: 5px;
+    color: #22c7a5;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1.6px;
 }
 
 .dashboard-header .zone {
-    font-size:22px;
-    font-weight:800;
+    color: #f8fafc;
+    font-size: 24px;
+    font-weight: 800;
 }
 
 .dashboard-header .mine {
-    color:#cbd5e1;
-    font-size:12px;
-    margin-top:4px;
+    margin-top: 5px;
+    color: #94a3b8;
+    font-size: 11px;
 }
 
 .close-dashboard {
-    position:absolute;
-    top:10px;
-    right:15px;
-    cursor:pointer;
-    color:white;
-    font-size:24px;
-    line-height:1;
+    position: absolute;
+    top: 15px;
+    right: 17px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(148,163,184,.20);
+    border-radius: 9px;
+    background: rgba(255,255,255,.05);
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 20px;
+    transition: .2s;
+}
+
+.close-dashboard:hover {
+    background: rgba(255,255,255,.10);
+    color: white;
 }
 
 .dashboard-body {
-    padding:16px;
+    padding: 16px;
 }
 
 .section {
-    margin-bottom:18px;
+    margin-bottom: 18px;
 }
 
 .section-title {
-    font-size:10px;
-    font-weight:800;
-    color:#64748b;
-    letter-spacing:1px;
-    margin-bottom:9px;
+    margin-bottom: 9px;
+    color: #64748b;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
 }
 
-.condition {
-    padding:12px;
-    border-radius:12px;
-    font-size:18px;
-    font-weight:800;
-    text-align:center;
+.risk-panel {
+    padding: 15px;
+    border: 1px solid rgba(148,163,184,.15);
+    border-radius: 14px;
+    background: rgba(30,41,59,.55);
 }
 
-.metrics {
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:8px;
+.risk-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
-.metric {
-    background:#f8fafc;
-    border:1px solid #e2e8f0;
-    border-radius:10px;
-    padding:10px;
-}
-
-.metric-label {
-    color:#64748b;
-    font-size:10px;
-}
-
-.metric-value {
-    color:#0f172a;
-    font-size:14px;
-    font-weight:700;
-    margin-top:3px;
-}
-
-.sensor-grid {
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:7px;
-}
-
-.sensor {
-    background:#eff6ff;
-    border-radius:9px;
-    padding:9px;
-    font-size:10px;
-    color:#475569;
-}
-
-.sensor-value {
-    font-size:13px;
-    font-weight:700;
-    color:#1e3a8a;
-    margin-top:3px;
-}
-
-.risk-box {
-    background:#f8fafc;
-    border:1px solid #e2e8f0;
-    border-radius:12px;
-    padding:13px;
-    text-align:center;
+.risk-status-label {
+    color: #64748b;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
 }
 
 .risk-level {
-    font-size:26px;
-    font-weight:900;
+    margin-top: 4px;
+    font-size: 25px;
+    font-weight: 800;
+}
+
+.risk-percent {
+    color: #f8fafc;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.risk-percent-label {
+    margin-top: 2px;
+    color: #64748b;
+    font-size: 8px;
+    text-align: right;
+}
+
+.risk-track {
+    height: 6px;
+    margin-top: 14px;
+    overflow: hidden;
+    border-radius: 20px;
+    background: #1e293b;
+}
+
+.risk-bar {
+    height: 100%;
+    width: 0%;
+    border-radius: 20px;
+    transition: width .5s ease;
+}
+
+.metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+}
+
+.metric {
+    padding: 11px;
+    border: 1px solid rgba(148,163,184,.12);
+    border-radius: 11px;
+    background: rgba(30,41,59,.42);
+}
+
+.metric-label {
+    color: #64748b;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: .7px;
+    text-transform: uppercase;
+}
+
+.metric-value {
+    margin-top: 5px;
+    color: #f1f5f9;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.indicator-card {
+    margin-bottom: 8px;
+    padding: 10px 11px;
+    border: 1px solid rgba(148,163,184,.12);
+    border-radius: 11px;
+    background: rgba(30,41,59,.42);
+}
+
+.indicator-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.indicator-name {
+    color: #94a3b8;
+    font-size: 10px;
+}
+
+.indicator-value {
+    color: #f8fafc;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.indicator-track {
+    height: 4px;
+    margin-top: 7px;
+    overflow: hidden;
+    border-radius: 10px;
+    background: #1e293b;
+}
+
+.indicator-bar {
+    height: 100%;
+    border-radius: 10px;
+    background: #22c7a5;
+}
+
+.sensor-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+}
+
+.sensor {
+    padding: 10px;
+    border: 1px solid rgba(103,232,249,.10);
+    border-radius: 10px;
+    background: rgba(8,47,73,.25);
+    color: #64748b;
+    font-size: 9px;
+}
+
+.sensor-value {
+    margin-top: 4px;
+    color: #67e8f9;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.sensor-status {
+    margin-bottom: 9px;
+    padding: 9px 10px;
+    border: 1px solid rgba(245,185,66,.15);
+    border-radius: 9px;
+    background: rgba(245,185,66,.06);
+    color: #f5b942;
+    font-size: 9px;
 }
 
 .explanation-box {
-    background:#f8fafc;
-    border:1px solid #e2e8f0;
-    border-radius:12px;
-    padding:12px;
+    padding: 12px;
+    border: 1px solid rgba(148,163,184,.12);
+    border-radius: 12px;
+    background: rgba(30,41,59,.42);
 }
 
 .explanation-list {
-    margin:0;
-    padding-left:20px;
-    color:#334155;
-    font-size:12px;
-    line-height:1.8;
+    margin: 0;
+    padding-left: 17px;
+    color: #cbd5e1;
+    font-size: 10px;
+    line-height: 1.9;
 }
 
 .recommendation {
-    margin-top:12px;
-    background:#eef2ff;
-    border-radius:10px;
-    padding:11px;
-    color:#334155;
-    font-size:12px;
-    line-height:1.5;
+    margin-top: 12px;
+    padding: 11px;
+    border-left: 3px solid #22c7a5;
+    border-radius: 8px;
+    background: rgba(34,199,165,.06);
+    color: #cbd5e1;
+    font-size: 10px;
+    line-height: 1.55;
 }
 
 .recommendation-title {
-    font-size:10px;
-    font-weight:800;
-    color:#64748b;
-    margin-bottom:5px;
+    margin-bottom: 5px;
+    color: #22c7a5;
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 1px;
 }
 
 #mineguard-search {
-    position:fixed;
-    bottom:25px;
-    left:25px;
-    z-index:9998;
-    background:white;
-    padding:9px 12px;
-    border-radius:12px;
-    box-shadow:0 5px 20px rgba(0,0,0,.18);
-    font-family:Arial,sans-serif;
+    position: fixed;
+    bottom: 22px;
+    left: 24px;
+    z-index: 9998;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 13px;
+    border: 1px solid rgba(148,163,184,.22);
+    border-radius: 12px;
+    background: rgba(15,23,42,.94);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 30px rgba(0,0,0,.25);
+}
+
+.search-icon {
+    color: #22c7a5;
 }
 
 #mineguard-search input {
-    border:none;
-    outline:none;
-    width:180px;
-    font-size:13px;
+    width: 180px;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #f8fafc;
+    font-family: Inter, Arial, sans-serif;
+    font-size: 11px;
+}
+
+#mineguard-search input::placeholder {
+    color: #64748b;
 }
 
 #mineguard-legend {
-    position:fixed;
-    bottom:25px;
-    right:400px;
-    z-index:9998;
-    background:rgba(255,255,255,.97);
-    padding:12px 15px;
-    border-radius:12px;
-    box-shadow:0 5px 20px rgba(0,0,0,.15);
-    font-family:Arial,sans-serif;
-    font-size:11px;
+    position: fixed;
+    right: 18px;
+    bottom: 22px;
+    z-index: 9998;
+    min-width: 170px;
+    padding: 13px;
+    border: 1px solid rgba(148,163,184,.20);
+    border-radius: 13px;
+    background: rgba(15,23,42,.94);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    color: #cbd5e1;
+    font-family: Inter, Arial, sans-serif;
+    font-size: 9px;
+}
+
+.legend-title {
+    margin-bottom: 9px;
+    color: #f8fafc;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1px;
 }
 
 .legend-item {
-    margin:5px 0;
+    display: flex;
+    align-items: center;
+    margin: 7px 0;
 }
 
-.legend-dot {
-    display:inline-block;
-    width:10px;
-    height:10px;
-    border-radius:3px;
-    margin-right:6px;
+.legend-line {
+    width: 18px;
+    height: 3px;
+    margin-right: 8px;
+    border-radius: 10px;
 }
 
-@media(max-width:900px) {
+.leaflet-control-layers {
+    border: 1px solid rgba(148,163,184,.25) !important;
+    border-radius: 12px !important;
+    background: rgba(15,23,42,.94) !important;
+    color: #cbd5e1 !important;
+    box-shadow: 0 8px 25px rgba(0,0,0,.25) !important;
+}
+
+.leaflet-control-layers label {
+    color: #cbd5e1 !important;
+    font-family: Inter, Arial, sans-serif;
+    font-size: 11px;
+}
+
+.leaflet-control-zoom a {
+    background: rgba(15,23,42,.94) !important;
+    color: #cbd5e1 !important;
+    border-color: #334155 !important;
+}
+
+.leaflet-control-attribution {
+    background: rgba(15,23,42,.75) !important;
+    color: #94a3b8 !important;
+}
+
+.leaflet-control-attribution a {
+    color: #67e8f9 !important;
+}
+
+@media(max-width: 900px) {
 
     #zone-dashboard {
-        width:310px;
-        right:10px;
+        width: calc(100vw - 20px);
+        right: 10px;
+        top: 70px;
+        max-height: calc(100vh - 80px);
     }
 
     #mineguard-header {
-        left:55px;
-        min-width:230px;
+        left: 55px;
+        min-width: 220px;
     }
 
     #mineguard-status {
-        display:none;
+        display: none;
     }
 
     #mineguard-legend {
-        display:none;
+        display: none;
     }
+
+    #mineguard-search {
+        bottom: 15px;
+        left: 15px;
+    }
+
 }
 
 </style>
@@ -978,7 +1219,7 @@ css = """
 
 
 mine_map.get_root().html.add_child(
-    folium.Element(css)
+    Element(css)
 )
 
 
@@ -986,11 +1227,19 @@ header = """
 <div id="mineguard-header">
 
     <div class="title">
-        ⛏ MineGuard AI
+
+        <span class="brand-mark">
+            ⛏
+        </span>
+
+        <span>
+            MineGuard AI
+        </span>
+
     </div>
 
     <div class="subtitle">
-        Intelligent Mine Safety & Terrain Monitoring
+        INTELLIGENT MINE SAFETY & TERRAIN INTELLIGENCE
     </div>
 
 </div>
@@ -1006,7 +1255,7 @@ header = """
 
 
 mine_map.get_root().html.add_child(
-    folium.Element(header)
+    Element(header)
 )
 
 
@@ -1021,6 +1270,10 @@ dashboard = """
         >
             ×
         </span>
+
+        <div class="eyebrow">
+            MINE SAFETY INTELLIGENCE
+        </div>
 
         <div
             id="dashboard-zone"
@@ -1038,22 +1291,67 @@ dashboard = """
 
     </div>
 
+
     <div class="dashboard-body">
+
 
         <div class="section">
 
             <div class="section-title">
-                AI RISK STATUS
+                AI RISK ASSESSMENT
             </div>
 
-            <div
-                id="terrain-condition"
-                class="condition"
-            >
-                UNKNOWN
+            <div class="risk-panel">
+
+                <div class="risk-top">
+
+                    <div>
+
+                        <div class="risk-status-label">
+                            CURRENT RISK
+                        </div>
+
+                        <div
+                            id="risk-level"
+                            class="risk-level"
+                        >
+                            UNKNOWN
+                        </div>
+
+                    </div>
+
+
+                    <div>
+
+                        <div
+                            id="risk-percent"
+                            class="risk-percent"
+                        >
+                            —
+                        </div>
+
+                        <div class="risk-percent-label">
+                            MODEL PROBABILITY
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="risk-track">
+
+                    <div
+                        id="risk-bar"
+                        class="risk-bar"
+                    ></div>
+
+                </div>
+
             </div>
 
         </div>
+
 
         <div class="section">
 
@@ -1064,268 +1362,261 @@ dashboard = """
             <div class="metrics">
 
                 <div class="metric">
+
                     <div class="metric-label">
                         Elevation
                     </div>
+
                     <div
                         id="elevation"
                         class="metric-value"
                     >
                         —
                     </div>
+
                 </div>
 
+
                 <div class="metric">
+
                     <div class="metric-label">
                         Mean Slope
                     </div>
+
                     <div
                         id="slope"
                         class="metric-value"
                     >
                         —
                     </div>
+
                 </div>
 
+
                 <div class="metric">
+
                     <div class="metric-label">
                         Max Slope
                     </div>
+
                     <div
                         id="max-slope"
                         class="metric-value"
                     >
                         —
                     </div>
+
                 </div>
 
-                <div class="metric">
-                    <div class="metric-label">
-                        Aspect
-                    </div>
-                    <div
-                        id="aspect"
-                        class="metric-value"
-                    >
-                        —
-                    </div>
-                </div>
 
                 <div class="metric">
-                    <div class="metric-label">
-                        Curvature
-                    </div>
-                    <div
-                        id="curvature"
-                        class="metric-value"
-                    >
-                        —
-                    </div>
-                </div>
 
-                <div class="metric">
                     <div class="metric-label">
                         Roughness
                     </div>
+
                     <div
                         id="roughness"
                         class="metric-value"
                     >
                         —
                     </div>
+
                 </div>
 
+
                 <div class="metric">
+
+                    <div class="metric-label">
+                        Aspect
+                    </div>
+
+                    <div
+                        id="aspect"
+                        class="metric-value"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+
+                <div class="metric">
+
+                    <div class="metric-label">
+                        Curvature
+                    </div>
+
+                    <div
+                        id="curvature"
+                        class="metric-value"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+
+                <div class="metric">
+
                     <div class="metric-label">
                         Roads
                     </div>
+
                     <div
                         id="roads"
                         class="metric-value"
                     >
                         —
                     </div>
+
                 </div>
 
+
                 <div class="metric">
+
                     <div class="metric-label">
                         Road Length
                     </div>
+
                     <div
                         id="road-length"
                         class="metric-value"
                     >
                         —
                     </div>
+
                 </div>
 
             </div>
 
         </div>
 
+
         <div class="section">
 
             <div class="section-title">
-                GIS TERRAIN INDICATORS
+                GIS TERRAIN SIGNALS
             </div>
 
-            <div class="metrics">
 
-                <div class="metric">
-                    <div class="metric-label">
+            <div class="indicator-card">
+
+                <div class="indicator-row">
+
+                    <span class="indicator-name">
                         Slope Indicator
-                    </div>
-                    <div
-                        id="slope-indicator"
-                        class="metric-value"
-                    >
-                        —
-                    </div>
-                </div>
-
-                <div class="metric">
-                    <div class="metric-label">
-                        Roughness Indicator
-                    </div>
-                    <div
-                        id="roughness-indicator"
-                        class="metric-value"
-                    >
-                        —
-                    </div>
-                </div>
-
-                <div class="metric">
-                    <div class="metric-label">
-                        Terrain Variability
-                    </div>
-                    <div
-                        id="terrain-variability"
-                        class="metric-value"
-                    >
-                        —
-                    </div>
-                </div>
-
-                <div class="metric">
-                    <div class="metric-label">
-                        GIS Indicator
-                    </div>
-                    <div
-                        id="gis-indicator"
-                        class="metric-value"
-                    >
-                        —
-                    </div>
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="section">
-
-            <div class="section-title">
-                LIVE SENSOR DATA
-            </div>
-
-            <div class="sensor-grid">
-
-                <div class="sensor">
-                    Displacement
-                    <div
-                        id="displacement"
-                        class="sensor-value"
-                    >
-                        Waiting
-                    </div>
-                </div>
-
-                <div class="sensor">
-                    Strain
-                    <div
-                        id="strain"
-                        class="sensor-value"
-                    >
-                        Waiting
-                    </div>
-                </div>
-
-                <div class="sensor">
-                    Pore Pressure
-                    <div
-                        id="pressure"
-                        class="sensor-value"
-                    >
-                        Waiting
-                    </div>
-                </div>
-
-                <div class="sensor">
-                    Rainfall
-                    <div
-                        id="rainfall"
-                        class="sensor-value"
-                    >
-                        Waiting
-                    </div>
-                </div>
-
-                <div class="sensor">
-                    Temperature
-                    <div
-                        id="temperature"
-                        class="sensor-value"
-                    >
-                        Waiting
-                    </div>
-                </div>
-
-                <div class="sensor">
-                    Vibration
-                    <div
-                        id="vibration"
-                        class="sensor-value"
-                    >
-                        Waiting
-                    </div>
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="section">
-
-            <div class="section-title">
-                AI RISK ENGINE
-            </div>
-
-            <div class="risk-box">
-
-                <div
-                    id="risk-level"
-                    class="risk-level"
-                >
-                    UNKNOWN
-                </div>
-
-                <div
-                    style="
-                    margin-top:7px;
-                    color:#64748b;
-                    font-size:12px;
-                    "
-                >
-                    Probability:
-                    <span id="risk-probability">
-                        Waiting for ML
                     </span>
+
+                    <span
+                        id="slope-indicator"
+                        class="indicator-value"
+                    >
+                        —
+                    </span>
+
+                </div>
+
+                <div class="indicator-track">
+
+                    <div
+                        id="slope-indicator-bar"
+                        class="indicator-bar"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <div class="indicator-card">
+
+                <div class="indicator-row">
+
+                    <span class="indicator-name">
+                        Roughness Indicator
+                    </span>
+
+                    <span
+                        id="roughness-indicator"
+                        class="indicator-value"
+                    >
+                        —
+                    </span>
+
+                </div>
+
+                <div class="indicator-track">
+
+                    <div
+                        id="roughness-indicator-bar"
+                        class="indicator-bar"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <div class="indicator-card">
+
+                <div class="indicator-row">
+
+                    <span class="indicator-name">
+                        Terrain Variability
+                    </span>
+
+                    <span
+                        id="terrain-variability"
+                        class="indicator-value"
+                    >
+                        —
+                    </span>
+
+                </div>
+
+                <div class="indicator-track">
+
+                    <div
+                        id="terrain-variability-bar"
+                        class="indicator-bar"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <div class="indicator-card">
+
+                <div class="indicator-row">
+
+                    <span class="indicator-name">
+                        Combined GIS Indicator
+                    </span>
+
+                    <span
+                        id="gis-indicator"
+                        class="indicator-value"
+                    >
+                        —
+                    </span>
+
+                </div>
+
+                <div class="indicator-track">
+
+                    <div
+                        id="gis-indicator-bar"
+                        class="indicator-bar"
+                    ></div>
+
                 </div>
 
             </div>
 
         </div>
+
 
         <div class="section">
 
@@ -1344,6 +1635,7 @@ dashboard = """
                     </li>
                 </ul>
 
+
                 <div class="recommendation">
 
                     <div class="recommendation-title">
@@ -1360,6 +1652,108 @@ dashboard = """
 
         </div>
 
+
+        <div class="section">
+
+            <div class="section-title">
+                LIVE SENSOR TELEMETRY
+            </div>
+
+            <div class="sensor-status">
+                ⏳ IoT telemetry awaiting sensor integration
+            </div>
+
+
+            <div class="sensor-grid">
+
+                <div class="sensor">
+
+                    Displacement
+
+                    <div
+                        id="displacement"
+                        class="sensor-value"
+                    >
+                        Waiting
+                    </div>
+
+                </div>
+
+
+                <div class="sensor">
+
+                    Strain
+
+                    <div
+                        id="strain"
+                        class="sensor-value"
+                    >
+                        Waiting
+                    </div>
+
+                </div>
+
+
+                <div class="sensor">
+
+                    Pore Pressure
+
+                    <div
+                        id="pressure"
+                        class="sensor-value"
+                    >
+                        Waiting
+                    </div>
+
+                </div>
+
+
+                <div class="sensor">
+
+                    Rainfall
+
+                    <div
+                        id="rainfall"
+                        class="sensor-value"
+                    >
+                        Waiting
+                    </div>
+
+                </div>
+
+
+                <div class="sensor">
+
+                    Temperature
+
+                    <div
+                        id="temperature"
+                        class="sensor-value"
+                    >
+                        Waiting
+                    </div>
+
+                </div>
+
+
+                <div class="sensor">
+
+                    Vibration
+
+                    <div
+                        id="vibration"
+                        class="sensor-value"
+                    >
+                        Waiting
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
     </div>
 
 </div>
@@ -1367,19 +1761,21 @@ dashboard = """
 
 
 mine_map.get_root().html.add_child(
-    folium.Element(dashboard)
+    Element(dashboard)
 )
 
 
 search_box = """
 <div id="mineguard-search">
 
-    🔎
+    <span class="search-icon">
+        ⌕
+    </span>
 
     <input
         id="zone-search"
         type="text"
-        placeholder="Search ZONE-001"
+        placeholder="Search zone e.g. ZONE-007"
     >
 
 </div>
@@ -1387,47 +1783,50 @@ search_box = """
 
 
 mine_map.get_root().html.add_child(
-    folium.Element(search_box)
+    Element(search_box)
 )
 
 
 legend = """
 <div id="mineguard-legend">
 
-    <b>AI Risk Heatmap</b>
-
-    <div class="legend-item">
-        <span
-            class="legend-dot"
-            style="background:#22c55e"
-        ></span>
-        LOW RISK
+    <div class="legend-title">
+        AI RISK INTELLIGENCE
     </div>
 
     <div class="legend-item">
+
         <span
-            class="legend-dot"
-            style="background:#f59e0b"
+            class="legend-line"
+            style="background:#ff4d67"
         ></span>
-        MODERATE RISK
+
+        High Risk
+
     </div>
+
 
     <div class="legend-item">
+
         <span
-            class="legend-dot"
-            style="background:#ef4444"
+            class="legend-line"
+            style="background:#f5b942"
         ></span>
-        HIGH RISK
+
+        Moderate Risk
+
     </div>
 
-    <div
-        style="
-        margin-top:8px;
-        color:#64748b;
-        font-size:10px;
-        "
-    >
-        Based on MineGuard AI prediction
+
+    <div class="legend-item">
+
+        <span
+            class="legend-line"
+            style="background:#22c7a5"
+        ></span>
+
+        Low Risk
+
     </div>
 
 </div>
@@ -1435,12 +1834,11 @@ legend = """
 
 
 mine_map.get_root().html.add_child(
-    folium.Element(legend)
+    Element(legend)
 )
 
 
 map_name = mine_map.get_name()
-
 zone_geojson_name = zone_geojson.get_name()
 
 
@@ -1494,14 +1892,78 @@ window.addEventListener(
                 ) {
 
                     const element =
-                        document.getElementById(
-                            id
-                        );
+                        document.getElementById(id);
 
                     if (element) {
-                        element.textContent =
-                            value;
+                        element.textContent = value;
                     }
+                }
+
+
+                function setBar(
+                    id,
+                    value
+                ) {
+
+                    const element =
+                        document.getElementById(id);
+
+                    if (!element) {
+                        return;
+                    }
+
+                    let numeric =
+                        Number(value);
+
+                    if (
+                        !Number.isFinite(numeric)
+                    ) {
+                        numeric = 0;
+                    }
+
+                    numeric =
+                        Math.max(
+                            0,
+                            Math.min(
+                                1,
+                                numeric
+                            )
+                        );
+
+                    element.style.width =
+                        (
+                            numeric * 100
+                        ) + "%";
+                }
+
+
+                function riskColor(
+                    level
+                ) {
+
+                    level =
+                        String(level)
+                            .toUpperCase();
+
+                    if (
+                        level === "HIGH"
+                    ) {
+                        return "#ff4d67";
+                    }
+
+                    if (
+                        level === "MODERATE"
+                    ) {
+                        return "#f5b942";
+                    }
+
+                    if (
+                        level === "LOW"
+                    ) {
+                        return "#22c7a5";
+                    }
+
+                    return "#94a3b8";
                 }
 
 
@@ -1542,10 +2004,97 @@ window.addEventListener(
                         "UNKNOWN";
 
 
+                    const riskColorValue =
+                        riskColor(
+                            riskLevel
+                        );
+
+
                     setElement(
-                        "terrain-condition",
+                        "risk-level",
                         riskLevel
                     );
+
+
+                    const riskLevelElement =
+                        document.getElementById(
+                            "risk-level"
+                        );
+
+
+                    if (riskLevelElement) {
+
+                        riskLevelElement.style.color =
+                            riskColorValue;
+                    }
+
+
+                    let probability =
+                        Number(
+                            properties.risk_probability
+                        );
+
+
+                    if (
+                        Number.isFinite(
+                            probability
+                        )
+                    ) {
+
+                        if (
+                            probability <= 1
+                        ) {
+
+                            probability *= 100;
+                        }
+
+                        probability =
+                            Math.max(
+                                0,
+                                Math.min(
+                                    100,
+                                    probability
+                                )
+                            );
+
+
+                        setElement(
+                            "risk-percent",
+                            probability.toFixed(2) + "%"
+                        );
+
+
+                        const riskBar =
+                            document.getElementById(
+                                "risk-bar"
+                            );
+
+
+                        if (riskBar) {
+
+                            riskBar.style.width =
+                                probability + "%";
+
+                            riskBar.style.background =
+                                riskColorValue;
+
+                            riskBar.style.boxShadow =
+                                "0 0 12px " +
+                                riskColorValue;
+                        }
+
+                    } else {
+
+                        setElement(
+                            "risk-percent",
+                            "—"
+                        );
+
+                        setBar(
+                            "risk-bar",
+                            0
+                        );
+                    }
 
 
                     setElement(
@@ -1576,6 +2125,15 @@ window.addEventListener(
 
 
                     setElement(
+                        "roughness",
+                        formatValue(
+                            properties.roughness,
+                            " m"
+                        )
+                    );
+
+
+                    setElement(
                         "aspect",
                         formatValue(
                             properties.aspect,
@@ -1588,15 +2146,6 @@ window.addEventListener(
                         "curvature",
                         formatValue(
                             properties.curvature
-                        )
-                    );
-
-
-                    setElement(
-                        "roughness",
-                        formatValue(
-                            properties.roughness,
-                            " m"
                         )
                     );
 
@@ -1647,6 +2196,30 @@ window.addEventListener(
                         formatValue(
                             properties.gis_indicator
                         )
+                    );
+
+
+                    setBar(
+                        "slope-indicator-bar",
+                        properties.slope_indicator
+                    );
+
+
+                    setBar(
+                        "roughness-indicator-bar",
+                        properties.roughness_indicator
+                    );
+
+
+                    setBar(
+                        "terrain-variability-bar",
+                        properties.terrain_variability
+                    );
+
+
+                    setBar(
+                        "gis-indicator-bar",
+                        properties.gis_indicator
                     );
 
 
@@ -1721,39 +2294,8 @@ window.addEventListener(
                     );
 
 
-                    if (
-                        properties.risk_probability !== null &&
-                        properties.risk_probability !== undefined
-                    ) {
-
-                        setElement(
-                            "risk-probability",
-                            (
-                                Number(
-                                    properties.risk_probability
-                                ) * 100
-                            ).toFixed(2)
-                            + "%"
-                        );
-
-                    } else {
-
-                        setElement(
-                            "risk-probability",
-                            "Waiting for ML"
-                        );
-                    }
-
-
-                    setElement(
-                        "risk-level",
-                        riskLevel
-                    );
-
-
-                    const riskFactors =
-                        properties.risk_factors ||
-                        [];
+                    const factors =
+                        properties.risk_factors || [];
 
 
                     const factorsElement =
@@ -1764,12 +2306,11 @@ window.addEventListener(
 
                     if (factorsElement) {
 
-                        factorsElement.innerHTML =
-                            "";
+                        factorsElement.innerHTML = "";
 
 
                         if (
-                            riskFactors.length === 0
+                            factors.length === 0
                         ) {
 
                             factorsElement.innerHTML =
@@ -1777,7 +2318,7 @@ window.addEventListener(
 
                         } else {
 
-                            riskFactors.forEach(
+                            factors.forEach(
                                 function(factor) {
 
                                     const li =
@@ -1802,92 +2343,6 @@ window.addEventListener(
                         properties.risk_recommendation ||
                         "Continue monitoring."
                     );
-
-
-                    const conditionBox =
-                        document.getElementById(
-                            "terrain-condition"
-                        );
-
-
-                    if (conditionBox) {
-
-                        if (
-                            riskLevel === "HIGH"
-                        ) {
-
-                            conditionBox.style.background =
-                                "#fee2e2";
-
-                            conditionBox.style.color =
-                                "#b91c1c";
-
-                        } else if (
-                            riskLevel === "MODERATE"
-                        ) {
-
-                            conditionBox.style.background =
-                                "#fef3c7";
-
-                            conditionBox.style.color =
-                                "#b45309";
-
-                        } else if (
-                            riskLevel === "LOW"
-                        ) {
-
-                            conditionBox.style.background =
-                                "#dcfce7";
-
-                            conditionBox.style.color =
-                                "#15803d";
-
-                        } else {
-
-                            conditionBox.style.background =
-                                "#f1f5f9";
-
-                            conditionBox.style.color =
-                                "#475569";
-                        }
-                    }
-
-
-                    const riskBox =
-                        document.getElementById(
-                            "risk-level"
-                        );
-
-
-                    if (riskBox) {
-
-                        if (
-                            riskLevel === "HIGH"
-                        ) {
-
-                            riskBox.style.color =
-                                "#dc2626";
-
-                        } else if (
-                            riskLevel === "MODERATE"
-                        ) {
-
-                            riskBox.style.color =
-                                "#d97706";
-
-                        } else if (
-                            riskLevel === "LOW"
-                        ) {
-
-                            riskBox.style.color =
-                                "#16a34a";
-
-                        } else {
-
-                            riskBox.style.color =
-                                "#64748b";
-                        }
-                    }
                 }
 
 
@@ -1933,14 +2388,33 @@ window.addEventListener(
                             layer.getBounds(),
                             {
                                 padding: [
-                                    80,
-                                    80
+                                    70,
+                                    410,
+                                    70,
+                                    70
                                 ],
                                 maxZoom: 16
                             }
                         );
                     }
                 }
+
+
+                zoneLayer.eachLayer(
+                    function(layer) {
+
+                        layer.on(
+                            "click",
+                            function() {
+
+                                openZone(
+                                    layer
+                                );
+                            }
+                        );
+
+                    }
+                );
 
 
                 window.searchZone =
@@ -1993,26 +2467,10 @@ window.addEventListener(
                                         layer
                                     );
                                 }
+
                             }
                         );
                     };
-
-
-                zoneLayer.eachLayer(
-                    function(layer) {
-
-                        layer.on(
-                            "click",
-                            function() {
-
-                                openZone(
-                                    layer
-                                );
-                            }
-                        );
-
-                    }
-                );
 
 
                 const searchInput =
@@ -2033,12 +2491,14 @@ window.addEventListener(
 
                                 window.searchZone();
                             }
+
                         }
                     );
                 }
 
+
             },
-            800
+            700
         );
 
     }
@@ -2061,9 +2521,7 @@ javascript = javascript.replace(
 
 
 mine_map.get_root().html.add_child(
-    folium.Element(
-        javascript
-    )
+    Element(javascript)
 )
 
 
@@ -2081,25 +2539,23 @@ mine_map.save(
 
 print()
 print("==========================================")
-print("MINEGUARD GIS DASHBOARD CREATED")
+print("MINEGUARD AI GIS DASHBOARD CREATED")
 print("==========================================")
 print()
-print(
-    f"Output: {OUTPUT_FILE}"
-)
-print(
-    f"Zones integrated: {len(zone_data)}"
-)
-print("JSON integration: SUCCESS")
-print("AI risk integration: SUCCESS")
-print("AI RISK HEATMAP: ENABLED")
-print("Explainable AI: ENABLED")
-print("DEM visualization: ENABLED")
-print("Slope visualization: ENABLED")
-print("Interactive dashboard: ENABLED")
-print("Zone search: ENABLED")
-print("Sensor layer: ENABLED")
-print("OpenStreetMap: ENABLED")
+print(f"Output: {OUTPUT_FILE}")
+print(f"Zones integrated: {len(zone_data)}")
+print()
+print("JSON integration       : SUCCESS")
+print("AI risk integration    : SUCCESS")
+print("Risk heatmap           : ENABLED")
+print("Explainable AI         : ENABLED")
+print("DEM visualization      : ENABLED")
+print("Slope visualization    : ENABLED")
+print("Interactive dashboard  : ENABLED")
+print("Professional UI        : ENABLED")
+print("Zone search            : ENABLED")
+print("Sensor layer           : ENABLED")
+print("IoT-ready              : YES")
 print()
 print("==========================================")
 print("OPEN mine_map.html")
