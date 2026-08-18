@@ -44,8 +44,13 @@ class FeatureAdapter:
         disp = telemetry.get("displacement_mm", 0.0)
         size = "large" if disp > 50.0 else ("medium" if disp > 10.0 else "small")
         
-        # Velocity in mm/h (conversion from mm/s: * 3600)
-        velocity_mm_h = rolling.get("displacement_change_rate", telemetry.get("slope_velocity_mm_s", 0.0) * 3600.0)
+            # Keep velocity in mm/s to match the real-time telemetry scale.
+            # The training pipeline currently does not learn meaningful velocity
+            # values, so avoid artificially multiplying the sensor value by 3600.
+        velocity_mm_h = rolling.get(
+            "displacement_change_rate",
+            telemetry.get("slope_velocity_mm_s", 0.0)
+        )
         accel_mm_h2 = rolling.get("vibration_acceleration", 0.0)
         
         feature_dict = {
