@@ -17,7 +17,8 @@ def run_simulation(
     interval: float = 1.0,
     duration: int = 10,
     seed: int = 42,
-    api_url: str = None
+    api_url: str = None,
+    sleep_enabled: bool = True
 ) -> list:
     """
     Run deterministic telemetry simulation loop.
@@ -54,7 +55,7 @@ def run_simulation(
             except Exception as e:
                 logger.warning(" Failed to POST telemetry to %s: %s", api_url, e)
                 
-        if interval > 0 and step < total_steps - 1:
+        if sleep_enabled and interval > 0 and step < total_steps - 1:
             time.sleep(interval)
             
     logger.info("Simulation completed. Total events generated: %d", len(generated_events))
