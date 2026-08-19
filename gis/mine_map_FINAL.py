@@ -3,6 +3,18 @@ import json
 import folium
 import geopandas as gpd
 
+try:
+    from simulation.config import DEFAULT_BASELINE_VALUES
+except Exception:
+    DEFAULT_BASELINE_VALUES = {
+        "displacement_mm": 4.2,
+        "strain": 0.21,
+        "pore_pressure_kpa": 31.5,
+        "rainfall_mm": 3.2,
+        "temperature_c": 28.5,
+        "vibration_g": 0.18,
+    }
+
 BASE_DIR = Path(__file__).resolve().parents[1]
 
 ZONE_FILE = BASE_DIR / "data" / "processed" / "gis" / "zones.geojson"
@@ -12,17 +24,6 @@ SENSOR_FILE = BASE_DIR / "data" / "processed" / "gis" / "sensors.geojson"
 OUTPUT_FILE = BASE_DIR / "mine_map.html"
 
 KUSUNDA = [23.7822, 86.3933]
-
-
-BASELINE_SENSOR_VALUES = {
-    "displacement_mm": 4.0,
-    "strain": 0.21,
-    "pore_pressure_kpa": 32.0,
-    "rainfall_mm": 3.0,
-    "temperature_c": 28.5,
-    "vibration_g": 0.18,
-}
-
 
 for path in (ZONE_FILE, ROAD_FILE, ZONE_DATA_FILE, SENSOR_FILE):
     if not path.exists():
@@ -43,6 +44,15 @@ zone_data = {
 zones = gpd.read_file(ZONE_FILE).to_crs("EPSG:4326")
 roads = gpd.read_file(ROAD_FILE).to_crs("EPSG:4326")
 sensors = gpd.read_file(SENSOR_FILE).to_crs("EPSG:4326")
+
+sensor_by_zone = {}
+
+for _, sensor in sensors.iterrows():
+    sensor_zone = str(sensor.get("zone_id", "")).strip()
+    sensor_id = str(sensor.get("sensor_id", "")).strip()
+
+    if sensor_zone:
+        sensor_by_zone[sensor_zone] = sensor_id
 
 
 def risk_color(value):
@@ -67,16 +77,9 @@ for _, zone in zones.iterrows():
     risk = record.get("risk", {})
     realtime = record.get("realtime", {})
 
-    sensor_number = zone_id.replace("ZONE-", "").strip()
-
-    # Every zone gets a real reference telemetry state.
-    # Zone 3 is upgraded to LIVE when the backend returns its reading.
     props = {
         "zone_id": zone_id,
         "mine_id": record.get("mine_id", "MINE-001"),
-        "sensor_id": f"SENSOR-{sensor_number}",
-        "sensor_count": 1,
-
         "terrain_condition": gis.get(
             "gis_terrain_condition",
             record.get("terrain_condition", "UNKNOWN"),
@@ -93,41 +96,48 @@ for _, zone in zones.iterrows():
         "roughness": gis.get("mean_roughness"),
         "road_count": gis.get("road_count"),
         "road_length": gis.get("road_length_km"),
-
-        "risk_level": risk.get("level", "LOW"),
-        "risk_probability": risk.get("probability", 0.0),
-
+        "risk_level": risk.get("level", "UNKNOWN"),
+        "risk_probability": risk.get("probability"),
+        "sensor_id": sensor_by_zone.get(zone_id),
+        "telemetry_source": (
+            "LIVE"
+            if any(
+                realtime.get(key) is not None
+                for key in (
+                    "displacement_mm",
+                    "strain",
+                    "pore_pressure_kpa",
+                    "rainfall_mm",
+                    "temperature_c",
+                    "vibration_g",
+                )
+            )
+            else "REFERENCE_BASELINE"
+        ),
         "displacement": realtime.get(
             "displacement_mm",
-            BASELINE_SENSOR_VALUES["displacement_mm"],
+            DEFAULT_BASELINE_VALUES["displacement_mm"],
         ),
         "strain": realtime.get(
             "strain",
-            BASELINE_SENSOR_VALUES["strain"],
+            DEFAULT_BASELINE_VALUES["strain"],
         ),
         "pressure": realtime.get(
             "pore_pressure_kpa",
-            BASELINE_SENSOR_VALUES["pore_pressure_kpa"],
+            DEFAULT_BASELINE_VALUES["pore_pressure_kpa"],
         ),
         "rainfall": realtime.get(
             "rainfall_mm",
-            BASELINE_SENSOR_VALUES["rainfall_mm"],
+            DEFAULT_BASELINE_VALUES["rainfall_mm"],
         ),
         "temperature": realtime.get(
             "temperature_c",
-            BASELINE_SENSOR_VALUES["temperature_c"],
+            DEFAULT_BASELINE_VALUES["temperature_c"],
         ),
         "vibration": realtime.get(
             "vibration_g",
-            BASELINE_SENSOR_VALUES["vibration_g"],
+            DEFAULT_BASELINE_VALUES["vibration_g"],
         ),
-
-        "telemetry_source": (
-            "LIVE"
-            if realtime
-            else "REFERENCE_BASELINE"
-        ),
-
         "risk_factors": risk.get("factors", []),
         "risk_recommendation": risk.get(
             "recommended_action",
@@ -398,7 +408,8 @@ ui_html = r"""
         </div>
 
         <div class="mg-card">
-            <div class="mg-label">LIVE SENSOR TELEMETRY</div>
+            <div class="mg-label">SENSOR TELEMETRY</div>
+            <div id="mg-telemetry-source" style="margin-top:6px;color:#94a3b8;font-size:9px;font-weight:800;">REFERENCE BASELINE</div>
             <div class="mg-sensors">
                 <div class="mg-sensor">Displacement<b id="s-displacement">—</b></div>
                 <div class="mg-sensor">Strain<b id="s-strain">—</b></div>
@@ -433,19 +444,9 @@ js = r"""
 (function () {
     "use strict";
 
-    const API_BASE = "http://127.0.0.1:8000/api/v1";
+    const API_BASE = "http://localhost:8000/api/v1";
     const MAP_NAME = "__MAP_NAME__";
     const ZONE_NAME = "__ZONE_NAME__";
-
-    const BASELINE_SENSOR_VALUES = {
-        displacement_mm: 4.0,
-        strain: 0.21,
-        pore_pressure_kpa: 32.0,
-        rainfall_mm: 3.0,
-        temperature_c: 28.5,
-        vibration_g: 0.18
-    };
-
 
     let mapInstance = null;
     let zoneLayer = null;
@@ -525,27 +526,18 @@ js = r"""
     function showZone(p) {
         if (!p) return;
 
-        selectedZone =
-            String(p.zone_id || "").toUpperCase();
+        selectedZone = String(p.zone_id || "").toUpperCase();
 
-        const dashboard =
-            document.getElementById("mg-dashboard");
-
-        if (dashboard) {
-            dashboard.style.display = "block";
-        }
+        document.getElementById("mg-dashboard").style.display = "block";
 
         text("mg-zone", p.zone_id || "ZONE");
         text("mg-mine", p.mine_id || "MINE-001");
 
-        const isLive =
-            String(p.telemetry_source || "").toUpperCase() === "LIVE";
-
         text(
             "mg-telemetry-source",
-            isLive
+            p.telemetry_source === "LIVE"
                 ? "● LIVE BACKEND TELEMETRY"
-                : "○ REFERENCE BASELINE • NO LIVE READING"
+                : "REFERENCE BASELINE • NO LIVE READING"
         );
 
         const source =
@@ -553,197 +545,65 @@ js = r"""
 
         if (source) {
             source.style.color =
-                isLive
+                p.telemetry_source === "LIVE"
                     ? "#22c7a5"
-                    : "#f5b942";
+                    : "#94a3b8";
         }
 
-        const level =
-            String(
-                p.risk_level ||
-                p.terrain_condition ||
-                "LOW"
-            ).toUpperCase();
+        const level = String(
+            p.risk_level || p.terrain_condition || "UNKNOWN"
+        ).toUpperCase();
 
         text("mg-risk", level);
 
-        const riskElement =
-            document.getElementById("mg-risk");
+        const risk = document.getElementById("mg-risk");
+        if (risk) risk.style.color = color(level);
 
-        if (riskElement) {
-            riskElement.style.color = color(level);
-        }
-
-        let probability =
-            Number(p.risk_probability);
-
-        if (
-            Number.isFinite(probability) &&
-            probability <= 1
-        ) {
-            probability *= 100;
-        }
+        let probability = Number(p.risk_probability);
+        if (Number.isFinite(probability) && probability <= 1) probability *= 100;
 
         text(
             "mg-score",
-            Number.isFinite(probability)
-                ? probability.toFixed(1) + "%"
-                : "—"
+            Number.isFinite(probability) ? probability.toFixed(1) + "%" : "—"
         );
 
-        const riskBar =
-            document.getElementById("mg-risk-bar");
-
+        const riskBar = document.getElementById("mg-risk-bar");
         if (riskBar) {
             riskBar.style.width =
-                (
-                    Number.isFinite(probability)
-                        ? Math.max(
-                            0,
-                            Math.min(100, probability)
-                        )
-                        : 0
-                ) + "%";
-
-            riskBar.style.background =
-                color(level);
+                (Number.isFinite(probability) ? Math.max(0, Math.min(100, probability)) : 0) + "%";
+            riskBar.style.background = color(level);
         }
 
-        text(
-            "m-elevation",
-            num(p.elevation) + " m"
-        );
+        text("m-elevation", num(p.elevation) + " m");
+        text("m-slope", num(p.slope) + "°");
+        text("m-max-slope", num(p.max_slope) + "°");
+        text("m-aspect", num(p.aspect) + "°");
+        text("m-roughness", num(p.roughness));
+        text("m-curvature", num(p.curvature, 4));
+        text("m-roads", p.road_count == null ? "—" : String(p.road_count));
+        text("m-road-length", num(p.road_length, 3) + " km");
 
-        text(
-            "m-slope",
-            num(p.slope) + "°"
-        );
-
-        text(
-            "m-max-slope",
-            num(p.max_slope) + "°"
-        );
-
-        text(
-            "m-aspect",
-            num(p.aspect) + "°"
-        );
-
-        text(
-            "m-roughness",
-            num(p.roughness)
-        );
-
-        text(
-            "m-curvature",
-            num(p.curvature, 4)
-        );
-
-        text(
-            "m-roads",
-            p.road_count == null
-                ? "—"
-                : String(p.road_count)
-        );
-
-        text(
-            "m-road-length",
-            num(p.road_length, 3) + " km"
-        );
-
-        text(
-            "i-slope",
-            pct(p.slope_indicator)
-        );
-
-        text(
-            "i-roughness",
-            pct(p.roughness_indicator)
-        );
-
-        text(
-            "i-variability",
-            pct(p.terrain_variability)
-        );
-
-        text(
-            "i-gis",
-            pct(p.gis_indicator)
-        );
+        text("i-slope", pct(p.slope_indicator));
+        text("i-roughness", pct(p.roughness_indicator));
+        text("i-variability", pct(p.terrain_variability));
+        text("i-gis", pct(p.gis_indicator));
 
         bar("b-slope", p.slope_indicator);
         bar("b-roughness", p.roughness_indicator);
         bar("b-variability", p.terrain_variability);
         bar("b-gis", p.gis_indicator);
 
-        const displacement =
-            p.displacement == null
-                ? BASELINE_SENSOR_VALUES.displacement_mm
-                : p.displacement;
+        text("s-displacement", num(p.displacement) + " mm");
+        text("s-strain", num(p.strain));
+        text("s-pressure", num(p.pressure) + " kPa");
+        text("s-rainfall", num(p.rainfall) + " mm");
+        text("s-temperature", num(p.temperature) + " °C");
+        text("s-vibration", num(p.vibration) + " g");
 
-        const strain =
-            p.strain == null
-                ? BASELINE_SENSOR_VALUES.strain
-                : p.strain;
-
-        const pressure =
-            p.pressure == null
-                ? BASELINE_SENSOR_VALUES.pore_pressure_kpa
-                : p.pressure;
-
-        const rainfall =
-            p.rainfall == null
-                ? BASELINE_SENSOR_VALUES.rainfall_mm
-                : p.rainfall;
-
-        const temperature =
-            p.temperature == null
-                ? BASELINE_SENSOR_VALUES.temperature_c
-                : p.temperature;
-
-        const vibration =
-            p.vibration == null
-                ? BASELINE_SENSOR_VALUES.vibration_g
-                : p.vibration;
-
-        text(
-            "s-displacement",
-            num(displacement) + " mm"
-        );
-
-        text(
-            "s-strain",
-            num(strain)
-        );
-
-        text(
-            "s-pressure",
-            num(pressure) + " kPa"
-        );
-
-        text(
-            "s-rainfall",
-            num(rainfall) + " mm"
-        );
-
-        text(
-            "s-temperature",
-            num(temperature) + " °C"
-        );
-
-        text(
-            "s-vibration",
-            num(vibration) + " g"
-        );
-
-        factors(
-            p.risk_factors || []
-        );
-
+        factors(p.risk_factors || []);
         text(
             "mg-action",
-            p.risk_recommendation ||
-            "Continue normal monitoring."
+            p.risk_recommendation || "Continue normal monitoring."
         );
     }
 
@@ -756,6 +616,10 @@ js = r"""
     function openLayer(layer) {
         if (!layer || !layer.feature || !layer.feature.properties) return;
 
+        selectedZone = String(
+            layer.feature.properties.zone_id || ""
+        ).toUpperCase();
+
         showZone(layer.feature.properties);
 
         if (mapInstance && layer.getBounds) {
@@ -767,34 +631,27 @@ js = r"""
     }
 
     function getSelectedZoneProperties() {
-        if (!zoneLayer || !selectedZone) {
-            return null;
-        }
+        if (!zoneLayer || !selectedZone) return null;
 
         let result = null;
 
-        zoneLayer.eachLayer(
-            function (layer) {
-                if (
-                    result ||
-                    !layer.feature ||
-                    !layer.feature.properties
-                ) {
-                    return;
-                }
-
-                const id =
-                    String(
-                        layer.feature.properties.zone_id ||
-                        ""
-                    ).toUpperCase();
-
-                if (id === selectedZone) {
-                    result =
-                        layer.feature.properties;
-                }
+        zoneLayer.eachLayer(function (layer) {
+            if (
+                result ||
+                !layer.feature ||
+                !layer.feature.properties
+            ) {
+                return;
             }
-        );
+
+            const id = String(
+                layer.feature.properties.zone_id || ""
+            ).toUpperCase();
+
+            if (id === selectedZone) {
+                result = layer.feature.properties;
+            }
+        });
 
         return result;
     }
@@ -874,171 +731,193 @@ js = r"""
     }
 
     async function liveUpdate() {
-        try {
-            const results = await Promise.all([
-                getJSON(
-                    API_BASE + "/sensors/latest"
-                ),
-                getJSON(
-                    API_BASE + "/risk/latest"
-                ),
-                getJSON(
-                    API_BASE + "/alerts/history"
-                )
-            ]);
+        let sensor = null;
+        let risk = null;
+        let alerts = null;
 
-            const sensor = results[0];
-            const risk = results[1];
-            const alerts = results[2];
+        try {
+            sensor = await getJSON(
+                API_BASE + "/sensors/latest"
+            );
+        } catch (error) {
+            console.error("Sensor API error:", error);
+        }
+
+        try {
+            risk = await getJSON(
+                API_BASE + "/risk/latest"
+            );
+        } catch (error) {
+            console.error("Risk API error:", error);
+        }
+
+        try {
+            alerts = await getJSON(
+                API_BASE + "/alerts/history"
+            );
+        } catch (error) {
+            console.warn("Alerts API error:", error);
+        }
+
+        if (!sensor && !risk) {
+            text("mg-status", "● BACKEND OFFLINE");
+
+            const status =
+                document.getElementById("mg-status");
+
+            if (status) {
+                status.style.color = "#ff4d67";
+            }
+
+            return;
+        }
+
+        text("mg-status", "● BACKEND ONLINE • LIVE");
+
+        const status =
+            document.getElementById("mg-status");
+
+        if (status) {
+            status.style.color = "#22c7a5";
+        }
+
+        if (risk) {
+            setLiveRisk(
+                risk.zone_id,
+                risk.risk_level,
+                risk.risk_score
+            );
+        }
+
+        /*
+         * Only the zone returned by the live sensor endpoint is
+         * upgraded from REFERENCE_BASELINE to LIVE.
+         *
+         * Every other zone keeps its own complete GIS data and
+         * baseline sensor values.
+         */
+        if (
+            sensor &&
+            sensor.sensors &&
+            selectedZone &&
+            selectedZone ===
+                String(sensor.zone_id || "").toUpperCase()
+        ) {
+            const base =
+                getSelectedZoneProperties() || {};
+
+            const s = sensor.sensors;
+
+            const merged =
+                Object.assign(
+                    {},
+                    base,
+                    {
+                        zone_id:
+                            sensor.zone_id ||
+                            base.zone_id,
+
+                        mine_id:
+                            sensor.mine_id ||
+                            base.mine_id,
+
+                        sensor_id:
+                            sensor.sensor_id ||
+                            base.sensor_id,
+
+                        telemetry_source:
+                            "LIVE",
+
+                        displacement:
+                            s.displacement_mm,
+
+                        strain:
+                            s.strain,
+
+                        pressure:
+                            s.pore_pressure_kpa,
+
+                        rainfall:
+                            s.rainfall_mm,
+
+                        temperature:
+                            s.temperature_c,
+
+                        vibration:
+                            s.vibration_g
+                    }
+                );
 
             if (risk) {
-                setLiveRisk(
-                    risk.zone_id,
-                    risk.risk_level,
-                    risk.risk_score
-                );
+                merged.risk_level =
+                    risk.risk_level;
+
+                merged.risk_probability =
+                    Number(risk.risk_score) / 100;
+
+                merged.risk_factors =
+                    risk.factors ||
+                    merged.risk_factors ||
+                    [];
+
+                merged.risk_recommendation =
+                    risk.recommended_action ||
+                    merged.risk_recommendation;
             }
 
-            /*
-             * Only replace telemetry for the zone for which the backend
-             * actually returned a reading. All other zones retain their
-             * reference baseline values.
-             */
-            if (
-                sensor &&
-                sensor.sensors &&
-                selectedZone &&
-                selectedZone ===
-                    String(
-                        sensor.zone_id || ""
-                    ).toUpperCase()
-            ) {
-                const base =
-                    getSelectedZoneProperties();
+            showZone(merged);
+        }
 
-                if (base) {
-                    const s = sensor.sensors;
+        if (
+            risk &&
+            selectedZone &&
+            selectedZone ===
+                String(risk.zone_id || "").toUpperCase()
+        ) {
+            const current =
+                getSelectedZoneProperties();
 
-                    const merged =
-                        Object.assign(
-                            {},
-                            base,
-                            {
-                                sensor_id:
-                                    sensor.sensor_id ||
-                                    base.sensor_id,
+            if (current) {
+                current.risk_level =
+                    risk.risk_level;
 
-                                telemetry_source:
-                                    "LIVE",
+                current.risk_probability =
+                    Number(risk.risk_score) / 100;
 
-                                displacement:
-                                    s.displacement_mm,
+                current.risk_factors =
+                    risk.factors ||
+                    current.risk_factors ||
+                    [];
 
-                                strain:
-                                    s.strain,
+                current.risk_recommendation =
+                    risk.recommended_action ||
+                    current.risk_recommendation;
 
-                                pressure:
-                                    s.pore_pressure_kpa,
-
-                                rainfall:
-                                    s.rainfall_mm,
-
-                                temperature:
-                                    s.temperature_c,
-
-                                vibration:
-                                    s.vibration_g
-                            }
-                        );
-
-                    if (
-                        risk &&
-                        selectedZone ===
-                            String(
-                                risk.zone_id || ""
-                            ).toUpperCase()
-                    ) {
-                        merged.risk_level =
-                            risk.risk_level;
-
-                        merged.risk_probability =
-                            Number(
-                                risk.risk_score
-                            ) / 100;
-
-                        merged.risk_factors =
-                            risk.factors ||
-                            merged.risk_factors ||
-                            [];
-
-                        merged.risk_recommendation =
-                            risk.recommended_action ||
-                            merged.risk_recommendation;
-                    }
-
-                    showZone(merged);
-                }
+                current.telemetry_source =
+                    "LIVE";
             }
+        }
+
+        if (
+            selectedZone &&
+            Array.isArray(alerts) &&
+            alerts.length > 0
+        ) {
+            const alert = alerts[0];
 
             if (
-                selectedZone &&
-                Array.isArray(alerts) &&
-                alerts.length > 0
+                String(alert.zone_id || "").toUpperCase() ===
+                selectedZone
             ) {
-                const alert = alerts[0];
-
-                if (
-                    String(
-                        alert.zone_id || ""
-                    ).toUpperCase() ===
-                    selectedZone
-                ) {
-                    factors(
-                        alert.factors || []
-                    );
-
-                    text(
-                        "mg-action",
-                        alert.recommended_action ||
-                        "Follow the latest safety instructions."
-                    );
-                }
-            }
-
-            text(
-                "mg-status",
-                "● BACKEND ONLINE • LIVE"
-            );
-
-            const status =
-                document.getElementById(
-                    "mg-status"
+                factors(
+                    alert.factors || []
                 );
 
-            if (status) {
-                status.style.color =
-                    "#22c7a5";
-            }
-
-        } catch (error) {
-            console.error(
-                "MineGuard API error:",
-                error
-            );
-
-            text(
-                "mg-status",
-                "● BACKEND OFFLINE"
-            );
-
-            const status =
-                document.getElementById(
-                    "mg-status"
+                text(
+                    "mg-action",
+                    alert.recommended_action ||
+                    "Follow the latest safety instructions."
                 );
-
-            if (status) {
-                status.style.color =
-                    "#ff4d67";
             }
         }
     }

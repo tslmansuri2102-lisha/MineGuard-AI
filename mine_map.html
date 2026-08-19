@@ -17,7 +17,7 @@
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_7ec4fdb79a0f49ad7e4cfc4f7050f875 {
+                #map_dbaee46697a2c133150c4c1f7f701021 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -49,36 +49,6 @@
                 L_DISABLE_3D = false;
             </script>
 
-        
-    
-            
-                <style>
-                    .leaflet-image-layer {
-                        /* old android/safari*/
-                        image-rendering: -webkit-optimize-contrast;
-                        image-rendering: crisp-edges; /* safari */
-                        image-rendering: pixelated; /* chrome */
-                        image-rendering: -moz-crisp-edges; /* firefox */
-                        image-rendering: -o-crisp-edges; /* opera */
-                        -ms-interpolation-mode: nearest-neighbor; /* ie */
-                    }
-                </style>
-            
-        
-    
-            
-                <style>
-                    .leaflet-image-layer {
-                        /* old android/safari*/
-                        image-rendering: -webkit-optimize-contrast;
-                        image-rendering: crisp-edges; /* safari */
-                        image-rendering: pixelated; /* chrome */
-                        image-rendering: -moz-crisp-edges; /* firefox */
-                        image-rendering: -o-crisp-edges; /* opera */
-                        -ms-interpolation-mode: nearest-neighbor; /* ie */
-                    }
-                </style>
-            
         
     
                     <style>
@@ -117,1779 +87,832 @@
     
     
 <style>
-
-@import url(
-'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap'
-);
-
-* {
-    box-sizing: border-box;
+html,body{width:100%;height:100%;margin:0;padding:0}
+#mg-header,#mg-status,#mg-search,#mg-legend,#mg-dashboard{
+position:fixed;z-index:9999;font-family:Arial,sans-serif}
+#mg-header{
+top:16px;left:16px;padding:14px 18px;border-radius:16px;
+background:rgba(7,15,28,.94);color:#e2e8f0;
+border:1px solid rgba(148,163,184,.25);
+box-shadow:0 12px 40px rgba(0,0,0,.25)}
+#mg-title{font-size:20px;font-weight:900}
+#mg-subtitle{margin-top:4px;color:#94a3b8;font-size:9px;font-weight:700;letter-spacing:1px}
+#mg-status{
+top:18px;right:18px;padding:9px 13px;border-radius:999px;
+background:rgba(7,15,28,.94);color:#22c7a5;
+border:1px solid rgba(34,199,165,.35);font-size:10px;font-weight:800}
+#mg-search{left:18px;bottom:20px;width:300px}
+#mg-search-inner{
+display:flex;gap:7px;padding:8px;border-radius:14px;
+background:rgba(7,15,28,.95);border:1px solid rgba(148,163,184,.25)}
+#zone-search{
+flex:1;min-width:0;border:0;outline:0;border-radius:9px;
+padding:10px;background:#111c2d;color:#e2e8f0}
+#zone-search::placeholder{color:#64748b}
+#zone-search-button{
+border:0;border-radius:9px;padding:0 13px;background:#22c7a5;
+color:#06111f;font-weight:900;cursor:pointer}
+#mg-legend{
+right:18px;bottom:20px;width:140px;padding:12px 14px;
+border-radius:14px;background:rgba(7,15,28,.95);color:#cbd5e1;
+border:1px solid rgba(148,163,184,.25);font-size:10px}
+.legend-title{color:#67e8f9;font-size:9px;font-weight:900;margin-bottom:8px}
+.legend-item{display:flex;gap:7px;align-items:center;margin-top:6px}
+.legend-color{width:22px;height:5px;border-radius:99px}
+#mg-dashboard{
+display:none;top:70px;right:18px;width:390px;max-height:calc(100vh - 90px);
+overflow:auto;border-radius:20px;background:rgba(7,15,28,.98);
+color:#e2e8f0;border:1px solid rgba(148,163,184,.25);
+box-shadow:0 24px 70px rgba(0,0,0,.4)}
+#mg-dashboard-header{
+position:sticky;top:0;padding:18px 20px;background:#07101c;
+border-bottom:1px solid rgba(148,163,184,.15)}
+#mg-close{float:right;font-size:24px;cursor:pointer;color:#94a3b8}
+.mg-eyebrow{color:#67e8f9;font-size:9px;font-weight:900;letter-spacing:1px}
+#mg-zone{font-size:27px;font-weight:900;margin-top:4px}
+#mg-mine{color:#94a3b8;font-size:11px}
+#mg-body{padding:15px}
+.mg-card{padding:14px;margin-bottom:12px;border-radius:15px;background:#0c1728;border:1px solid rgba(148,163,184,.13)}
+.mg-label{color:#94a3b8;font-size:9px;font-weight:900;letter-spacing:.7px}
+#mg-risk-row{display:flex;justify-content:space-between;align-items:end;margin-top:5px}
+#mg-risk{font-size:26px;font-weight:900}
+#mg-score{font-size:20px;font-weight:900}
+#mg-risk-track,.mg-track{height:7px;background:#1e293b;border-radius:99px;overflow:hidden;margin-top:10px}
+#mg-risk-bar,.mg-bar{height:100%;width:0;border-radius:99px;transition:width .3s}
+.mg-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.mg-metric{padding:10px;border-radius:10px;background:#111c2d;color:#94a3b8;font-size:9px;font-weight:800}
+.mg-value{display:block;color:#e2e8f0;font-size:14px;margin-top:4px;font-weight:900}
+.mg-indicator{margin-top:11px}
+.mg-head{display:flex;justify-content:space-between;font-size:9px;font-weight:800}
+.mg-sensors{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.mg-sensor{padding:10px;border-radius:10px;background:#111c2d;color:#94a3b8;font-size:9px}
+.mg-sensor b{display:block;color:#e2e8f0;font-size:14px;margin-top:4px}
+#mg-factors{margin:8px 0 0;padding-left:17px;font-size:10px;line-height:1.6}
+#mg-action{font-size:11px;font-weight:700;line-height:1.5;margin-top:8px}
+@media(max-width:900px){
+#mg-dashboard{left:10px;right:10px;width:auto;top:65px}
+#mg-status,#mg-legend{display:none}
+#mg-search{left:10px;right:10px;width:auto}
 }
-
-body {
-    font-family: Inter, Arial, sans-serif;
-}
-
-#mineguard-header {
-    position: fixed;
-    top: 18px;
-    left: 60px;
-    z-index: 9998;
-    min-width: 310px;
-    padding: 15px 20px;
-    border: 1px solid rgba(148,163,184,.25);
-    border-radius: 16px;
-    background: rgba(15,23,42,.94);
-    backdrop-filter: blur(14px);
-    box-shadow:
-        0 12px 35px rgba(0,0,0,.30);
-    color: #f8fafc;
-}
-
-#mineguard-header .title {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    font-size: 20px;
-    font-weight: 800;
-    letter-spacing: -.4px;
-}
-
-#mineguard-header .subtitle {
-    margin-top: 5px;
-    color: #94a3b8;
-    font-size: 10px;
-    letter-spacing: .5px;
-}
-
-.brand-mark {
-    width: 28px;
-    height: 28px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    background: linear-gradient(
-        135deg,
-        #22c7a5,
-        #0891b2
-    );
-    color: #082f49;
-    font-size: 15px;
-}
-
-#mineguard-status {
-    position: fixed;
-    top: 18px;
-    right: 65px;
-    z-index: 9998;
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    padding: 9px 14px;
-    border: 1px solid rgba(148,163,184,.25);
-    border-radius: 999px;
-    background: rgba(15,23,42,.92);
-    backdrop-filter: blur(12px);
-    box-shadow: 0 8px 25px rgba(0,0,0,.20);
-    color: #cbd5e1;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: .7px;
-}
-
-.status-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #22c7a5;
-    box-shadow: 0 0 10px rgba(34,199,165,.8);
-}
-
-#zone-dashboard {
-    position: fixed;
-    top: 78px;
-    right: 18px;
-    z-index: 10000;
-    width: 390px;
-    max-height: calc(100vh - 96px);
-    overflow-y: auto;
-    display: none;
-    border: 1px solid rgba(148,163,184,.20);
-    border-radius: 20px;
-    background: rgba(10,18,32,.96);
-    backdrop-filter: blur(20px);
-    box-shadow:
-        0 25px 70px rgba(0,0,0,.42);
-    color: #e2e8f0;
-    animation: panelIn .25s ease-out;
-}
-
-@keyframes panelIn {
-    from {
-        opacity: 0;
-        transform: translateX(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-#zone-dashboard::-webkit-scrollbar {
-    width: 5px;
-}
-
-#zone-dashboard::-webkit-scrollbar-thumb {
-    background: #334155;
-    border-radius: 10px;
-}
-
-.dashboard-header {
-    position: relative;
-    padding: 20px;
-    border-bottom: 1px solid rgba(148,163,184,.14);
-    background:
-        linear-gradient(
-            135deg,
-            rgba(30,41,59,.95),
-            rgba(15,23,42,.96)
-        );
-}
-
-.dashboard-header .eyebrow {
-    margin-bottom: 5px;
-    color: #22c7a5;
-    font-size: 9px;
-    font-weight: 800;
-    letter-spacing: 1.6px;
-}
-
-.dashboard-header .zone {
-    color: #f8fafc;
-    font-size: 24px;
-    font-weight: 800;
-}
-
-.dashboard-header .mine {
-    margin-top: 5px;
-    color: #94a3b8;
-    font-size: 11px;
-}
-
-.close-dashboard {
-    position: absolute;
-    top: 15px;
-    right: 17px;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid rgba(148,163,184,.20);
-    border-radius: 9px;
-    background: rgba(255,255,255,.05);
-    color: #94a3b8;
-    cursor: pointer;
-    font-size: 20px;
-    transition: .2s;
-}
-
-.close-dashboard:hover {
-    background: rgba(255,255,255,.10);
-    color: white;
-}
-
-.dashboard-body {
-    padding: 16px;
-}
-
-.section {
-    margin-bottom: 18px;
-}
-
-.section-title {
-    margin-bottom: 9px;
-    color: #64748b;
-    font-size: 9px;
-    font-weight: 800;
-    letter-spacing: 1.5px;
-}
-
-.risk-panel {
-    padding: 15px;
-    border: 1px solid rgba(148,163,184,.15);
-    border-radius: 14px;
-    background: rgba(30,41,59,.55);
-}
-
-.risk-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.risk-status-label {
-    color: #64748b;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 1px;
-}
-
-.risk-level {
-    margin-top: 4px;
-    font-size: 25px;
-    font-weight: 800;
-}
-
-.risk-percent {
-    color: #f8fafc;
-    font-size: 24px;
-    font-weight: 800;
-}
-
-.risk-percent-label {
-    margin-top: 2px;
-    color: #64748b;
-    font-size: 8px;
-    text-align: right;
-}
-
-.risk-track {
-    height: 6px;
-    margin-top: 14px;
-    overflow: hidden;
-    border-radius: 20px;
-    background: #1e293b;
-}
-
-.risk-bar {
-    height: 100%;
-    width: 0%;
-    border-radius: 20px;
-    transition: width .5s ease;
-}
-
-.metrics {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 7px;
-}
-
-.metric {
-    padding: 11px;
-    border: 1px solid rgba(148,163,184,.12);
-    border-radius: 11px;
-    background: rgba(30,41,59,.42);
-}
-
-.metric-label {
-    color: #64748b;
-    font-size: 8px;
-    font-weight: 700;
-    letter-spacing: .7px;
-    text-transform: uppercase;
-}
-
-.metric-value {
-    margin-top: 5px;
-    color: #f1f5f9;
-    font-size: 14px;
-    font-weight: 700;
-}
-
-.indicator-card {
-    margin-bottom: 8px;
-    padding: 10px 11px;
-    border: 1px solid rgba(148,163,184,.12);
-    border-radius: 11px;
-    background: rgba(30,41,59,.42);
-}
-
-.indicator-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.indicator-name {
-    color: #94a3b8;
-    font-size: 10px;
-}
-
-.indicator-value {
-    color: #f8fafc;
-    font-size: 10px;
-    font-weight: 700;
-}
-
-.indicator-track {
-    height: 4px;
-    margin-top: 7px;
-    overflow: hidden;
-    border-radius: 10px;
-    background: #1e293b;
-}
-
-.indicator-bar {
-    height: 100%;
-    border-radius: 10px;
-    background: #22c7a5;
-}
-
-.sensor-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 7px;
-}
-
-.sensor {
-    padding: 10px;
-    border: 1px solid rgba(103,232,249,.10);
-    border-radius: 10px;
-    background: rgba(8,47,73,.25);
-    color: #64748b;
-    font-size: 9px;
-}
-
-.sensor-value {
-    margin-top: 4px;
-    color: #67e8f9;
-    font-size: 12px;
-    font-weight: 700;
-}
-
-.sensor-status {
-    margin-bottom: 9px;
-    padding: 9px 10px;
-    border: 1px solid rgba(245,185,66,.15);
-    border-radius: 9px;
-    background: rgba(245,185,66,.06);
-    color: #f5b942;
-    font-size: 9px;
-}
-
-.explanation-box {
-    padding: 12px;
-    border: 1px solid rgba(148,163,184,.12);
-    border-radius: 12px;
-    background: rgba(30,41,59,.42);
-}
-
-.explanation-list {
-    margin: 0;
-    padding-left: 17px;
-    color: #cbd5e1;
-    font-size: 10px;
-    line-height: 1.9;
-}
-
-.recommendation {
-    margin-top: 12px;
-    padding: 11px;
-    border-left: 3px solid #22c7a5;
-    border-radius: 8px;
-    background: rgba(34,199,165,.06);
-    color: #cbd5e1;
-    font-size: 10px;
-    line-height: 1.55;
-}
-
-.recommendation-title {
-    margin-bottom: 5px;
-    color: #22c7a5;
-    font-size: 8px;
-    font-weight: 800;
-    letter-spacing: 1px;
-}
-
-#mineguard-search {
-    position: fixed;
-    bottom: 22px;
-    left: 24px;
-    z-index: 9998;
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    padding: 10px 13px;
-    border: 1px solid rgba(148,163,184,.22);
-    border-radius: 12px;
-    background: rgba(15,23,42,.94);
-    backdrop-filter: blur(12px);
-    box-shadow: 0 10px 30px rgba(0,0,0,.25);
-}
-
-.search-icon {
-    color: #22c7a5;
-}
-
-#mineguard-search input {
-    width: 180px;
-    border: none;
-    outline: none;
-    background: transparent;
-    color: #f8fafc;
-    font-family: Inter, Arial, sans-serif;
-    font-size: 11px;
-}
-
-#mineguard-search input::placeholder {
-    color: #64748b;
-}
-
-#mineguard-legend {
-    position: fixed;
-    right: 18px;
-    bottom: 22px;
-    z-index: 9998;
-    min-width: 170px;
-    padding: 13px;
-    border: 1px solid rgba(148,163,184,.20);
-    border-radius: 13px;
-    background: rgba(15,23,42,.94);
-    backdrop-filter: blur(12px);
-    box-shadow: 0 10px 30px rgba(0,0,0,.25);
-    color: #cbd5e1;
-    font-family: Inter, Arial, sans-serif;
-    font-size: 9px;
-}
-
-.legend-title {
-    margin-bottom: 9px;
-    color: #f8fafc;
-    font-size: 9px;
-    font-weight: 800;
-    letter-spacing: 1px;
-}
-
-.legend-item {
-    display: flex;
-    align-items: center;
-    margin: 7px 0;
-}
-
-.legend-line {
-    width: 18px;
-    height: 3px;
-    margin-right: 8px;
-    border-radius: 10px;
-}
-
-.leaflet-control-layers {
-    border: 1px solid rgba(148,163,184,.25) !important;
-    border-radius: 12px !important;
-    background: rgba(15,23,42,.94) !important;
-    color: #cbd5e1 !important;
-    box-shadow: 0 8px 25px rgba(0,0,0,.25) !important;
-}
-
-.leaflet-control-layers label {
-    color: #cbd5e1 !important;
-    font-family: Inter, Arial, sans-serif;
-    font-size: 11px;
-}
-
-.leaflet-control-zoom a {
-    background: rgba(15,23,42,.94) !important;
-    color: #cbd5e1 !important;
-    border-color: #334155 !important;
-}
-
-.leaflet-control-attribution {
-    background: rgba(15,23,42,.75) !important;
-    color: #94a3b8 !important;
-}
-
-.leaflet-control-attribution a {
-    color: #67e8f9 !important;
-}
-
-@media(max-width: 900px) {
-
-    #zone-dashboard {
-        width: calc(100vw - 20px);
-        right: 10px;
-        top: 70px;
-        max-height: calc(100vh - 80px);
-    }
-
-    #mineguard-header {
-        left: 55px;
-        min-width: 220px;
-    }
-
-    #mineguard-status {
-        display: none;
-    }
-
-    #mineguard-legend {
-        display: none;
-    }
-
-    #mineguard-search {
-        bottom: 15px;
-        left: 15px;
-    }
-
-}
-
 </style>
     
-<div id="mineguard-header">
-
-    <div class="title">
-
-        <span class="brand-mark">
-            ⛏
-        </span>
-
-        <span>
-            MineGuard AI
-        </span>
-
-    </div>
-
-    <div class="subtitle">
-        INTELLIGENT MINE SAFETY & TERRAIN INTELLIGENCE
-    </div>
-
+<div id="mg-header">
+    <div id="mg-title">⛏ MineGuard AI</div>
+    <div id="mg-subtitle">INTELLIGENT MINE SAFETY & TERRAIN INTELLIGENCE</div>
 </div>
 
-<div id="mineguard-status">
+<div id="mg-status">● CONNECTING</div>
 
-    <span class="status-dot"></span>
-
-    GIS SYSTEM ONLINE
-
+<div id="mg-search">
+    <div id="mg-search-inner">
+        <input id="zone-search" placeholder="Search ZONE-003" autocomplete="off">
+        <button id="zone-search-button" type="button">GO</button>
+    </div>
 </div>
-    
-<div id="zone-dashboard">
 
-    <div class="dashboard-header">
-
-        <span
-            class="close-dashboard"
-            onclick="closeZoneDashboard()"
-        >
-            ×
-        </span>
-
-        <div class="eyebrow">
-            MINE SAFETY INTELLIGENCE
-        </div>
-
-        <div
-            id="dashboard-zone"
-            class="zone"
-        >
-            ZONE-001
-        </div>
-
-        <div
-            id="dashboard-mine"
-            class="mine"
-        >
-            MINE-001
-        </div>
-
-    </div>
-
-
-    <div class="dashboard-body">
-
-
-        <div class="section">
-
-            <div class="section-title">
-                AI RISK ASSESSMENT
-            </div>
-
-            <div class="risk-panel">
-
-                <div class="risk-top">
-
-                    <div>
-
-                        <div class="risk-status-label">
-                            CURRENT RISK
-                        </div>
-
-                        <div
-                            id="risk-level"
-                            class="risk-level"
-                        >
-                            UNKNOWN
-                        </div>
-
-                    </div>
-
-
-                    <div>
-
-                        <div
-                            id="risk-percent"
-                            class="risk-percent"
-                        >
-                            —
-                        </div>
-
-                        <div class="risk-percent-label">
-                            MODEL PROBABILITY
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <div class="risk-track">
-
-                    <div
-                        id="risk-bar"
-                        class="risk-bar"
-                    ></div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="section">
-
-            <div class="section-title">
-                TERRAIN PROFILE
-            </div>
-
-            <div class="metrics">
-
-                <div class="metric">
-
-                    <div class="metric-label">
-                        Elevation
-                    </div>
-
-                    <div
-                        id="elevation"
-                        class="metric-value"
-                    >
-                        —
-                    </div>
-
-                </div>
-
-
-                <div class="metric">
-
-                    <div class="metric-label">
-                        Mean Slope
-                    </div>
-
-                    <div
-                        id="slope"
-                        class="metric-value"
-                    >
-                        —
-                    </div>
-
-                </div>
-
-
-                <div class="metric">
-
-                    <div class="metric-label">
-                        Max Slope
-                    </div>
-
-                    <div
-                        id="max-slope"
-                        class="metric-value"
-                    >
-                        —
-                    </div>
-
-                </div>
-
-
-                <div class="metric">
-
-                    <div class="metric-label">
-                        Roughness
-                    </div>
-
-                    <div
-                        id="roughness"
-                        class="metric-value"
-                    >
-                        —
-                    </div>
-
-                </div>
-
-
-                <div class="metric">
-
-                    <div class="metric-label">
-                        Aspect
-                    </div>
-
-                    <div
-                        id="aspect"
-                        class="metric-value"
-                    >
-                        —
-                    </div>
-
-                </div>
-
-
-                <div class="metric">
-
-                    <div class="metric-label">
-                        Curvature
-                    </div>
-
-                    <div
-                        id="curvature"
-                        class="metric-value"
-                    >
-                        —
-                    </div>
-
-                </div>
-
-
-                <div class="metric">
-
-                    <div class="metric-label">
-                        Roads
-                    </div>
-
-                    <div
-                        id="roads"
-                        class="metric-value"
-                    >
-                        —
-                    </div>
-
-                </div>
-
-
-                <div class="metric">
-
-                    <div class="metric-label">
-                        Road Length
-                    </div>
-
-                    <div
-                        id="road-length"
-                        class="metric-value"
-                    >
-                        —
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="section">
-
-            <div class="section-title">
-                GIS TERRAIN SIGNALS
-            </div>
-
-
-            <div class="indicator-card">
-
-                <div class="indicator-row">
-
-                    <span class="indicator-name">
-                        Slope Indicator
-                    </span>
-
-                    <span
-                        id="slope-indicator"
-                        class="indicator-value"
-                    >
-                        —
-                    </span>
-
-                </div>
-
-                <div class="indicator-track">
-
-                    <div
-                        id="slope-indicator-bar"
-                        class="indicator-bar"
-                    ></div>
-
-                </div>
-
-            </div>
-
-
-            <div class="indicator-card">
-
-                <div class="indicator-row">
-
-                    <span class="indicator-name">
-                        Roughness Indicator
-                    </span>
-
-                    <span
-                        id="roughness-indicator"
-                        class="indicator-value"
-                    >
-                        —
-                    </span>
-
-                </div>
-
-                <div class="indicator-track">
-
-                    <div
-                        id="roughness-indicator-bar"
-                        class="indicator-bar"
-                    ></div>
-
-                </div>
-
-            </div>
-
-
-            <div class="indicator-card">
-
-                <div class="indicator-row">
-
-                    <span class="indicator-name">
-                        Terrain Variability
-                    </span>
-
-                    <span
-                        id="terrain-variability"
-                        class="indicator-value"
-                    >
-                        —
-                    </span>
-
-                </div>
-
-                <div class="indicator-track">
-
-                    <div
-                        id="terrain-variability-bar"
-                        class="indicator-bar"
-                    ></div>
-
-                </div>
-
-            </div>
-
-
-            <div class="indicator-card">
-
-                <div class="indicator-row">
-
-                    <span class="indicator-name">
-                        Combined GIS Indicator
-                    </span>
-
-                    <span
-                        id="gis-indicator"
-                        class="indicator-value"
-                    >
-                        —
-                    </span>
-
-                </div>
-
-                <div class="indicator-track">
-
-                    <div
-                        id="gis-indicator-bar"
-                        class="indicator-bar"
-                    ></div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="section">
-
-            <div class="section-title">
-                WHY THIS ZONE IS AT RISK
-            </div>
-
-            <div class="explanation-box">
-
-                <ul
-                    id="risk-factors"
-                    class="explanation-list"
-                >
-                    <li>
-                        Waiting for risk analysis
-                    </li>
-                </ul>
-
-
-                <div class="recommendation">
-
-                    <div class="recommendation-title">
-                        RECOMMENDED ACTION
-                    </div>
-
-                    <div id="risk-recommendation">
-                        Continue monitoring.
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="section">
-
-            <div class="section-title">
-                LIVE SENSOR TELEMETRY
-            </div>
-
-            <div class="sensor-status">
-                ⏳ IoT telemetry awaiting sensor integration
-            </div>
-
-
-            <div class="sensor-grid">
-
-                <div class="sensor">
-
-                    Displacement
-
-                    <div
-                        id="displacement"
-                        class="sensor-value"
-                    >
-                        Waiting
-                    </div>
-
-                </div>
-
-
-                <div class="sensor">
-
-                    Strain
-
-                    <div
-                        id="strain"
-                        class="sensor-value"
-                    >
-                        Waiting
-                    </div>
-
-                </div>
-
-
-                <div class="sensor">
-
-                    Pore Pressure
-
-                    <div
-                        id="pressure"
-                        class="sensor-value"
-                    >
-                        Waiting
-                    </div>
-
-                </div>
-
-
-                <div class="sensor">
-
-                    Rainfall
-
-                    <div
-                        id="rainfall"
-                        class="sensor-value"
-                    >
-                        Waiting
-                    </div>
-
-                </div>
-
-
-                <div class="sensor">
-
-                    Temperature
-
-                    <div
-                        id="temperature"
-                        class="sensor-value"
-                    >
-                        Waiting
-                    </div>
-
-                </div>
-
-
-                <div class="sensor">
-
-                    Vibration
-
-                    <div
-                        id="vibration"
-                        class="sensor-value"
-                    >
-                        Waiting
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-    </div>
-
+<div id="mg-legend">
+    <div class="legend-title">AI RISK LEVEL</div>
+    <div class="legend-item"><span class="legend-color" style="background:#ff1744"></span>Critical</div>
+    <div class="legend-item"><span class="legend-color" style="background:#ff4d67"></span>High</div>
+    <div class="legend-item"><span class="legend-color" style="background:#f5b942"></span>Moderate</div>
+    <div class="legend-item"><span class="legend-color" style="background:#22c7a5"></span>Low</div>
 </div>
-    
-<div id="mineguard-search">
 
-    <span class="search-icon">
-        ⌕
-    </span>
-
-    <input
-        id="zone-search"
-        type="text"
-        placeholder="Search zone e.g. ZONE-007"
-    >
-
-</div>
-    
-<div id="mineguard-legend">
-
-    <div class="legend-title">
-        AI RISK INTELLIGENCE
+<div id="mg-dashboard">
+    <div id="mg-dashboard-header">
+        <span id="mg-close" onclick="closeZoneDashboard()">×</span>
+        <div class="mg-eyebrow">MINE SAFETY INTELLIGENCE</div>
+        <div id="mg-zone">ZONE</div>
+        <div id="mg-mine">MINE-001</div>
     </div>
 
-    <div class="legend-item">
+    <div id="mg-body">
+        <div class="mg-card">
+            <div class="mg-label">LIVE AI RISK ASSESSMENT</div>
+            <div id="mg-risk-row">
+                <div id="mg-risk">UNKNOWN</div>
+                <div id="mg-score">—</div>
+            </div>
+            <div id="mg-risk-track"><div id="mg-risk-bar"></div></div>
+        </div>
 
-        <span
-            class="legend-line"
-            style="background:#ff4d67"
-        ></span>
+        <div class="mg-card">
+            <div class="mg-label">TERRAIN PROFILE</div>
+            <div class="mg-grid">
+                <div class="mg-metric">Elevation<span id="m-elevation" class="mg-value">—</span></div>
+                <div class="mg-metric">Slope<span id="m-slope" class="mg-value">—</span></div>
+                <div class="mg-metric">Max Slope<span id="m-max-slope" class="mg-value">—</span></div>
+                <div class="mg-metric">Aspect<span id="m-aspect" class="mg-value">—</span></div>
+                <div class="mg-metric">Roughness<span id="m-roughness" class="mg-value">—</span></div>
+                <div class="mg-metric">Curvature<span id="m-curvature" class="mg-value">—</span></div>
+                <div class="mg-metric">Roads<span id="m-roads" class="mg-value">—</span></div>
+                <div class="mg-metric">Road Length<span id="m-road-length" class="mg-value">—</span></div>
+            </div>
+        </div>
 
-        High Risk
+        <div class="mg-card">
+            <div class="mg-label">GIS RISK INDICATORS</div>
+            <div class="mg-indicator"><div class="mg-head"><span>Slope</span><span id="i-slope">—</span></div><div class="mg-track"><div id="b-slope" class="mg-bar"></div></div></div>
+            <div class="mg-indicator"><div class="mg-head"><span>Roughness</span><span id="i-roughness">—</span></div><div class="mg-track"><div id="b-roughness" class="mg-bar"></div></div></div>
+            <div class="mg-indicator"><div class="mg-head"><span>Terrain Variability</span><span id="i-variability">—</span></div><div class="mg-track"><div id="b-variability" class="mg-bar"></div></div></div>
+            <div class="mg-indicator"><div class="mg-head"><span>GIS Indicator</span><span id="i-gis">—</span></div><div class="mg-track"><div id="b-gis" class="mg-bar"></div></div></div>
+        </div>
 
+        <div class="mg-card">
+            <div class="mg-label">LIVE SENSOR TELEMETRY</div>
+            <div class="mg-sensors">
+                <div class="mg-sensor">Displacement<b id="s-displacement">—</b></div>
+                <div class="mg-sensor">Strain<b id="s-strain">—</b></div>
+                <div class="mg-sensor">Pore Pressure<b id="s-pressure">—</b></div>
+                <div class="mg-sensor">Rainfall<b id="s-rainfall">—</b></div>
+                <div class="mg-sensor">Temperature<b id="s-temperature">—</b></div>
+                <div class="mg-sensor">Vibration<b id="s-vibration">—</b></div>
+            </div>
+        </div>
+
+        <div class="mg-card">
+            <div class="mg-label">WHY THIS ZONE IS AT RISK</div>
+            <ul id="mg-factors"><li>Waiting for AI analysis.</li></ul>
+        </div>
+
+        <div class="mg-card">
+            <div class="mg-label">RECOMMENDED ACTION</div>
+            <div id="mg-action">Continue normal monitoring.</div>
+        </div>
     </div>
-
-
-    <div class="legend-item">
-
-        <span
-            class="legend-line"
-            style="background:#f5b942"
-        ></span>
-
-        Moderate Risk
-
-    </div>
-
-
-    <div class="legend-item">
-
-        <span
-            class="legend-line"
-            style="background:#22c7a5"
-        ></span>
-
-        Low Risk
-
-    </div>
-
 </div>
     
 <script>
+(function () {
+    "use strict";
+
+    const API_BASE = "http://127.0.0.1:8000/api/v1";
+    const MAP_NAME = "map_dbaee46697a2c133150c4c1f7f701021";
+    const ZONE_NAME = "geo_json_5349ef580c042442b75169b669fc50c5";
+
+    const BASELINE_SENSOR_VALUES = {
+        displacement_mm: 4.0,
+        strain: 0.21,
+        pore_pressure_kpa: 32.0,
+        rainfall_mm: 3.0,
+        temperature_c: 28.5,
+        vibration_g: 0.18
+    };
+
+
+    let mapInstance = null;
+    let zoneLayer = null;
+    let selectedZone = null;
+
+    function runtime(name) {
+        try {
+            return window[name];
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function text(id, value) {
+        const e = document.getElementById(id);
+        if (e) e.textContent = value;
+    }
+
+    function num(value, digits) {
+        const n = Number(value);
+        return Number.isFinite(n)
+            ? n.toFixed(digits === undefined ? 2 : digits)
+            : "—";
+    }
+
+    function pct(value) {
+        const n = Number(value);
+        if (!Number.isFinite(n)) return "—";
+        return (Math.max(0, Math.min(1, n)) * 100).toFixed(1) + "%";
+    }
+
+    function color(level) {
+        level = String(level || "").toUpperCase();
+        if (level === "CRITICAL") return "#ff1744";
+        if (level === "HIGH") return "#ff4d67";
+        if (level === "MODERATE") return "#f5b942";
+        if (level === "LOW") return "#22c7a5";
+        return "#94a3b8";
+    }
+
+    function bar(id, value) {
+        const e = document.getElementById(id);
+        if (!e) return;
+        let n = Number(value);
+        if (!Number.isFinite(n)) n = 0;
+        n = Math.max(0, Math.min(1, n));
+        e.style.width = (n * 100) + "%";
+        e.style.background = "#22c7a5";
+    }
+
+    function factors(items) {
+        const list = document.getElementById("mg-factors");
+        if (!list) return;
+        list.innerHTML = "";
+
+        if (!Array.isArray(items) || items.length === 0) {
+            const li = document.createElement("li");
+            li.textContent = "No significant risk factors detected.";
+            list.appendChild(li);
+            return;
+        }
+
+        items.forEach(function (item) {
+            const li = document.createElement("li");
+            if (item && typeof item === "object") {
+                li.textContent =
+                    String(item.feature || "Risk factor") +
+                    " — " +
+                    String(item.impact || "DETECTED");
+            } else {
+                li.textContent = String(item);
+            }
+            list.appendChild(li);
+        });
+    }
+
+    function showZone(p) {
+        if (!p) return;
+
+        selectedZone =
+            String(p.zone_id || "").toUpperCase();
+
+        const dashboard =
+            document.getElementById("mg-dashboard");
+
+        if (dashboard) {
+            dashboard.style.display = "block";
+        }
 
-window.addEventListener(
-    "load",
-    function() {
+        text("mg-zone", p.zone_id || "ZONE");
+        text("mg-mine", p.mine_id || "MINE-001");
 
-        setTimeout(
-            function() {
+        const isLive =
+            String(p.telemetry_source || "").toUpperCase() === "LIVE";
 
-                const mapInstance =
-                    map_7ec4fdb79a0f49ad7e4cfc4f7050f875;
-
-                const zoneLayer =
-                    geo_json_ce3f38cf3efbecd24f31ea4b3278ab3c;
-
-
-                function formatValue(
-                    value,
-                    suffix
-                ) {
-
-                    if (
-                        value === null ||
-                        value === undefined ||
-                        value === ""
-                    ) {
-                        return "—";
-                    }
-
-                    if (
-                        typeof value === "number"
-                    ) {
-
-                        return value.toFixed(3)
-                            + (suffix || "");
-
-                    }
-
-                    return value
-                        + (suffix || "");
-                }
-
-
-                function setElement(
-                    id,
-                    value
-                ) {
-
-                    const element =
-                        document.getElementById(id);
-
-                    if (element) {
-                        element.textContent = value;
-                    }
-                }
-
-
-                function setBar(
-                    id,
-                    value
-                ) {
-
-                    const element =
-                        document.getElementById(id);
-
-                    if (!element) {
-                        return;
-                    }
-
-                    let numeric =
-                        Number(value);
-
-                    if (
-                        !Number.isFinite(numeric)
-                    ) {
-                        numeric = 0;
-                    }
-
-                    numeric =
-                        Math.max(
-                            0,
-                            Math.min(
-                                1,
-                                numeric
-                            )
-                        );
-
-                    element.style.width =
-                        (
-                            numeric * 100
-                        ) + "%";
-                }
-
-
-                function riskColor(
-                    level
-                ) {
-
-                    level =
-                        String(level)
-                            .toUpperCase();
-
-                    if (
-                        level === "HIGH"
-                    ) {
-                        return "#ff4d67";
-                    }
-
-                    if (
-                        level === "MODERATE"
-                    ) {
-                        return "#f5b942";
-                    }
-
-                    if (
-                        level === "LOW"
-                    ) {
-                        return "#22c7a5";
-                    }
-
-                    return "#94a3b8";
-                }
-
-
-                function showZoneDashboard(
-                    properties
-                ) {
-
-                    const dashboard =
-                        document.getElementById(
-                            "zone-dashboard"
-                        );
-
-                    if (!dashboard) {
-                        return;
-                    }
-
-
-                    dashboard.style.display =
-                        "block";
-
-
-                    setElement(
-                        "dashboard-zone",
-                        properties.zone_id ||
-                        "UNKNOWN"
-                    );
-
-
-                    setElement(
-                        "dashboard-mine",
-                        properties.mine_id ||
-                        "MINE-001"
-                    );
-
-
-                    const riskLevel =
-                        properties.risk_level ||
-                        "UNKNOWN";
-
-
-                    const riskColorValue =
-                        riskColor(
-                            riskLevel
-                        );
-
-
-                    setElement(
-                        "risk-level",
-                        riskLevel
-                    );
-
-
-                    const riskLevelElement =
-                        document.getElementById(
-                            "risk-level"
-                        );
-
-
-                    if (riskLevelElement) {
-
-                        riskLevelElement.style.color =
-                            riskColorValue;
-                    }
-
-
-                    let probability =
-                        Number(
-                            properties.risk_probability
-                        );
-
-
-                    if (
-                        Number.isFinite(
-                            probability
-                        )
-                    ) {
-
-                        if (
-                            probability <= 1
-                        ) {
-
-                            probability *= 100;
-                        }
-
-                        probability =
-                            Math.max(
-                                0,
-                                Math.min(
-                                    100,
-                                    probability
-                                )
-                            );
-
-
-                        setElement(
-                            "risk-percent",
-                            probability.toFixed(2) + "%"
-                        );
-
-
-                        const riskBar =
-                            document.getElementById(
-                                "risk-bar"
-                            );
-
-
-                        if (riskBar) {
-
-                            riskBar.style.width =
-                                probability + "%";
-
-                            riskBar.style.background =
-                                riskColorValue;
-
-                            riskBar.style.boxShadow =
-                                "0 0 12px " +
-                                riskColorValue;
-                        }
-
-                    } else {
-
-                        setElement(
-                            "risk-percent",
-                            "—"
-                        );
-
-                        setBar(
-                            "risk-bar",
-                            0
-                        );
-                    }
-
-
-                    setElement(
-                        "elevation",
-                        formatValue(
-                            properties.elevation,
-                            " m"
-                        )
-                    );
-
-
-                    setElement(
-                        "slope",
-                        formatValue(
-                            properties.slope,
-                            "°"
-                        )
-                    );
-
-
-                    setElement(
-                        "max-slope",
-                        formatValue(
-                            properties.max_slope,
-                            "°"
-                        )
-                    );
-
-
-                    setElement(
-                        "roughness",
-                        formatValue(
-                            properties.roughness,
-                            " m"
-                        )
-                    );
-
-
-                    setElement(
-                        "aspect",
-                        formatValue(
-                            properties.aspect,
-                            "°"
-                        )
-                    );
-
-
-                    setElement(
-                        "curvature",
-                        formatValue(
-                            properties.curvature
-                        )
-                    );
-
-
-                    setElement(
-                        "roads",
-                        formatValue(
-                            properties.road_count
-                        )
-                    );
-
-
-                    setElement(
-                        "road-length",
-                        formatValue(
-                            properties.road_length,
-                            " km"
-                        )
-                    );
-
-
-                    setElement(
-                        "slope-indicator",
-                        formatValue(
-                            properties.slope_indicator
-                        )
-                    );
-
-
-                    setElement(
-                        "roughness-indicator",
-                        formatValue(
-                            properties.roughness_indicator
-                        )
-                    );
-
-
-                    setElement(
-                        "terrain-variability",
-                        formatValue(
-                            properties.terrain_variability
-                        )
-                    );
-
-
-                    setElement(
-                        "gis-indicator",
-                        formatValue(
-                            properties.gis_indicator
-                        )
-                    );
-
-
-                    setBar(
-                        "slope-indicator-bar",
-                        properties.slope_indicator
-                    );
-
-
-                    setBar(
-                        "roughness-indicator-bar",
-                        properties.roughness_indicator
-                    );
-
-
-                    setBar(
-                        "terrain-variability-bar",
-                        properties.terrain_variability
-                    );
-
-
-                    setBar(
-                        "gis-indicator-bar",
-                        properties.gis_indicator
-                    );
-
-
-                    setElement(
-                        "displacement",
-                        properties.displacement !== null &&
-                        properties.displacement !== undefined
-                            ? formatValue(
-                                properties.displacement,
-                                " mm"
-                            )
-                            : "Waiting"
-                    );
-
-
-                    setElement(
-                        "strain",
-                        properties.strain !== null &&
-                        properties.strain !== undefined
-                            ? formatValue(
-                                properties.strain
-                            )
-                            : "Waiting"
-                    );
-
-
-                    setElement(
-                        "pressure",
-                        properties.pressure !== null &&
-                        properties.pressure !== undefined
-                            ? formatValue(
-                                properties.pressure,
-                                " kPa"
-                            )
-                            : "Waiting"
-                    );
-
-
-                    setElement(
-                        "rainfall",
-                        properties.rainfall !== null &&
-                        properties.rainfall !== undefined
-                            ? formatValue(
-                                properties.rainfall,
-                                " mm"
-                            )
-                            : "Waiting"
-                    );
-
-
-                    setElement(
-                        "temperature",
-                        properties.temperature !== null &&
-                        properties.temperature !== undefined
-                            ? formatValue(
-                                properties.temperature,
-                                " °C"
-                            )
-                            : "Waiting"
-                    );
-
-
-                    setElement(
-                        "vibration",
-                        properties.vibration !== null &&
-                        properties.vibration !== undefined
-                            ? formatValue(
-                                properties.vibration,
-                                " g"
-                            )
-                            : "Waiting"
-                    );
-
-
-                    const factors =
-                        properties.risk_factors || [];
-
-
-                    const factorsElement =
-                        document.getElementById(
-                            "risk-factors"
-                        );
-
-
-                    if (factorsElement) {
-
-                        factorsElement.innerHTML = "";
-
-
-                        if (
-                            factors.length === 0
-                        ) {
-
-                            factorsElement.innerHTML =
-                                "<li>No significant terrain factors detected.</li>";
-
-                        } else {
-
-                            factors.forEach(
-                                function(factor) {
-
-                                    const li =
-                                        document.createElement(
-                                            "li"
-                                        );
-
-                                    li.textContent =
-                                        factor;
-
-                                    factorsElement.appendChild(
-                                        li
-                                    );
-                                }
-                            );
-                        }
-                    }
-
-
-                    setElement(
-                        "risk-recommendation",
-                        properties.risk_recommendation ||
-                        "Continue monitoring."
-                    );
-                }
-
-
-                window.closeZoneDashboard =
-                    function() {
-
-                        const dashboard =
-                            document.getElementById(
-                                "zone-dashboard"
-                            );
-
-                        if (dashboard) {
-
-                            dashboard.style.display =
-                                "none";
-                        }
-                    };
-
-
-                function openZone(
-                    layer
-                ) {
-
-                    if (
-                        !layer ||
-                        !layer.feature ||
-                        !layer.feature.properties
-                    ) {
-                        return;
-                    }
-
-
-                    showZoneDashboard(
-                        layer.feature.properties
-                    );
-
-
-                    if (
-                        layer.getBounds
-                    ) {
-
-                        mapInstance.fitBounds(
-                            layer.getBounds(),
-                            {
-                                padding: [
-                                    70,
-                                    410,
-                                    70,
-                                    70
-                                ],
-                                maxZoom: 16
-                            }
-                        );
-                    }
-                }
-
-
-                zoneLayer.eachLayer(
-                    function(layer) {
-
-                        layer.on(
-                            "click",
-                            function() {
-
-                                openZone(
-                                    layer
-                                );
-                            }
-                        );
-
-                    }
-                );
-
-
-                window.searchZone =
-                    function() {
-
-                        const input =
-                            document.getElementById(
-                                "zone-search"
-                            );
-
-                        if (!input) {
-                            return;
-                        }
-
-
-                        const query =
-                            input.value
-                                .trim()
-                                .toUpperCase();
-
-
-                        if (!query) {
-                            return;
-                        }
-
-
-                        zoneLayer.eachLayer(
-                            function(layer) {
-
-                                if (
-                                    !layer.feature ||
-                                    !layer.feature.properties
-                                ) {
-                                    return;
-                                }
-
-
-                                const zoneId =
-                                    String(
-                                        layer.feature.properties.zone_id ||
-                                        ""
-                                    ).toUpperCase();
-
-
-                                if (
-                                    zoneId === query
-                                ) {
-
-                                    openZone(
-                                        layer
-                                    );
-                                }
-
-                            }
-                        );
-                    };
-
-
-                const searchInput =
-                    document.getElementById(
-                        "zone-search"
-                    );
-
-
-                if (searchInput) {
-
-                    searchInput.addEventListener(
-                        "keydown",
-                        function(event) {
-
-                            if (
-                                event.key === "Enter"
-                            ) {
-
-                                window.searchZone();
-                            }
-
-                        }
-                    );
-                }
-
-
-            },
-            700
+        text(
+            "mg-telemetry-source",
+            isLive
+                ? "● LIVE BACKEND TELEMETRY"
+                : "○ REFERENCE BASELINE • NO LIVE READING"
         );
 
-    }
-);
+        const source =
+            document.getElementById("mg-telemetry-source");
 
+        if (source) {
+            source.style.color =
+                isLive
+                    ? "#22c7a5"
+                    : "#f5b942";
+        }
+
+        const level =
+            String(
+                p.risk_level ||
+                p.terrain_condition ||
+                "LOW"
+            ).toUpperCase();
+
+        text("mg-risk", level);
+
+        const riskElement =
+            document.getElementById("mg-risk");
+
+        if (riskElement) {
+            riskElement.style.color = color(level);
+        }
+
+        let probability =
+            Number(p.risk_probability);
+
+        if (
+            Number.isFinite(probability) &&
+            probability <= 1
+        ) {
+            probability *= 100;
+        }
+
+        text(
+            "mg-score",
+            Number.isFinite(probability)
+                ? probability.toFixed(1) + "%"
+                : "—"
+        );
+
+        const riskBar =
+            document.getElementById("mg-risk-bar");
+
+        if (riskBar) {
+            riskBar.style.width =
+                (
+                    Number.isFinite(probability)
+                        ? Math.max(
+                            0,
+                            Math.min(100, probability)
+                        )
+                        : 0
+                ) + "%";
+
+            riskBar.style.background =
+                color(level);
+        }
+
+        text(
+            "m-elevation",
+            num(p.elevation) + " m"
+        );
+
+        text(
+            "m-slope",
+            num(p.slope) + "°"
+        );
+
+        text(
+            "m-max-slope",
+            num(p.max_slope) + "°"
+        );
+
+        text(
+            "m-aspect",
+            num(p.aspect) + "°"
+        );
+
+        text(
+            "m-roughness",
+            num(p.roughness)
+        );
+
+        text(
+            "m-curvature",
+            num(p.curvature, 4)
+        );
+
+        text(
+            "m-roads",
+            p.road_count == null
+                ? "—"
+                : String(p.road_count)
+        );
+
+        text(
+            "m-road-length",
+            num(p.road_length, 3) + " km"
+        );
+
+        text(
+            "i-slope",
+            pct(p.slope_indicator)
+        );
+
+        text(
+            "i-roughness",
+            pct(p.roughness_indicator)
+        );
+
+        text(
+            "i-variability",
+            pct(p.terrain_variability)
+        );
+
+        text(
+            "i-gis",
+            pct(p.gis_indicator)
+        );
+
+        bar("b-slope", p.slope_indicator);
+        bar("b-roughness", p.roughness_indicator);
+        bar("b-variability", p.terrain_variability);
+        bar("b-gis", p.gis_indicator);
+
+        const displacement =
+            p.displacement == null
+                ? BASELINE_SENSOR_VALUES.displacement_mm
+                : p.displacement;
+
+        const strain =
+            p.strain == null
+                ? BASELINE_SENSOR_VALUES.strain
+                : p.strain;
+
+        const pressure =
+            p.pressure == null
+                ? BASELINE_SENSOR_VALUES.pore_pressure_kpa
+                : p.pressure;
+
+        const rainfall =
+            p.rainfall == null
+                ? BASELINE_SENSOR_VALUES.rainfall_mm
+                : p.rainfall;
+
+        const temperature =
+            p.temperature == null
+                ? BASELINE_SENSOR_VALUES.temperature_c
+                : p.temperature;
+
+        const vibration =
+            p.vibration == null
+                ? BASELINE_SENSOR_VALUES.vibration_g
+                : p.vibration;
+
+        text(
+            "s-displacement",
+            num(displacement) + " mm"
+        );
+
+        text(
+            "s-strain",
+            num(strain)
+        );
+
+        text(
+            "s-pressure",
+            num(pressure) + " kPa"
+        );
+
+        text(
+            "s-rainfall",
+            num(rainfall) + " mm"
+        );
+
+        text(
+            "s-temperature",
+            num(temperature) + " °C"
+        );
+
+        text(
+            "s-vibration",
+            num(vibration) + " g"
+        );
+
+        factors(
+            p.risk_factors || []
+        );
+
+        text(
+            "mg-action",
+            p.risk_recommendation ||
+            "Continue normal monitoring."
+        );
+    }
+
+    window.closeZoneDashboard = function () {
+        const d = document.getElementById("mg-dashboard");
+        if (d) d.style.display = "none";
+        selectedZone = null;
+    };
+
+    function openLayer(layer) {
+        if (!layer || !layer.feature || !layer.feature.properties) return;
+
+        showZone(layer.feature.properties);
+
+        if (mapInstance && layer.getBounds) {
+            mapInstance.fitBounds(
+                layer.getBounds(),
+                { padding: [70, 430, 70, 70], maxZoom: 16 }
+            );
+        }
+    }
+
+    function getSelectedZoneProperties() {
+        if (!zoneLayer || !selectedZone) {
+            return null;
+        }
+
+        let result = null;
+
+        zoneLayer.eachLayer(
+            function (layer) {
+                if (
+                    result ||
+                    !layer.feature ||
+                    !layer.feature.properties
+                ) {
+                    return;
+                }
+
+                const id =
+                    String(
+                        layer.feature.properties.zone_id ||
+                        ""
+                    ).toUpperCase();
+
+                if (id === selectedZone) {
+                    result =
+                        layer.feature.properties;
+                }
+            }
+        );
+
+        return result;
+    }
+
+    function attachZones() {
+        if (!zoneLayer) return;
+
+        zoneLayer.eachLayer(function (layer) {
+            layer.off("click");
+            layer.on("click", function () {
+                openLayer(layer);
+            });
+        });
+    }
+
+    function searchZone() {
+        if (!zoneLayer) return;
+
+        const input = document.getElementById("zone-search");
+        if (!input) return;
+
+        let q = input.value.trim().toUpperCase();
+        if (!q) return;
+
+        if (!q.startsWith("ZONE-")) q = "ZONE-" + q;
+
+        let found = false;
+
+        zoneLayer.eachLayer(function (layer) {
+            if (!layer.feature || !layer.feature.properties) return;
+
+            const id = String(
+                layer.feature.properties.zone_id || ""
+            ).toUpperCase();
+
+            if (id === q) {
+                found = true;
+                openLayer(layer);
+            }
+        });
+
+        if (!found) {
+            window.alert("Zone " + q + " was not found.");
+        }
+    }
+
+    window.searchZone = searchZone;
+
+    function setLiveRisk(zoneId, level, score) {
+        if (!zoneLayer) return;
+
+        zoneLayer.eachLayer(function (layer) {
+            if (!layer.feature || !layer.feature.properties) return;
+
+            const p = layer.feature.properties;
+            const id = String(p.zone_id || "").toUpperCase();
+
+            if (id !== String(zoneId || "").toUpperCase()) return;
+
+            p.risk_level = level;
+            p.risk_probability = Number(score) / 100;
+
+            const c = color(level);
+            layer.setStyle({
+                color: c,
+                fillColor: c,
+                weight: 3,
+                fillOpacity: 0.42
+            });
+        });
+    }
+
+    async function getJSON(url) {
+        const r = await fetch(url, { cache: "no-store" });
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        return r.json();
+    }
+
+    async function liveUpdate() {
+        try {
+            const results = await Promise.all([
+                getJSON(
+                    API_BASE + "/sensors/latest"
+                ),
+                getJSON(
+                    API_BASE + "/risk/latest"
+                ),
+                getJSON(
+                    API_BASE + "/alerts/history"
+                )
+            ]);
+
+            const sensor = results[0];
+            const risk = results[1];
+            const alerts = results[2];
+
+            if (risk) {
+                setLiveRisk(
+                    risk.zone_id,
+                    risk.risk_level,
+                    risk.risk_score
+                );
+            }
+
+            /*
+             * Only replace telemetry for the zone for which the backend
+             * actually returned a reading. All other zones retain their
+             * reference baseline values.
+             */
+            if (
+                sensor &&
+                sensor.sensors &&
+                selectedZone &&
+                selectedZone ===
+                    String(
+                        sensor.zone_id || ""
+                    ).toUpperCase()
+            ) {
+                const base =
+                    getSelectedZoneProperties();
+
+                if (base) {
+                    const s = sensor.sensors;
+
+                    const merged =
+                        Object.assign(
+                            {},
+                            base,
+                            {
+                                sensor_id:
+                                    sensor.sensor_id ||
+                                    base.sensor_id,
+
+                                telemetry_source:
+                                    "LIVE",
+
+                                displacement:
+                                    s.displacement_mm,
+
+                                strain:
+                                    s.strain,
+
+                                pressure:
+                                    s.pore_pressure_kpa,
+
+                                rainfall:
+                                    s.rainfall_mm,
+
+                                temperature:
+                                    s.temperature_c,
+
+                                vibration:
+                                    s.vibration_g
+                            }
+                        );
+
+                    if (
+                        risk &&
+                        selectedZone ===
+                            String(
+                                risk.zone_id || ""
+                            ).toUpperCase()
+                    ) {
+                        merged.risk_level =
+                            risk.risk_level;
+
+                        merged.risk_probability =
+                            Number(
+                                risk.risk_score
+                            ) / 100;
+
+                        merged.risk_factors =
+                            risk.factors ||
+                            merged.risk_factors ||
+                            [];
+
+                        merged.risk_recommendation =
+                            risk.recommended_action ||
+                            merged.risk_recommendation;
+                    }
+
+                    showZone(merged);
+                }
+            }
+
+            if (
+                selectedZone &&
+                Array.isArray(alerts) &&
+                alerts.length > 0
+            ) {
+                const alert = alerts[0];
+
+                if (
+                    String(
+                        alert.zone_id || ""
+                    ).toUpperCase() ===
+                    selectedZone
+                ) {
+                    factors(
+                        alert.factors || []
+                    );
+
+                    text(
+                        "mg-action",
+                        alert.recommended_action ||
+                        "Follow the latest safety instructions."
+                    );
+                }
+            }
+
+            text(
+                "mg-status",
+                "● BACKEND ONLINE • LIVE"
+            );
+
+            const status =
+                document.getElementById(
+                    "mg-status"
+                );
+
+            if (status) {
+                status.style.color =
+                    "#22c7a5";
+            }
+
+        } catch (error) {
+            console.error(
+                "MineGuard API error:",
+                error
+            );
+
+            text(
+                "mg-status",
+                "● BACKEND OFFLINE"
+            );
+
+            const status =
+                document.getElementById(
+                    "mg-status"
+                );
+
+            if (status) {
+                status.style.color =
+                    "#ff4d67";
+            }
+        }
+    }
+
+    function initialize() {
+        mapInstance = runtime(MAP_NAME);
+        zoneLayer = runtime(ZONE_NAME);
+
+        if (!mapInstance || !zoneLayer) return false;
+
+        attachZones();
+
+        const input = document.getElementById("zone-search");
+        const button = document.getElementById("zone-search-button");
+
+        if (input) {
+            input.addEventListener("keydown", function (event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    searchZone();
+                }
+            });
+        }
+
+        if (button) button.addEventListener("click", searchZone);
+
+        liveUpdate();
+        window.setInterval(liveUpdate, 3000);
+
+        return true;
+    }
+
+    window.addEventListener("load", function () {
+        let tries = 0;
+
+        const timer = window.setInterval(function () {
+            tries += 1;
+
+            if (initialize()) {
+                window.clearInterval(timer);
+                return;
+            }
+
+            if (tries >= 40) {
+                window.clearInterval(timer);
+                console.error("MineGuard map initialization timed out.");
+            }
+        }, 250);
+    });
+
+})();
 </script>
     
-            <div class="folium-map" id="map_7ec4fdb79a0f49ad7e4cfc4f7050f875" ></div>
+            <div class="folium-map" id="map_dbaee46697a2c133150c4c1f7f701021" ></div>
         
 </body>
 <script>
     
     
-            var map_7ec4fdb79a0f49ad7e4cfc4f7050f875 = L.map(
-                "map_7ec4fdb79a0f49ad7e4cfc4f7050f875",
+            var map_dbaee46697a2c133150c4c1f7f701021 = L.map(
+                "map_dbaee46697a2c133150c4c1f7f701021",
                 {
                     center: [23.7822, 86.3933],
                     crs: L.CRS.EPSG3857,
@@ -1901,13 +924,13 @@ window.addEventListener(
 
                 }
             );
-            L.control.scale().addTo(map_7ec4fdb79a0f49ad7e4cfc4f7050f875);
+            L.control.scale().addTo(map_dbaee46697a2c133150c4c1f7f701021);
 
             
 
         
     
-            var tile_layer_accf9c231ed34b616200da1ace5a5dbf = L.tileLayer(
+            var tile_layer_a00ca76dcab397b103716704f58a52df = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {
   "minZoom": 0,
@@ -1924,118 +947,76 @@ window.addEventListener(
             );
         
     
-            tile_layer_accf9c231ed34b616200da1ace5a5dbf.addTo(map_7ec4fdb79a0f49ad7e4cfc4f7050f875);
+            tile_layer_a00ca76dcab397b103716704f58a52df.addTo(map_dbaee46697a2c133150c4c1f7f701021);
         
     
-            var feature_group_cf39a80b14dc08e2c12def5f2aaebe6d = L.featureGroup(
+            var feature_group_b387cc5f28a985b17334af30271bde9c = L.featureGroup(
                 {
 }
             );
         
     
-            var image_overlay_e8c4a2468a016b68b0a7ca7252fb7374 = L.imageOverlay(
-                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAXCAAAAAA5VKC2AAABd0lEQVR4nH2RXY4bMQyDSfpnku4GvUXvf68+dbFIM2NLLJQDVE8GRH0mJeI3HeFESqLdkEmuhJ3+1ZFCg4lhgoJhpEkwaAi0SKo1GfWwBIAATXQAUWpmEjUlF8aAnOiwXUCigHp/qUAhMiFMGnbJ2RpVKhNVbOjI3mMTYomqB9JRfKLaVI8g0VSW7crkzLTKWpxsoBRJAeb6uxupFR4Fh59jdidtsynn8wS8XzzmQEf/vL7mx2EoN1PKvc9cr5gVsEMY6+/6PMp/oLW9rldYQ1s1TdyO53XOyP6jr0wn7ls37Wuo/ub8OL++tflwvB03jNtD+3tWMFOPa52UOqG2mhtv92F+hCs3NH7Gnxz3Dpdidjc5w1ltpXR/5KWRJzva/d4d2/tKF1zBvj9xxYJpjqlW203X2QSO3nqfqJXtBSEjTB6s63b0QBiMrAtJSsBoY+T3G85NJMKp1oYEymjHEfAzahpL4P1cUhfbIUSfN2bv8/U++3/qH8iD8xRbYzK+AAAAAElFTkSuQmCC",
-                [[23.77875, 86.38986111111112], [23.785138888888888, 86.39819444444446]],
-                {
-  "opacity": 0.42,
-  "interactive": true,
-  "crossOrigin": false,
-  "zindex": 1,
-}
-            );
-        
-    
-            image_overlay_e8c4a2468a016b68b0a7ca7252fb7374.addTo(feature_group_cf39a80b14dc08e2c12def5f2aaebe6d);
-        
-    
-            var feature_group_c6f2fa561bf477ce756381ded4bda70e = L.featureGroup(
-                {
-}
-            );
-        
-    
-            var image_overlay_c3eff78c0e4e4639c694082e239cf4ec = L.imageOverlay(
-                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAXCAAAAAA5VKC2AAABxklEQVR4nCVSyW5UMRCsXvy22cJwgCB+ijN3/oLP4l84I4SEFMhkMsnb3C7khy25W12qaqtUkp++fX0EKcrIRRBQiimLffzy6eyApBACFQWgImQUiIgAXidBQsgiym1cCk3NRMSBQlsrUUQFhGA7uuFaRXOpCLQ+IigkSwRM4FUVrGTVWutGggypvVdSkqXqEShqRgNp5lr+f61NiMJKqxs7dyW8tf1KOLj2dyOWYFUXSUOX3LxJRaegg+PU9P3zGKKuYDMM0NQ617hFcWD23B8Ot5WFYtJ0XZ7m6zJ5+1roInx7nfvdKWK6rdYkzfPzZMmxgBX2rv19OfWSOb4w8oIcw93Rpnmn6pB2Pr3/+asxV07LZNZ2++NOFvZ7r3B38Tf3Px710AQLtT8eOhsvNzu1Wm1JNw6ne13lZVJDsz/2uP29SNNLNRVqj/vzcLxcXyQZXKfXdRytQS7YTG3/PIit8zha6jStt+vSprZZYzNVRMYn7+YMAy1hHnNM7IfNZRdQWgQMa7TGXDIaneeFQ9MKnDh/nkqUZVnWYGqSm5V1zvDunUKe1zFIRo4alBolkdqxhO3Mv384KGo6ag5lu1tlRIwP/wDYmwcTOxJhXAAAAABJRU5ErkJggg==",
-                [[23.77877868536618, 86.3898312967052], [23.78517143564985, 86.39816966664041]],
-                {
-  "opacity": 0.42,
-  "interactive": true,
-  "crossOrigin": false,
-  "zindex": 2,
-}
-            );
-        
-    
-            image_overlay_c3eff78c0e4e4639c694082e239cf4ec.addTo(feature_group_c6f2fa561bf477ce756381ded4bda70e);
-        
-    
-            var feature_group_db85705996e7e0f5cef8c190da4ac829 = L.featureGroup(
-                {
-}
-            );
-        
-    
-            var polygon_faf9a990e58c045dfc6649497d39ac22 = L.polygon(
+            var polygon_14f28da08f3bd0790fdb9d596cddd826 = L.polygon(
                 [[23.787, 86.387], [23.787, 86.401], [23.779, 86.402], [23.777, 86.389]],
-                {"bubblingMouseEvents": true, "color": "#64748b", "dashArray": "7 7", "dashOffset": null, "fill": false, "fillColor": "#64748b", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 2}
-            ).addTo(feature_group_db85705996e7e0f5cef8c190da4ac829);
+                {"bubblingMouseEvents": true, "color": "#111827", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#111827", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 3}
+            ).addTo(feature_group_b387cc5f28a985b17334af30271bde9c);
         
     
-        var popup_2c452e8231c9bcfc129fc0053d1113ee = L.popup({
+        var popup_bcc33d6b429236030f4090e1c2d61d8a = L.popup({
   "maxWidth": "100%",
 });
 
         
             
-                var html_3868b5455c272e40c1aafdcb30c2e0b9 = $(`<div id="html_3868b5455c272e40c1aafdcb30c2e0b9" style="width: 100.0%; height: 100.0%;">Kusunda Mine Study Area</div>`)[0];
-                popup_2c452e8231c9bcfc129fc0053d1113ee.setContent(html_3868b5455c272e40c1aafdcb30c2e0b9);
+                var html_dcadcf72717d36e0dae50e7ca8a765c9 = $(`<div id="html_dcadcf72717d36e0dae50e7ca8a765c9" style="width: 100.0%; height: 100.0%;">Kusunda Mine Study Area</div>`)[0];
+                popup_bcc33d6b429236030f4090e1c2d61d8a.setContent(html_dcadcf72717d36e0dae50e7ca8a765c9);
             
         
 
-        polygon_faf9a990e58c045dfc6649497d39ac22.bindPopup(popup_2c452e8231c9bcfc129fc0053d1113ee)
+        polygon_14f28da08f3bd0790fdb9d596cddd826.bindPopup(popup_bcc33d6b429236030f4090e1c2d61d8a)
         ;
 
         
     
     
-            feature_group_db85705996e7e0f5cef8c190da4ac829.addTo(map_7ec4fdb79a0f49ad7e4cfc4f7050f875);
+            feature_group_b387cc5f28a985b17334af30271bde9c.addTo(map_dbaee46697a2c133150c4c1f7f701021);
         
     
-            var feature_group_37a4f636afc20ac08f494aebd8ae8d77 = L.featureGroup(
+            var feature_group_3317fceec3bb4d43fb7851833b7efa78 = L.featureGroup(
                 {
 }
             );
         
     
-        function geo_json_13a48d8c01d4d09e1b48f9317519cbdc_styler(feature) {
+        function geo_json_d2a44c48a8bb790c26c98367ab697134_styler(feature) {
             switch(feature.id) {
                 default:
-                    return {"color": "#64748b", "opacity": 0.65, "weight": 1.8};
+                    return {"color": "#64748b", "opacity": 0.7, "weight": 2};
             }
         }
 
-        function geo_json_13a48d8c01d4d09e1b48f9317519cbdc_onEachFeature(feature, layer) {
+        function geo_json_d2a44c48a8bb790c26c98367ab697134_onEachFeature(feature, layer) {
 
             layer.on({
             });
         };
-        var geo_json_13a48d8c01d4d09e1b48f9317519cbdc = L.geoJson(null, {
-                onEachFeature: geo_json_13a48d8c01d4d09e1b48f9317519cbdc_onEachFeature,
+        var geo_json_d2a44c48a8bb790c26c98367ab697134 = L.geoJson(null, {
+                onEachFeature: geo_json_d2a44c48a8bb790c26c98367ab697134_onEachFeature,
             
-                style: geo_json_13a48d8c01d4d09e1b48f9317519cbdc_styler,
+                style: geo_json_d2a44c48a8bb790c26c98367ab697134_styler,
             ...{
 }
         });
 
-        function geo_json_13a48d8c01d4d09e1b48f9317519cbdc_add (data) {
-            geo_json_13a48d8c01d4d09e1b48f9317519cbdc
+        function geo_json_d2a44c48a8bb790c26c98367ab697134_add (data) {
+            geo_json_d2a44c48a8bb790c26c98367ab697134
                 .addData(data);
         }
-            geo_json_13a48d8c01d4d09e1b48f9317519cbdc_add({"features": [{"geometry": {"coordinates": [[86.3916323, 23.7842158], [86.3918522, 23.7841397], [86.392048, 23.7840317], [86.392276, 23.7838943], [86.3926875, 23.7836446]], "type": "LineString"}, "id": "0", "properties": {"highway": "trunk", "key": 0, "length": 125.2027825030172, "oneway": true, "osmid": 117695861, "ref": "NH18", "reversed": false, "u": 2466491371, "v": 9507564880}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3952264, 23.7838206], [86.39561, 23.784071], [86.3959184, 23.7842722], [86.3960129, 23.7843282]], "type": "LineString"}, "id": "1", "properties": {"highway": "trunk", "key": 0, "length": 97.93961456974557, "oneway": true, "osmid": 117695861, "ref": "NH18", "reversed": false, "u": 9445014254, "v": 9503984325}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3952264, 23.7838206], [86.3949057, 23.7840977], [86.3947321, 23.7842421], [86.3947163, 23.7842875], [86.3947275, 23.7843433], [86.3947691, 23.7844816], [86.3947668, 23.7845085], [86.3947573, 23.7845324], [86.3947254, 23.7845655], [86.394615, 23.7846265], [86.3945561, 23.7846384], [86.3944637, 23.7846384], [86.3939473, 23.7846135], [86.3938457, 23.7846178], [86.3937651, 23.78463], [86.3935569, 23.7847007]], "type": "LineString"}, "id": "2", "properties": {"highway": "residential", "key": 0, "length": 229.57995104841845, "oneway": false, "osmid": 1031625796, "ref": null, "reversed": false, "u": 9445014254, "v": 9507614858}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3944902, 23.7833408], [86.3946846, 23.7834598], [86.394918, 23.7836071], [86.3952264, 23.7838206]], "type": "LineString"}, "id": "3", "properties": {"highway": "trunk", "key": 0, "length": 91.99632955382843, "oneway": true, "osmid": 117695861, "ref": "NH18", "reversed": false, "u": 9445014256, "v": 9445014254}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3944902, 23.7833408], [86.3941364, 23.783437], [86.3940269, 23.7834605], [86.3939343, 23.7834929], [86.3931478, 23.7839513]], "type": "LineString"}, "id": "4", "properties": {"highway": "residential", "key": 0, "length": 153.9690491516272, "oneway": false, "osmid": 1031621824, "ref": null, "reversed": true, "u": 9445014256, "v": 9507564884}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3926875, 23.7836446], [86.3930163, 23.7834451], [86.3932537, 23.7833064], [86.3934696, 23.7832156], [86.3936198, 23.7831677], [86.3937686, 23.7831432], [86.3939095, 23.7831371], [86.394061, 23.7831493], [86.3941924, 23.7831849], [86.3943239, 23.7832377], [86.3944902, 23.7833408]], "type": "LineString"}, "id": "5", "properties": {"highway": "trunk", "key": 0, "length": 203.37077518653476, "oneway": true, "osmid": 117695861, "ref": "NH18", "reversed": false, "u": 9507564880, "v": 9445014256}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3926875, 23.7836446], [86.392947, 23.7839162], [86.3929989, 23.7839493], [86.3930666, 23.7839637], [86.3931478, 23.7839513]], "type": "LineString"}, "id": "6", "properties": {"highway": "residential", "key": 0, "length": 62.001470897101285, "oneway": false, "osmid": 1031621824, "ref": null, "reversed": false, "u": 9507564880, "v": 9507564884}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3931478, 23.7839513], [86.3935569, 23.7847007]], "type": "LineString"}, "id": "7", "properties": {"highway": "residential", "key": 0, "length": 93.14817787461877, "oneway": false, "osmid": 1031625797, "ref": null, "reversed": false, "u": 9507564884, "v": 9507614858}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3931478, 23.7839513], [86.3939343, 23.7834929], [86.3940269, 23.7834605], [86.3941364, 23.783437], [86.3944902, 23.7833408]], "type": "LineString"}, "id": "8", "properties": {"highway": "residential", "key": 0, "length": 153.9690491516272, "oneway": false, "osmid": 1031621824, "ref": null, "reversed": false, "u": 9507564884, "v": 9445014256}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3931478, 23.7839513], [86.3930666, 23.7839637], [86.3929989, 23.7839493], [86.392947, 23.7839162], [86.3926875, 23.7836446]], "type": "LineString"}, "id": "9", "properties": {"highway": "residential", "key": 0, "length": 62.001470897101285, "oneway": false, "osmid": 1031621824, "ref": null, "reversed": true, "u": 9507564884, "v": 9507564880}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3901232, 23.7845382], [86.3903012, 23.7841453]], "type": "LineString"}, "id": "10", "properties": {"highway": "residential", "key": 0, "length": 47.2940157016978, "oneway": false, "osmid": 1031594633, "ref": null, "reversed": false, "u": 9507566189, "v": 9507568957}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3903698, 23.7839939], [86.3903012, 23.7841453]], "type": "LineString"}, "id": "11", "properties": {"highway": "residential", "key": 0, "length": 18.2246421996772, "oneway": false, "osmid": 1031594633, "ref": null, "reversed": true, "u": 9507566190, "v": 9507568957}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3903698, 23.7839939], [86.3904467, 23.7840464], [86.3906559, 23.784152], [86.3908491, 23.7842133], [86.391077, 23.7842489], [86.3912621, 23.78426], [86.3913676, 23.7842519]], "type": "LineString"}, "id": "12", "properties": {"highway": "trunk", "key": 0, "length": 108.05092692012605, "oneway": true, "osmid": 117695861, "ref": "NH18", "reversed": false, "u": 9507566190, "v": 9507614888}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3903012, 23.7841453], [86.3903698, 23.7839939]], "type": "LineString"}, "id": "13", "properties": {"highway": "residential", "key": 0, "length": 18.2246421996772, "oneway": false, "osmid": 1031594633, "ref": null, "reversed": false, "u": 9507568957, "v": 9507566190}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3903012, 23.7841453], [86.3901232, 23.7845382]], "type": "LineString"}, "id": "14", "properties": {"highway": "residential", "key": 0, "length": 47.2940157016978, "oneway": false, "osmid": 1031594633, "ref": null, "reversed": true, "u": 9507568957, "v": 9507566189}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3903012, 23.7841453], [86.390207, 23.7838742]], "type": "LineString"}, "id": "15", "properties": {"highway": "residential", "key": 0, "length": 31.63214150705147, "oneway": false, "osmid": 1122288143, "ref": null, "reversed": false, "u": 9507568957, "v": 10264886525}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3935569, 23.7847007], [86.3931478, 23.7839513]], "type": "LineString"}, "id": "16", "properties": {"highway": "residential", "key": 0, "length": 93.14817787461877, "oneway": false, "osmid": 1031625797, "ref": null, "reversed": true, "u": 9507614858, "v": 9507564884}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3935569, 23.7847007], [86.3937651, 23.78463], [86.3938457, 23.7846178], [86.3939473, 23.7846135], [86.3944637, 23.7846384], [86.3945561, 23.7846384], [86.394615, 23.7846265], [86.3947254, 23.7845655], [86.3947573, 23.7845324], [86.3947668, 23.7845085], [86.3947691, 23.7844816], [86.3947275, 23.7843433], [86.3947163, 23.7842875], [86.3947321, 23.7842421], [86.3949057, 23.7840977], [86.3952264, 23.7838206]], "type": "LineString"}, "id": "17", "properties": {"highway": "residential", "key": 0, "length": 229.57995104841848, "oneway": false, "osmid": 1031625796, "ref": null, "reversed": true, "u": 9507614858, "v": 9445014254}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3913676, 23.7842519], [86.3914217, 23.7842477], [86.3916323, 23.7842158]], "type": "LineString"}, "id": "18", "properties": {"highway": "trunk", "key": 0, "length": 27.244954458874965, "oneway": true, "osmid": 117695861, "ref": "NH18", "reversed": false, "u": 9507614888, "v": 2466491371}, "type": "Feature"}, {"geometry": {"coordinates": [[86.390207, 23.7838742], [86.3903012, 23.7841453]], "type": "LineString"}, "id": "19", "properties": {"highway": "residential", "key": 0, "length": 31.63214150705147, "oneway": false, "osmid": 1122288143, "ref": null, "reversed": true, "u": 10264886525, "v": 9507568957}, "type": "Feature"}, {"geometry": {"coordinates": [[86.390207, 23.7838742], [86.390267, 23.7839237], [86.3903698, 23.7839939]], "type": "LineString"}, "id": "20", "properties": {"highway": "trunk", "key": 0, "length": 21.271596987244074, "oneway": true, "osmid": 117695861, "ref": "NH18", "reversed": false, "u": 10264886525, "v": 9507566190}, "type": "Feature"}], "type": "FeatureCollection"});
+            geo_json_d2a44c48a8bb790c26c98367ab697134_add({"features": [{"geometry": {"coordinates": [[86.3916323, 23.7842158], [86.3918522, 23.7841397], [86.392048, 23.7840317], [86.392276, 23.7838943], [86.3926875, 23.7836446]], "type": "LineString"}, "id": "0", "properties": {"highway": "trunk", "key": 0, "length": 125.2027825030172, "oneway": true, "osmid": 117695861, "ref": "NH18", "reversed": false, "u": 2466491371, "v": 9507564880}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3952264, 23.7838206], [86.39561, 23.784071], [86.3959184, 23.7842722], [86.3960129, 23.7843282]], "type": "LineString"}, "id": "1", "properties": {"highway": "trunk", "key": 0, "length": 97.93961456974557, "oneway": true, "osmid": 117695861, "ref": "NH18", "reversed": false, "u": 9445014254, "v": 9503984325}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3952264, 23.7838206], [86.3949057, 23.7840977], [86.3947321, 23.7842421], [86.3947163, 23.7842875], [86.3947275, 23.7843433], [86.3947691, 23.7844816], [86.3947668, 23.7845085], [86.3947573, 23.7845324], [86.3947254, 23.7845655], [86.394615, 23.7846265], [86.3945561, 23.7846384], [86.3944637, 23.7846384], [86.3939473, 23.7846135], [86.3938457, 23.7846178], [86.3937651, 23.78463], [86.3935569, 23.7847007]], "type": "LineString"}, "id": "2", "properties": {"highway": "residential", "key": 0, "length": 229.57995104841845, "oneway": false, "osmid": 1031625796, "ref": null, "reversed": false, "u": 9445014254, "v": 9507614858}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3944902, 23.7833408], [86.3946846, 23.7834598], [86.394918, 23.7836071], [86.3952264, 23.7838206]], "type": "LineString"}, "id": "3", "properties": {"highway": "trunk", "key": 0, "length": 91.99632955382843, "oneway": true, "osmid": 117695861, "ref": "NH18", "reversed": false, "u": 9445014256, "v": 9445014254}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3944902, 23.7833408], [86.3941364, 23.783437], [86.3940269, 23.7834605], [86.3939343, 23.7834929], [86.3931478, 23.7839513]], "type": "LineString"}, "id": "4", "properties": {"highway": "residential", "key": 0, "length": 153.9690491516272, "oneway": false, "osmid": 1031621824, "ref": null, "reversed": true, "u": 9445014256, "v": 9507564884}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3926875, 23.7836446], [86.3930163, 23.7834451], [86.3932537, 23.7833064], [86.3934696, 23.7832156], [86.3936198, 23.7831677], [86.3937686, 23.7831432], [86.3939095, 23.7831371], [86.394061, 23.7831493], [86.3941924, 23.7831849], [86.3943239, 23.7832377], [86.3944902, 23.7833408]], "type": "LineString"}, "id": "5", "properties": {"highway": "trunk", "key": 0, "length": 203.37077518653476, "oneway": true, "osmid": 117695861, "ref": "NH18", "reversed": false, "u": 9507564880, "v": 9445014256}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3926875, 23.7836446], [86.392947, 23.7839162], [86.3929989, 23.7839493], [86.3930666, 23.7839637], [86.3931478, 23.7839513]], "type": "LineString"}, "id": "6", "properties": {"highway": "residential", "key": 0, "length": 62.001470897101285, "oneway": false, "osmid": 1031621824, "ref": null, "reversed": false, "u": 9507564880, "v": 9507564884}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3931478, 23.7839513], [86.3935569, 23.7847007]], "type": "LineString"}, "id": "7", "properties": {"highway": "residential", "key": 0, "length": 93.14817787461877, "oneway": false, "osmid": 1031625797, "ref": null, "reversed": false, "u": 9507564884, "v": 9507614858}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3931478, 23.7839513], [86.3939343, 23.7834929], [86.3940269, 23.7834605], [86.3941364, 23.783437], [86.3944902, 23.7833408]], "type": "LineString"}, "id": "8", "properties": {"highway": "residential", "key": 0, "length": 153.9690491516272, "oneway": false, "osmid": 1031621824, "ref": null, "reversed": false, "u": 9507564884, "v": 9445014256}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3931478, 23.7839513], [86.3930666, 23.7839637], [86.3929989, 23.7839493], [86.392947, 23.7839162], [86.3926875, 23.7836446]], "type": "LineString"}, "id": "9", "properties": {"highway": "residential", "key": 0, "length": 62.001470897101285, "oneway": false, "osmid": 1031621824, "ref": null, "reversed": true, "u": 9507564884, "v": 9507564880}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3901232, 23.7845382], [86.3903012, 23.7841453]], "type": "LineString"}, "id": "10", "properties": {"highway": "residential", "key": 0, "length": 47.2940157016978, "oneway": false, "osmid": 1031594633, "ref": null, "reversed": false, "u": 9507566189, "v": 9507568957}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3903698, 23.7839939], [86.3903012, 23.7841453]], "type": "LineString"}, "id": "11", "properties": {"highway": "residential", "key": 0, "length": 18.2246421996772, "oneway": false, "osmid": 1031594633, "ref": null, "reversed": true, "u": 9507566190, "v": 9507568957}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3903698, 23.7839939], [86.3904467, 23.7840464], [86.3906559, 23.784152], [86.3908491, 23.7842133], [86.391077, 23.7842489], [86.3912621, 23.78426], [86.3913676, 23.7842519]], "type": "LineString"}, "id": "12", "properties": {"highway": "trunk", "key": 0, "length": 108.05092692012605, "oneway": true, "osmid": 117695861, "ref": "NH18", "reversed": false, "u": 9507566190, "v": 9507614888}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3903012, 23.7841453], [86.3903698, 23.7839939]], "type": "LineString"}, "id": "13", "properties": {"highway": "residential", "key": 0, "length": 18.2246421996772, "oneway": false, "osmid": 1031594633, "ref": null, "reversed": false, "u": 9507568957, "v": 9507566190}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3903012, 23.7841453], [86.3901232, 23.7845382]], "type": "LineString"}, "id": "14", "properties": {"highway": "residential", "key": 0, "length": 47.2940157016978, "oneway": false, "osmid": 1031594633, "ref": null, "reversed": true, "u": 9507568957, "v": 9507566189}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3903012, 23.7841453], [86.390207, 23.7838742]], "type": "LineString"}, "id": "15", "properties": {"highway": "residential", "key": 0, "length": 31.63214150705147, "oneway": false, "osmid": 1122288143, "ref": null, "reversed": false, "u": 9507568957, "v": 10264886525}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3935569, 23.7847007], [86.3931478, 23.7839513]], "type": "LineString"}, "id": "16", "properties": {"highway": "residential", "key": 0, "length": 93.14817787461877, "oneway": false, "osmid": 1031625797, "ref": null, "reversed": true, "u": 9507614858, "v": 9507564884}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3935569, 23.7847007], [86.3937651, 23.78463], [86.3938457, 23.7846178], [86.3939473, 23.7846135], [86.3944637, 23.7846384], [86.3945561, 23.7846384], [86.394615, 23.7846265], [86.3947254, 23.7845655], [86.3947573, 23.7845324], [86.3947668, 23.7845085], [86.3947691, 23.7844816], [86.3947275, 23.7843433], [86.3947163, 23.7842875], [86.3947321, 23.7842421], [86.3949057, 23.7840977], [86.3952264, 23.7838206]], "type": "LineString"}, "id": "17", "properties": {"highway": "residential", "key": 0, "length": 229.57995104841848, "oneway": false, "osmid": 1031625796, "ref": null, "reversed": true, "u": 9507614858, "v": 9445014254}, "type": "Feature"}, {"geometry": {"coordinates": [[86.3913676, 23.7842519], [86.3914217, 23.7842477], [86.3916323, 23.7842158]], "type": "LineString"}, "id": "18", "properties": {"highway": "trunk", "key": 0, "length": 27.244954458874965, "oneway": true, "osmid": 117695861, "ref": "NH18", "reversed": false, "u": 9507614888, "v": 2466491371}, "type": "Feature"}, {"geometry": {"coordinates": [[86.390207, 23.7838742], [86.3903012, 23.7841453]], "type": "LineString"}, "id": "19", "properties": {"highway": "residential", "key": 0, "length": 31.63214150705147, "oneway": false, "osmid": 1122288143, "ref": null, "reversed": true, "u": 10264886525, "v": 9507568957}, "type": "Feature"}, {"geometry": {"coordinates": [[86.390207, 23.7838742], [86.390267, 23.7839237], [86.3903698, 23.7839939]], "type": "LineString"}, "id": "20", "properties": {"highway": "trunk", "key": 0, "length": 21.271596987244074, "oneway": true, "osmid": 117695861, "ref": "NH18", "reversed": false, "u": 10264886525, "v": 9507566190}, "type": "Feature"}], "type": "FeatureCollection"});
 
         
     
-    geo_json_13a48d8c01d4d09e1b48f9317519cbdc.bindTooltip(
+    geo_json_d2a44c48a8bb790c26c98367ab697134.bindTooltip(
     function(layer){
     let div = L.DomUtil.create('div');
     
@@ -2070,68 +1051,60 @@ window.addEventListener(
 });
                      
     
-            geo_json_13a48d8c01d4d09e1b48f9317519cbdc.addTo(feature_group_37a4f636afc20ac08f494aebd8ae8d77);
+            geo_json_d2a44c48a8bb790c26c98367ab697134.addTo(feature_group_3317fceec3bb4d43fb7851833b7efa78);
         
     
-            feature_group_37a4f636afc20ac08f494aebd8ae8d77.addTo(map_7ec4fdb79a0f49ad7e4cfc4f7050f875);
+            feature_group_3317fceec3bb4d43fb7851833b7efa78.addTo(map_dbaee46697a2c133150c4c1f7f701021);
         
     
-            var feature_group_ceab6bbbeb9c999abe04afd19c805286 = L.featureGroup(
-                {
-}
-            );
-        
-    
-        function geo_json_ce3f38cf3efbecd24f31ea4b3278ab3c_styler(feature) {
+        function geo_json_5349ef580c042442b75169b669fc50c5_styler(feature) {
             switch(feature.properties.zone_id) {
                 case "ZONE-001": case "ZONE-004": case "ZONE-007": 
-                    return {"color": "#ff4d67", "fillColor": "#ff4d67", "fillOpacity": 0.07, "opacity": 0.9, "weight": 2};
+                    return {"color": "#ff4d67", "fillColor": "#ff4d67", "fillOpacity": 0.4, "weight": 3};
                 default:
-                    return {"color": "#22c7a5", "fillColor": "#22c7a5", "fillOpacity": 0.07, "opacity": 0.9, "weight": 2};
+                    return {"color": "#22c7a5", "fillColor": "#22c7a5", "fillOpacity": 0.4, "weight": 3};
             }
         }
-        function geo_json_ce3f38cf3efbecd24f31ea4b3278ab3c_highlighter(feature) {
+        function geo_json_5349ef580c042442b75169b669fc50c5_highlighter(feature) {
             switch(feature.properties.zone_id) {
-                case "ZONE-001": case "ZONE-004": case "ZONE-007": 
-                    return {"color": "#ff4d67", "fillColor": "#ff4d67", "fillOpacity": 0.16, "opacity": 1, "weight": 4};
                 default:
-                    return {"color": "#22c7a5", "fillColor": "#22c7a5", "fillOpacity": 0.16, "opacity": 1, "weight": 4};
+                    return {"fillOpacity": 0.6, "weight": 5};
             }
         }
 
-        function geo_json_ce3f38cf3efbecd24f31ea4b3278ab3c_onEachFeature(feature, layer) {
+        function geo_json_5349ef580c042442b75169b669fc50c5_onEachFeature(feature, layer) {
 
             layer.on({
                 mouseout: function(e) {
                     if(typeof e.target.setStyle === "function"){
-                            geo_json_ce3f38cf3efbecd24f31ea4b3278ab3c.resetStyle(e.target);
+                            geo_json_5349ef580c042442b75169b669fc50c5.resetStyle(e.target);
                     }
                 },
                 mouseover: function(e) {
                     if(typeof e.target.setStyle === "function"){
-                        const highlightStyle = geo_json_ce3f38cf3efbecd24f31ea4b3278ab3c_highlighter(e.target.feature)
+                        const highlightStyle = geo_json_5349ef580c042442b75169b669fc50c5_highlighter(e.target.feature)
                         e.target.setStyle(highlightStyle);
                     }
                 },
             });
         };
-        var geo_json_ce3f38cf3efbecd24f31ea4b3278ab3c = L.geoJson(null, {
-                onEachFeature: geo_json_ce3f38cf3efbecd24f31ea4b3278ab3c_onEachFeature,
+        var geo_json_5349ef580c042442b75169b669fc50c5 = L.geoJson(null, {
+                onEachFeature: geo_json_5349ef580c042442b75169b669fc50c5_onEachFeature,
             
-                style: geo_json_ce3f38cf3efbecd24f31ea4b3278ab3c_styler,
+                style: geo_json_5349ef580c042442b75169b669fc50c5_styler,
             ...{
 }
         });
 
-        function geo_json_ce3f38cf3efbecd24f31ea4b3278ab3c_add (data) {
-            geo_json_ce3f38cf3efbecd24f31ea4b3278ab3c
+        function geo_json_5349ef580c042442b75169b669fc50c5_add (data) {
+            geo_json_5349ef580c042442b75169b669fc50c5
                 .addData(data);
         }
-            geo_json_ce3f38cf3efbecd24f31ea4b3278ab3c_add({"features": [{"geometry": {"coordinates": [[[86.39208643333333, 23.7831371], [86.39208643333333, 23.7836583], [86.3901232, 23.7836583], [86.3901232, 23.7831371], [86.39208643333333, 23.7831371]]], "type": "Polygon"}, "properties": {"area": 0.011542, "aspect": 214.184, "curvature": 0.005964, "displacement": null, "elevation": 219.792, "gis_indicator": 0.9911978972067969, "max_elevation": 225.322, "max_roughness": 156.689, "max_slope": 69.49, "min_elevation": 216.63, "mine_id": "MINE-001", "pressure": null, "rainfall": null, "risk_factors": ["High terrain slope", "High terrain roughness", "High terrain variability", "Very steep local slope", "High local surface roughness"], "risk_level": "HIGH", "risk_probability": 0.9833, "risk_recommendation": "Prioritize inspection and continuous monitoring of this zone.", "road_count": 0, "road_length": 0.0, "roughness": 33.414, "roughness_indicator": 0.987137151303582, "slope": 18.16, "slope_indicator": 0.98083952364108, "strain": null, "temperature": null, "terrain_condition": "HIGH", "terrain_variability": 0.9927863166139576, "vibration": null, "zone_id": "ZONE-001"}, "type": "Feature"}, {"geometry": {"coordinates": [[[86.39404966666667, 23.7831371], [86.39404966666667, 23.7836583], [86.39208643333333, 23.7836583], [86.39208643333333, 23.7831371], [86.39404966666667, 23.7831371]]], "type": "Polygon"}, "properties": {"area": 0.011542, "aspect": 194.506, "curvature": 0.000694, "displacement": null, "elevation": 220.676, "gis_indicator": 0.0582243095158224, "max_elevation": 224.439, "max_roughness": 3.022, "max_slope": 2.427, "min_elevation": 217.427, "mine_id": "MINE-001", "pressure": null, "rainfall": null, "risk_factors": ["Terrain indicators are currently low"], "risk_level": "LOW", "risk_probability": 0.0433, "risk_recommendation": "Continue routine monitoring.", "road_count": 6, "road_length": 0.2535, "roughness": 2.026, "roughness_indicator": 0.0, "slope": 1.523, "slope_indicator": 0.0, "strain": null, "temperature": null, "terrain_condition": "LOW", "terrain_variability": 0.1565434446050848, "vibration": null, "zone_id": "ZONE-002"}, "type": "Feature"}, {"geometry": {"coordinates": [[[86.3960129, 23.7831371], [86.3960129, 23.7836583], [86.39404966666667, 23.7836583], [86.39404966666667, 23.7831371], [86.3960129, 23.7831371]]], "type": "Polygon"}, "properties": {"area": 0.011542, "aspect": 310.772, "curvature": 0.001803, "displacement": null, "elevation": 219.375, "gis_indicator": 0.2233825517937802, "max_elevation": 225.315, "max_roughness": 10.425, "max_slope": 7.797, "min_elevation": 215.851, "mine_id": "MINE-001", "pressure": null, "rainfall": null, "risk_factors": ["Moderate terrain variability"], "risk_level": "LOW", "risk_probability": 0.0767, "risk_recommendation": "Continue routine monitoring.", "road_count": 4, "road_length": 0.2055, "roughness": 6.077, "roughness_indicator": 0.1274019561593861, "slope": 4.48, "slope_indicator": 0.1743308572102347, "strain": null, "temperature": null, "terrain_condition": "LOW", "terrain_variability": 0.3794610330325342, "vibration": null, "zone_id": "ZONE-003"}, "type": "Feature"}, {"geometry": {"coordinates": [[[86.39208643333333, 23.7836583], [86.39208643333333, 23.7841795], [86.3901232, 23.7841795], [86.3901232, 23.7836583], [86.39208643333333, 23.7836583]]], "type": "Polygon"}, "properties": {"area": 0.011542, "aspect": 215.92, "curvature": 0.004601, "displacement": null, "elevation": 219.029, "gis_indicator": 0.8585717162657034, "max_elevation": 221.047, "max_roughness": 157.326, "max_slope": 69.35, "min_elevation": 217.098, "mine_id": "MINE-001", "pressure": null, "rainfall": null, "risk_factors": ["High terrain slope", "High terrain roughness", "Moderate terrain variability", "Very steep local slope", "High local surface roughness"], "risk_level": "HIGH", "risk_probability": 0.9533, "risk_recommendation": "Prioritize inspection and continuous monitoring of this zone.", "road_count": 9, "road_length": 0.2127, "roughness": 33.039, "roughness_indicator": 0.9753435858728812, "slope": 17.592, "slope_indicator": 0.9473529064968752, "strain": null, "temperature": null, "terrain_condition": "HIGH", "terrain_variability": 0.6672629501085087, "vibration": null, "zone_id": "ZONE-004"}, "type": "Feature"}, {"geometry": {"coordinates": [[[86.39404966666667, 23.7836583], [86.39404966666667, 23.7841795], [86.39208643333333, 23.7841795], [86.39208643333333, 23.7836583], [86.39404966666667, 23.7836583]]], "type": "Polygon"}, "properties": {"area": 0.011542, "aspect": 149.498, "curvature": 0.000162, "displacement": null, "elevation": 219.258, "gis_indicator": 0.0095947589920623, "max_elevation": 222.914, "max_roughness": 3.846, "max_slope": 2.794, "min_elevation": 217.738, "mine_id": "MINE-001", "pressure": null, "rainfall": null, "risk_factors": ["Terrain indicators are currently low"], "risk_level": "LOW", "risk_probability": 0.01, "risk_recommendation": "Continue routine monitoring.", "road_count": 7, "road_length": 0.3682, "roughness": 2.356, "roughness_indicator": 0.0103783375790168, "slope": 1.68, "slope_indicator": 0.0092559839641551, "strain": null, "temperature": null, "terrain_condition": "LOW", "terrain_variability": 0.0093431414935781, "vibration": null, "zone_id": "ZONE-005"}, "type": "Feature"}, {"geometry": {"coordinates": [[[86.3960129, 23.7836583], [86.3960129, 23.7841795], [86.39404966666667, 23.7841795], [86.39404966666667, 23.7836583], [86.3960129, 23.7836583]]], "type": "Polygon"}, "properties": {"area": 0.011542, "aspect": 24.59, "curvature": 0.000326, "displacement": null, "elevation": 218.517, "gis_indicator": 0.1079347705893669, "max_elevation": 222.737, "max_roughness": 4.004, "max_slope": 3.403, "min_elevation": 214.334, "mine_id": "MINE-001", "pressure": null, "rainfall": null, "risk_factors": ["Terrain indicators are currently low"], "risk_level": "LOW", "risk_probability": 0.0167, "risk_recommendation": "Continue routine monitoring.", "road_count": 4, "road_length": 0.2152, "roughness": 2.619, "roughness_indicator": 0.0186495581344152, "slope": 2.091, "slope_indicator": 0.0334866171442047, "strain": null, "temperature": null, "terrain_condition": "LOW", "terrain_variability": 0.2942355566228482, "vibration": null, "zone_id": "ZONE-006"}, "type": "Feature"}, {"geometry": {"coordinates": [[[86.39208643333333, 23.7841795], [86.39208643333333, 23.7847007], [86.3901232, 23.7847007], [86.3901232, 23.7841795], [86.39208643333333, 23.7841795]]], "type": "Polygon"}, "properties": {"area": 0.011542, "aspect": 204.36, "curvature": 0.005673, "displacement": null, "elevation": 220.902, "gis_indicator": 0.9277644999364144, "max_elevation": 223.947, "max_roughness": 156.739, "max_slope": 69.513, "min_elevation": 217.769, "mine_id": "MINE-001", "pressure": null, "rainfall": null, "risk_factors": ["High terrain slope", "High terrain roughness", "High terrain variability", "Very steep local slope", "High local surface roughness"], "risk_level": "HIGH", "risk_probability": 0.99, "risk_recommendation": "Prioritize inspection and continuous monitoring of this zone.", "road_count": 5, "road_length": 0.1895, "roughness": 33.823, "roughness_indicator": 1.0, "slope": 18.485, "slope_indicator": 1.0, "strain": null, "temperature": null, "terrain_condition": "HIGH", "terrain_variability": 0.775892159541233, "vibration": null, "zone_id": "ZONE-007"}, "type": "Feature"}, {"geometry": {"coordinates": [[[86.39404966666667, 23.7841795], [86.39404966666667, 23.7847007], [86.39208643333333, 23.7847007], [86.39208643333333, 23.7841795], [86.39404966666667, 23.7841795]]], "type": "Polygon"}, "properties": {"area": 0.011542, "aspect": 110.788, "curvature": 0.000392, "displacement": null, "elevation": 219.41, "gis_indicator": 0.0099198834765177, "max_elevation": 221.022, "max_roughness": 3.244, "max_slope": 2.675, "min_elevation": 217.344, "mine_id": "MINE-001", "pressure": null, "rainfall": null, "risk_factors": ["Terrain indicators are currently low"], "risk_level": "LOW", "risk_probability": 0.0067, "risk_recommendation": "Continue routine monitoring.", "road_count": 4, "road_length": 0.2326, "roughness": 2.209, "roughness_indicator": 0.0057552599301821, "slope": 1.599, "slope_indicator": 0.0044806037023935, "strain": null, "temperature": null, "terrain_condition": "LOW", "terrain_variability": 0.0046723655333421, "vibration": null, "zone_id": "ZONE-008"}, "type": "Feature"}, {"geometry": {"coordinates": [[[86.3960129, 23.7841795], [86.3960129, 23.7847007], [86.39404966666667, 23.7847007], [86.39404966666667, 23.7841795], [86.3960129, 23.7841795]]], "type": "Polygon"}, "properties": {"area": 0.011542, "aspect": 30.6, "curvature": 2e-06, "displacement": null, "elevation": 217.633, "gis_indicator": 0.1021714091982852, "max_elevation": 221.049, "max_roughness": 3.823, "max_slope": 2.89, "min_elevation": 213.656, "mine_id": "MINE-001", "pressure": null, "rainfall": null, "risk_factors": ["Terrain indicators are currently low"], "risk_level": "LOW", "risk_probability": 0.0067, "risk_recommendation": "Continue routine monitoring.", "road_count": 3, "road_length": 0.268, "roughness": 2.982, "roughness_indicator": 0.0300657294713337, "slope": 2.252, "slope_indicator": 0.0429784223558542, "strain": null, "temperature": null, "terrain_condition": "LOW", "terrain_variability": 0.2812396220008997, "vibration": null, "zone_id": "ZONE-009"}, "type": "Feature"}], "type": "FeatureCollection"});
+            geo_json_5349ef580c042442b75169b669fc50c5_add({"features": [{"geometry": {"coordinates": [[[86.39208643333333, 23.7831371], [86.39208643333333, 23.7836583], [86.3901232, 23.7836583], [86.3901232, 23.7831371], [86.39208643333333, 23.7831371]]], "type": "Polygon"}, "properties": {"aspect": 214.184, "curvature": 0.005964, "displacement": null, "elevation": 219.792, "gis_indicator": 0.9911978972067969, "max_slope": 69.49, "mine_id": "MINE-001", "pressure": null, "rainfall": null, "risk_factors": [], "risk_level": "HIGH", "risk_probability": 0.9833, "risk_recommendation": "Continue normal monitoring.", "road_count": 0, "road_length": 0.0, "roughness": 33.414, "roughness_indicator": 0.987137151303582, "sensor_count": 1, "sensor_id": "SENSOR-001", "slope": 18.16, "slope_indicator": 0.98083952364108, "strain": null, "telemetry_source": "LIVE", "temperature": null, "terrain_condition": "HIGH", "terrain_variability": null, "vibration": null, "zone_id": "ZONE-001"}, "type": "Feature"}, {"geometry": {"coordinates": [[[86.39404966666667, 23.7831371], [86.39404966666667, 23.7836583], [86.39208643333333, 23.7836583], [86.39208643333333, 23.7831371], [86.39404966666667, 23.7831371]]], "type": "Polygon"}, "properties": {"aspect": 194.506, "curvature": 0.000694, "displacement": null, "elevation": 220.676, "gis_indicator": 0.0582243095158224, "max_slope": 2.427, "mine_id": "MINE-001", "pressure": null, "rainfall": null, "risk_factors": [], "risk_level": "LOW", "risk_probability": 0.0433, "risk_recommendation": "Continue normal monitoring.", "road_count": 6, "road_length": 0.2535, "roughness": 2.026, "roughness_indicator": 0.0, "sensor_count": 1, "sensor_id": "SENSOR-002", "slope": 1.523, "slope_indicator": 0.0, "strain": null, "telemetry_source": "LIVE", "temperature": null, "terrain_condition": "LOW", "terrain_variability": null, "vibration": null, "zone_id": "ZONE-002"}, "type": "Feature"}, {"geometry": {"coordinates": [[[86.3960129, 23.7831371], [86.3960129, 23.7836583], [86.39404966666667, 23.7836583], [86.39404966666667, 23.7831371], [86.3960129, 23.7831371]]], "type": "Polygon"}, "properties": {"aspect": 310.772, "curvature": 0.001803, "displacement": null, "elevation": 219.375, "gis_indicator": 0.2233825517937802, "max_slope": 7.797, "mine_id": "MINE-001", "pressure": null, "rainfall": null, "risk_factors": [], "risk_level": "LOW", "risk_probability": 0.0767, "risk_recommendation": "Continue normal monitoring.", "road_count": 4, "road_length": 0.2055, "roughness": 6.077, "roughness_indicator": 0.1274019561593861, "sensor_count": 1, "sensor_id": "SENSOR-003", "slope": 4.48, "slope_indicator": 0.1743308572102347, "strain": null, "telemetry_source": "LIVE", "temperature": null, "terrain_condition": "LOW", "terrain_variability": null, "vibration": null, "zone_id": "ZONE-003"}, "type": "Feature"}, {"geometry": {"coordinates": [[[86.39208643333333, 23.7836583], [86.39208643333333, 23.7841795], [86.3901232, 23.7841795], [86.3901232, 23.7836583], [86.39208643333333, 23.7836583]]], "type": "Polygon"}, "properties": {"aspect": 215.92, "curvature": 0.004601, "displacement": null, "elevation": 219.029, "gis_indicator": 0.8585717162657034, "max_slope": 69.35, "mine_id": "MINE-001", "pressure": null, "rainfall": null, "risk_factors": [], "risk_level": "HIGH", "risk_probability": 0.9533, "risk_recommendation": "Continue normal monitoring.", "road_count": 9, "road_length": 0.2127, "roughness": 33.039, "roughness_indicator": 0.9753435858728812, "sensor_count": 1, "sensor_id": "SENSOR-004", "slope": 17.592, "slope_indicator": 0.9473529064968752, "strain": null, "telemetry_source": "LIVE", "temperature": null, "terrain_condition": "HIGH", "terrain_variability": null, "vibration": null, "zone_id": "ZONE-004"}, "type": "Feature"}, {"geometry": {"coordinates": [[[86.39404966666667, 23.7836583], [86.39404966666667, 23.7841795], [86.39208643333333, 23.7841795], [86.39208643333333, 23.7836583], [86.39404966666667, 23.7836583]]], "type": "Polygon"}, "properties": {"aspect": 149.498, "curvature": 0.000162, "displacement": null, "elevation": 219.258, "gis_indicator": 0.0095947589920623, "max_slope": 2.794, "mine_id": "MINE-001", "pressure": null, "rainfall": null, "risk_factors": [], "risk_level": "LOW", "risk_probability": 0.01, "risk_recommendation": "Continue normal monitoring.", "road_count": 7, "road_length": 0.3682, "roughness": 2.356, "roughness_indicator": 0.0103783375790168, "sensor_count": 1, "sensor_id": "SENSOR-005", "slope": 1.68, "slope_indicator": 0.0092559839641551, "strain": null, "telemetry_source": "LIVE", "temperature": null, "terrain_condition": "LOW", "terrain_variability": null, "vibration": null, "zone_id": "ZONE-005"}, "type": "Feature"}, {"geometry": {"coordinates": [[[86.3960129, 23.7836583], [86.3960129, 23.7841795], [86.39404966666667, 23.7841795], [86.39404966666667, 23.7836583], [86.3960129, 23.7836583]]], "type": "Polygon"}, "properties": {"aspect": 24.59, "curvature": 0.000326, "displacement": null, "elevation": 218.517, "gis_indicator": 0.1079347705893669, "max_slope": 3.403, "mine_id": "MINE-001", "pressure": null, "rainfall": null, "risk_factors": [], "risk_level": "LOW", "risk_probability": 0.0167, "risk_recommendation": "Continue normal monitoring.", "road_count": 4, "road_length": 0.2152, "roughness": 2.619, "roughness_indicator": 0.0186495581344152, "sensor_count": 1, "sensor_id": "SENSOR-006", "slope": 2.091, "slope_indicator": 0.0334866171442047, "strain": null, "telemetry_source": "LIVE", "temperature": null, "terrain_condition": "LOW", "terrain_variability": null, "vibration": null, "zone_id": "ZONE-006"}, "type": "Feature"}, {"geometry": {"coordinates": [[[86.39208643333333, 23.7841795], [86.39208643333333, 23.7847007], [86.3901232, 23.7847007], [86.3901232, 23.7841795], [86.39208643333333, 23.7841795]]], "type": "Polygon"}, "properties": {"aspect": 204.36, "curvature": 0.005673, "displacement": null, "elevation": 220.902, "gis_indicator": 0.9277644999364144, "max_slope": 69.513, "mine_id": "MINE-001", "pressure": null, "rainfall": null, "risk_factors": [], "risk_level": "HIGH", "risk_probability": 0.99, "risk_recommendation": "Continue normal monitoring.", "road_count": 5, "road_length": 0.1895, "roughness": 33.823, "roughness_indicator": 1.0, "sensor_count": 1, "sensor_id": "SENSOR-007", "slope": 18.485, "slope_indicator": 1.0, "strain": null, "telemetry_source": "LIVE", "temperature": null, "terrain_condition": "HIGH", "terrain_variability": null, "vibration": null, "zone_id": "ZONE-007"}, "type": "Feature"}, {"geometry": {"coordinates": [[[86.39404966666667, 23.7841795], [86.39404966666667, 23.7847007], [86.39208643333333, 23.7847007], [86.39208643333333, 23.7841795], [86.39404966666667, 23.7841795]]], "type": "Polygon"}, "properties": {"aspect": 110.788, "curvature": 0.000392, "displacement": null, "elevation": 219.41, "gis_indicator": 0.0099198834765177, "max_slope": 2.675, "mine_id": "MINE-001", "pressure": null, "rainfall": null, "risk_factors": [], "risk_level": "LOW", "risk_probability": 0.0067, "risk_recommendation": "Continue normal monitoring.", "road_count": 4, "road_length": 0.2326, "roughness": 2.209, "roughness_indicator": 0.0057552599301821, "sensor_count": 1, "sensor_id": "SENSOR-008", "slope": 1.599, "slope_indicator": 0.0044806037023935, "strain": null, "telemetry_source": "LIVE", "temperature": null, "terrain_condition": "LOW", "terrain_variability": null, "vibration": null, "zone_id": "ZONE-008"}, "type": "Feature"}, {"geometry": {"coordinates": [[[86.3960129, 23.7841795], [86.3960129, 23.7847007], [86.39404966666667, 23.7847007], [86.39404966666667, 23.7841795], [86.3960129, 23.7841795]]], "type": "Polygon"}, "properties": {"aspect": 30.6, "curvature": 2e-06, "displacement": null, "elevation": 217.633, "gis_indicator": 0.1021714091982852, "max_slope": 2.89, "mine_id": "MINE-001", "pressure": null, "rainfall": null, "risk_factors": [], "risk_level": "LOW", "risk_probability": 0.0067, "risk_recommendation": "Continue normal monitoring.", "road_count": 3, "road_length": 0.268, "roughness": 2.982, "roughness_indicator": 0.0300657294713337, "sensor_count": 1, "sensor_id": "SENSOR-009", "slope": 2.252, "slope_indicator": 0.0429784223558542, "strain": null, "telemetry_source": "LIVE", "temperature": null, "terrain_condition": "LOW", "terrain_variability": null, "vibration": null, "zone_id": "ZONE-009"}, "type": "Feature"}], "type": "FeatureCollection"});
 
         
     
-    geo_json_ce3f38cf3efbecd24f31ea4b3278ab3c.bindTooltip(
+    geo_json_5349ef580c042442b75169b669fc50c5.bindTooltip(
     function(layer){
     let div = L.DomUtil.create('div');
     
@@ -2144,8 +1117,8 @@ window.addEventListener(
             return feature;
         }
     }
-    let fields = ["zone_id", "risk_level"];
-    let aliases = ["ZONE", "AI RISK"];
+    let fields = ["zone_id", "risk_level", "terrain_condition", "slope"];
+    let aliases = ["Zone", "AI Risk", "Terrain", "Slope"];
     let table = '<table>' +
         String(
         fields.map(
@@ -2166,42 +1139,39 @@ window.addEventListener(
 });
                      
     
-            geo_json_ce3f38cf3efbecd24f31ea4b3278ab3c.addTo(feature_group_ceab6bbbeb9c999abe04afd19c805286);
+            geo_json_5349ef580c042442b75169b669fc50c5.addTo(map_dbaee46697a2c133150c4c1f7f701021);
         
     
-            feature_group_ceab6bbbeb9c999abe04afd19c805286.addTo(map_7ec4fdb79a0f49ad7e4cfc4f7050f875);
-        
-    
-            var feature_group_d25605b9a92fb65a1d3935ac752ec488 = L.featureGroup(
+            var feature_group_a154ba6c874e630ec9d707487dfd4af8 = L.featureGroup(
                 {
 }
             );
         
     
-            var circle_marker_e51272697396feda75273a0e346bca5c = L.circleMarker(
+            var circle_marker_8ee01e621663ec9b608e794c8f09e930 = L.circleMarker(
                 [23.7833977, 86.3911048166667],
-                {"bubblingMouseEvents": true, "color": "#67e8f9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#22d3ee", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 2}
-            ).addTo(feature_group_d25605b9a92fb65a1d3935ac752ec488);
+                {"bubblingMouseEvents": true, "color": "#67e8f9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#22c7a5", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_a154ba6c874e630ec9d707487dfd4af8);
         
     
-        var popup_8f937cfdf82b6ec1d18eab74b29c89bb = L.popup({
+        var popup_43018b0b2adf918e370b0c797849039e = L.popup({
   "maxWidth": 280,
 });
 
         
             
-                var html_8d8ec768fa19affd3074c1b40f685f25 = $(`<div id="html_8d8ec768fa19affd3074c1b40f685f25" style="width: 100.0%; height: 100.0%;">         <div style="             font-family:Inter,Arial,sans-serif;             width:220px;             color:#e2e8f0;             background:#0f172a;             padding:8px;         ">             <div style="                 font-size:15px;                 font-weight:700;                 margin-bottom:8px;             ">                 MineGuard Sensor             </div>              <b>Sensor ID:</b>             SENSOR-001             <br><br>              <b>Type:</b>             Environmental             <br><br>              <b>Status:</b>             <span style="color:#22c7a5">                 Ready             </span>         </div>         </div>`)[0];
-                popup_8f937cfdf82b6ec1d18eab74b29c89bb.setContent(html_8d8ec768fa19affd3074c1b40f685f25);
+                var html_248e92db6820341b9a55cf143aa75afa = $(`<div id="html_248e92db6820341b9a55cf143aa75afa" style="width: 100.0%; height: 100.0%;">     <div style="font-family:Arial;width:210px;padding:8px">         <b style="font-size:15px">MineGuard IoT Sensor</b><br><br>         <b>Sensor:</b> SENSOR-001<br>         <b>Zone:</b> ZONE-001<br><br>         <span style="color:#22c7a5;font-weight:700">● Connected</span>     </div>     </div>`)[0];
+                popup_43018b0b2adf918e370b0c797849039e.setContent(html_248e92db6820341b9a55cf143aa75afa);
             
         
 
-        circle_marker_e51272697396feda75273a0e346bca5c.bindPopup(popup_8f937cfdf82b6ec1d18eab74b29c89bb)
+        circle_marker_8ee01e621663ec9b608e794c8f09e930.bindPopup(popup_43018b0b2adf918e370b0c797849039e)
         ;
 
         
     
     
-            circle_marker_e51272697396feda75273a0e346bca5c.bindTooltip(
+            circle_marker_8ee01e621663ec9b608e794c8f09e930.bindTooltip(
                 `<div>
                      SENSOR-001
                  </div>`,
@@ -2211,30 +1181,30 @@ window.addEventListener(
             );
         
     
-            var circle_marker_bbbcd3bb5061120b591368fbf2ddb5f8 = L.circleMarker(
+            var circle_marker_763190fbf03286f192c5246034e00777 = L.circleMarker(
                 [23.7833977, 86.39306805000001],
-                {"bubblingMouseEvents": true, "color": "#67e8f9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#22d3ee", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 2}
-            ).addTo(feature_group_d25605b9a92fb65a1d3935ac752ec488);
+                {"bubblingMouseEvents": true, "color": "#67e8f9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#22c7a5", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_a154ba6c874e630ec9d707487dfd4af8);
         
     
-        var popup_aa7871a182b8ab77167042fb6f146a83 = L.popup({
+        var popup_b9c0d8a1629c55597423af71c1bb92ea = L.popup({
   "maxWidth": 280,
 });
 
         
             
-                var html_96ad56550fcfc3f291a47943254dd958 = $(`<div id="html_96ad56550fcfc3f291a47943254dd958" style="width: 100.0%; height: 100.0%;">         <div style="             font-family:Inter,Arial,sans-serif;             width:220px;             color:#e2e8f0;             background:#0f172a;             padding:8px;         ">             <div style="                 font-size:15px;                 font-weight:700;                 margin-bottom:8px;             ">                 MineGuard Sensor             </div>              <b>Sensor ID:</b>             SENSOR-002             <br><br>              <b>Type:</b>             Environmental             <br><br>              <b>Status:</b>             <span style="color:#22c7a5">                 Ready             </span>         </div>         </div>`)[0];
-                popup_aa7871a182b8ab77167042fb6f146a83.setContent(html_96ad56550fcfc3f291a47943254dd958);
+                var html_251b07b78fa0780dba45842c37ff2b14 = $(`<div id="html_251b07b78fa0780dba45842c37ff2b14" style="width: 100.0%; height: 100.0%;">     <div style="font-family:Arial;width:210px;padding:8px">         <b style="font-size:15px">MineGuard IoT Sensor</b><br><br>         <b>Sensor:</b> SENSOR-002<br>         <b>Zone:</b> ZONE-002<br><br>         <span style="color:#22c7a5;font-weight:700">● Connected</span>     </div>     </div>`)[0];
+                popup_b9c0d8a1629c55597423af71c1bb92ea.setContent(html_251b07b78fa0780dba45842c37ff2b14);
             
         
 
-        circle_marker_bbbcd3bb5061120b591368fbf2ddb5f8.bindPopup(popup_aa7871a182b8ab77167042fb6f146a83)
+        circle_marker_763190fbf03286f192c5246034e00777.bindPopup(popup_b9c0d8a1629c55597423af71c1bb92ea)
         ;
 
         
     
     
-            circle_marker_bbbcd3bb5061120b591368fbf2ddb5f8.bindTooltip(
+            circle_marker_763190fbf03286f192c5246034e00777.bindTooltip(
                 `<div>
                      SENSOR-002
                  </div>`,
@@ -2244,30 +1214,30 @@ window.addEventListener(
             );
         
     
-            var circle_marker_e60e2c66a188e487f9cfb3cb20ba2719 = L.circleMarker(
+            var circle_marker_e5c8519aa55f472104d71fe39a591176 = L.circleMarker(
                 [23.7833977, 86.39503128333334],
-                {"bubblingMouseEvents": true, "color": "#67e8f9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#22d3ee", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 2}
-            ).addTo(feature_group_d25605b9a92fb65a1d3935ac752ec488);
+                {"bubblingMouseEvents": true, "color": "#67e8f9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#22c7a5", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_a154ba6c874e630ec9d707487dfd4af8);
         
     
-        var popup_7a8873604b9b90f7499dad6adb067c91 = L.popup({
+        var popup_8abb18c3fb925bcb9bb99b3b58eb3d76 = L.popup({
   "maxWidth": 280,
 });
 
         
             
-                var html_2d99e58014eb2b474a82d422255fb4c2 = $(`<div id="html_2d99e58014eb2b474a82d422255fb4c2" style="width: 100.0%; height: 100.0%;">         <div style="             font-family:Inter,Arial,sans-serif;             width:220px;             color:#e2e8f0;             background:#0f172a;             padding:8px;         ">             <div style="                 font-size:15px;                 font-weight:700;                 margin-bottom:8px;             ">                 MineGuard Sensor             </div>              <b>Sensor ID:</b>             SENSOR-003             <br><br>              <b>Type:</b>             Environmental             <br><br>              <b>Status:</b>             <span style="color:#22c7a5">                 Ready             </span>         </div>         </div>`)[0];
-                popup_7a8873604b9b90f7499dad6adb067c91.setContent(html_2d99e58014eb2b474a82d422255fb4c2);
+                var html_5360159a30bf4c8481fd673fb5829d5d = $(`<div id="html_5360159a30bf4c8481fd673fb5829d5d" style="width: 100.0%; height: 100.0%;">     <div style="font-family:Arial;width:210px;padding:8px">         <b style="font-size:15px">MineGuard IoT Sensor</b><br><br>         <b>Sensor:</b> SENSOR-003<br>         <b>Zone:</b> ZONE-003<br><br>         <span style="color:#22c7a5;font-weight:700">● Connected</span>     </div>     </div>`)[0];
+                popup_8abb18c3fb925bcb9bb99b3b58eb3d76.setContent(html_5360159a30bf4c8481fd673fb5829d5d);
             
         
 
-        circle_marker_e60e2c66a188e487f9cfb3cb20ba2719.bindPopup(popup_7a8873604b9b90f7499dad6adb067c91)
+        circle_marker_e5c8519aa55f472104d71fe39a591176.bindPopup(popup_8abb18c3fb925bcb9bb99b3b58eb3d76)
         ;
 
         
     
     
-            circle_marker_e60e2c66a188e487f9cfb3cb20ba2719.bindTooltip(
+            circle_marker_e5c8519aa55f472104d71fe39a591176.bindTooltip(
                 `<div>
                      SENSOR-003
                  </div>`,
@@ -2277,30 +1247,30 @@ window.addEventListener(
             );
         
     
-            var circle_marker_e49f73b1c52d75a9c7c63a5a32bb3908 = L.circleMarker(
+            var circle_marker_1700adf96d8895defb7b26f2bd6f536b = L.circleMarker(
                 [23.7839189, 86.39110481666668],
-                {"bubblingMouseEvents": true, "color": "#67e8f9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#22d3ee", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 2}
-            ).addTo(feature_group_d25605b9a92fb65a1d3935ac752ec488);
+                {"bubblingMouseEvents": true, "color": "#67e8f9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#22c7a5", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_a154ba6c874e630ec9d707487dfd4af8);
         
     
-        var popup_b1b157b564bb509bfc0d29adcb9768e3 = L.popup({
+        var popup_c9bb1d5b05223d321347fbd99e319d4c = L.popup({
   "maxWidth": 280,
 });
 
         
             
-                var html_4bd4a0691a52ef03d12e6c72fc757750 = $(`<div id="html_4bd4a0691a52ef03d12e6c72fc757750" style="width: 100.0%; height: 100.0%;">         <div style="             font-family:Inter,Arial,sans-serif;             width:220px;             color:#e2e8f0;             background:#0f172a;             padding:8px;         ">             <div style="                 font-size:15px;                 font-weight:700;                 margin-bottom:8px;             ">                 MineGuard Sensor             </div>              <b>Sensor ID:</b>             SENSOR-004             <br><br>              <b>Type:</b>             Environmental             <br><br>              <b>Status:</b>             <span style="color:#22c7a5">                 Ready             </span>         </div>         </div>`)[0];
-                popup_b1b157b564bb509bfc0d29adcb9768e3.setContent(html_4bd4a0691a52ef03d12e6c72fc757750);
+                var html_6946be7790851883598b995c0410fc97 = $(`<div id="html_6946be7790851883598b995c0410fc97" style="width: 100.0%; height: 100.0%;">     <div style="font-family:Arial;width:210px;padding:8px">         <b style="font-size:15px">MineGuard IoT Sensor</b><br><br>         <b>Sensor:</b> SENSOR-004<br>         <b>Zone:</b> ZONE-004<br><br>         <span style="color:#22c7a5;font-weight:700">● Connected</span>     </div>     </div>`)[0];
+                popup_c9bb1d5b05223d321347fbd99e319d4c.setContent(html_6946be7790851883598b995c0410fc97);
             
         
 
-        circle_marker_e49f73b1c52d75a9c7c63a5a32bb3908.bindPopup(popup_b1b157b564bb509bfc0d29adcb9768e3)
+        circle_marker_1700adf96d8895defb7b26f2bd6f536b.bindPopup(popup_c9bb1d5b05223d321347fbd99e319d4c)
         ;
 
         
     
     
-            circle_marker_e49f73b1c52d75a9c7c63a5a32bb3908.bindTooltip(
+            circle_marker_1700adf96d8895defb7b26f2bd6f536b.bindTooltip(
                 `<div>
                      SENSOR-004
                  </div>`,
@@ -2310,30 +1280,30 @@ window.addEventListener(
             );
         
     
-            var circle_marker_f82f613fdeea72e48b9c0e32bff1218d = L.circleMarker(
+            var circle_marker_2c80a63c88e267cc0234e387625be458 = L.circleMarker(
                 [23.7839189, 86.39306805000002],
-                {"bubblingMouseEvents": true, "color": "#67e8f9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#22d3ee", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 2}
-            ).addTo(feature_group_d25605b9a92fb65a1d3935ac752ec488);
+                {"bubblingMouseEvents": true, "color": "#67e8f9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#22c7a5", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_a154ba6c874e630ec9d707487dfd4af8);
         
     
-        var popup_c0e5821ae21b9be0fe963967357aff32 = L.popup({
+        var popup_3598dbfe547b5ec5b73d3a5b8142bf0e = L.popup({
   "maxWidth": 280,
 });
 
         
             
-                var html_380cef39ee1b564d1cd9f57a7d781602 = $(`<div id="html_380cef39ee1b564d1cd9f57a7d781602" style="width: 100.0%; height: 100.0%;">         <div style="             font-family:Inter,Arial,sans-serif;             width:220px;             color:#e2e8f0;             background:#0f172a;             padding:8px;         ">             <div style="                 font-size:15px;                 font-weight:700;                 margin-bottom:8px;             ">                 MineGuard Sensor             </div>              <b>Sensor ID:</b>             SENSOR-005             <br><br>              <b>Type:</b>             Environmental             <br><br>              <b>Status:</b>             <span style="color:#22c7a5">                 Ready             </span>         </div>         </div>`)[0];
-                popup_c0e5821ae21b9be0fe963967357aff32.setContent(html_380cef39ee1b564d1cd9f57a7d781602);
+                var html_4ae185671eae6479478e70193bb87357 = $(`<div id="html_4ae185671eae6479478e70193bb87357" style="width: 100.0%; height: 100.0%;">     <div style="font-family:Arial;width:210px;padding:8px">         <b style="font-size:15px">MineGuard IoT Sensor</b><br><br>         <b>Sensor:</b> SENSOR-005<br>         <b>Zone:</b> ZONE-005<br><br>         <span style="color:#22c7a5;font-weight:700">● Connected</span>     </div>     </div>`)[0];
+                popup_3598dbfe547b5ec5b73d3a5b8142bf0e.setContent(html_4ae185671eae6479478e70193bb87357);
             
         
 
-        circle_marker_f82f613fdeea72e48b9c0e32bff1218d.bindPopup(popup_c0e5821ae21b9be0fe963967357aff32)
+        circle_marker_2c80a63c88e267cc0234e387625be458.bindPopup(popup_3598dbfe547b5ec5b73d3a5b8142bf0e)
         ;
 
         
     
     
-            circle_marker_f82f613fdeea72e48b9c0e32bff1218d.bindTooltip(
+            circle_marker_2c80a63c88e267cc0234e387625be458.bindTooltip(
                 `<div>
                      SENSOR-005
                  </div>`,
@@ -2343,30 +1313,30 @@ window.addEventListener(
             );
         
     
-            var circle_marker_dca85028fb719fe39f2c21457c085384 = L.circleMarker(
+            var circle_marker_cd6affc8964739cb9320bc48c2fc4731 = L.circleMarker(
                 [23.7839189, 86.39503128333335],
-                {"bubblingMouseEvents": true, "color": "#67e8f9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#22d3ee", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 2}
-            ).addTo(feature_group_d25605b9a92fb65a1d3935ac752ec488);
+                {"bubblingMouseEvents": true, "color": "#67e8f9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#22c7a5", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_a154ba6c874e630ec9d707487dfd4af8);
         
     
-        var popup_3c01493dae13d398ff952e34046578dd = L.popup({
+        var popup_da7c05a471ac9af62e74594872471069 = L.popup({
   "maxWidth": 280,
 });
 
         
             
-                var html_eba2d048ce9df1b1fa366dfa3b913cbe = $(`<div id="html_eba2d048ce9df1b1fa366dfa3b913cbe" style="width: 100.0%; height: 100.0%;">         <div style="             font-family:Inter,Arial,sans-serif;             width:220px;             color:#e2e8f0;             background:#0f172a;             padding:8px;         ">             <div style="                 font-size:15px;                 font-weight:700;                 margin-bottom:8px;             ">                 MineGuard Sensor             </div>              <b>Sensor ID:</b>             SENSOR-006             <br><br>              <b>Type:</b>             Environmental             <br><br>              <b>Status:</b>             <span style="color:#22c7a5">                 Ready             </span>         </div>         </div>`)[0];
-                popup_3c01493dae13d398ff952e34046578dd.setContent(html_eba2d048ce9df1b1fa366dfa3b913cbe);
+                var html_7e67d82e5deac0b18213ee9b4183de4b = $(`<div id="html_7e67d82e5deac0b18213ee9b4183de4b" style="width: 100.0%; height: 100.0%;">     <div style="font-family:Arial;width:210px;padding:8px">         <b style="font-size:15px">MineGuard IoT Sensor</b><br><br>         <b>Sensor:</b> SENSOR-006<br>         <b>Zone:</b> ZONE-006<br><br>         <span style="color:#22c7a5;font-weight:700">● Connected</span>     </div>     </div>`)[0];
+                popup_da7c05a471ac9af62e74594872471069.setContent(html_7e67d82e5deac0b18213ee9b4183de4b);
             
         
 
-        circle_marker_dca85028fb719fe39f2c21457c085384.bindPopup(popup_3c01493dae13d398ff952e34046578dd)
+        circle_marker_cd6affc8964739cb9320bc48c2fc4731.bindPopup(popup_da7c05a471ac9af62e74594872471069)
         ;
 
         
     
     
-            circle_marker_dca85028fb719fe39f2c21457c085384.bindTooltip(
+            circle_marker_cd6affc8964739cb9320bc48c2fc4731.bindTooltip(
                 `<div>
                      SENSOR-006
                  </div>`,
@@ -2376,30 +1346,30 @@ window.addEventListener(
             );
         
     
-            var circle_marker_4d6228111cc9d81112b11a8ffe40c506 = L.circleMarker(
+            var circle_marker_4b5d005700a8ccb29bfbeba61617b2bb = L.circleMarker(
                 [23.7844401, 86.3911048166667],
-                {"bubblingMouseEvents": true, "color": "#67e8f9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#22d3ee", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 2}
-            ).addTo(feature_group_d25605b9a92fb65a1d3935ac752ec488);
+                {"bubblingMouseEvents": true, "color": "#67e8f9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#22c7a5", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_a154ba6c874e630ec9d707487dfd4af8);
         
     
-        var popup_a06b8c64ce6710a1a54614e17ec856a4 = L.popup({
+        var popup_a023f0b64276fa50730463f7cc6a48e3 = L.popup({
   "maxWidth": 280,
 });
 
         
             
-                var html_8458a7d46d5c09de19bda4a31847625d = $(`<div id="html_8458a7d46d5c09de19bda4a31847625d" style="width: 100.0%; height: 100.0%;">         <div style="             font-family:Inter,Arial,sans-serif;             width:220px;             color:#e2e8f0;             background:#0f172a;             padding:8px;         ">             <div style="                 font-size:15px;                 font-weight:700;                 margin-bottom:8px;             ">                 MineGuard Sensor             </div>              <b>Sensor ID:</b>             SENSOR-007             <br><br>              <b>Type:</b>             Environmental             <br><br>              <b>Status:</b>             <span style="color:#22c7a5">                 Ready             </span>         </div>         </div>`)[0];
-                popup_a06b8c64ce6710a1a54614e17ec856a4.setContent(html_8458a7d46d5c09de19bda4a31847625d);
+                var html_fd306faaf8b89bdd0621a7efb556b493 = $(`<div id="html_fd306faaf8b89bdd0621a7efb556b493" style="width: 100.0%; height: 100.0%;">     <div style="font-family:Arial;width:210px;padding:8px">         <b style="font-size:15px">MineGuard IoT Sensor</b><br><br>         <b>Sensor:</b> SENSOR-007<br>         <b>Zone:</b> ZONE-007<br><br>         <span style="color:#22c7a5;font-weight:700">● Connected</span>     </div>     </div>`)[0];
+                popup_a023f0b64276fa50730463f7cc6a48e3.setContent(html_fd306faaf8b89bdd0621a7efb556b493);
             
         
 
-        circle_marker_4d6228111cc9d81112b11a8ffe40c506.bindPopup(popup_a06b8c64ce6710a1a54614e17ec856a4)
+        circle_marker_4b5d005700a8ccb29bfbeba61617b2bb.bindPopup(popup_a023f0b64276fa50730463f7cc6a48e3)
         ;
 
         
     
     
-            circle_marker_4d6228111cc9d81112b11a8ffe40c506.bindTooltip(
+            circle_marker_4b5d005700a8ccb29bfbeba61617b2bb.bindTooltip(
                 `<div>
                      SENSOR-007
                  </div>`,
@@ -2409,30 +1379,30 @@ window.addEventListener(
             );
         
     
-            var circle_marker_647a67f64460b813b18954c48c6496d6 = L.circleMarker(
+            var circle_marker_21cbe4e1bf1e3ea959241738ea3270f2 = L.circleMarker(
                 [23.7844401, 86.39306805000001],
-                {"bubblingMouseEvents": true, "color": "#67e8f9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#22d3ee", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 2}
-            ).addTo(feature_group_d25605b9a92fb65a1d3935ac752ec488);
+                {"bubblingMouseEvents": true, "color": "#67e8f9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#22c7a5", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_a154ba6c874e630ec9d707487dfd4af8);
         
     
-        var popup_e4f128ec9eb696dcf1df2f4632cbb5cf = L.popup({
+        var popup_c2a08e609f4999800b433fa97679fd96 = L.popup({
   "maxWidth": 280,
 });
 
         
             
-                var html_23c4235db1e982bee69852329030be72 = $(`<div id="html_23c4235db1e982bee69852329030be72" style="width: 100.0%; height: 100.0%;">         <div style="             font-family:Inter,Arial,sans-serif;             width:220px;             color:#e2e8f0;             background:#0f172a;             padding:8px;         ">             <div style="                 font-size:15px;                 font-weight:700;                 margin-bottom:8px;             ">                 MineGuard Sensor             </div>              <b>Sensor ID:</b>             SENSOR-008             <br><br>              <b>Type:</b>             Environmental             <br><br>              <b>Status:</b>             <span style="color:#22c7a5">                 Ready             </span>         </div>         </div>`)[0];
-                popup_e4f128ec9eb696dcf1df2f4632cbb5cf.setContent(html_23c4235db1e982bee69852329030be72);
+                var html_b85ab37362ae5c2e57f6c6916e95bb11 = $(`<div id="html_b85ab37362ae5c2e57f6c6916e95bb11" style="width: 100.0%; height: 100.0%;">     <div style="font-family:Arial;width:210px;padding:8px">         <b style="font-size:15px">MineGuard IoT Sensor</b><br><br>         <b>Sensor:</b> SENSOR-008<br>         <b>Zone:</b> ZONE-008<br><br>         <span style="color:#22c7a5;font-weight:700">● Connected</span>     </div>     </div>`)[0];
+                popup_c2a08e609f4999800b433fa97679fd96.setContent(html_b85ab37362ae5c2e57f6c6916e95bb11);
             
         
 
-        circle_marker_647a67f64460b813b18954c48c6496d6.bindPopup(popup_e4f128ec9eb696dcf1df2f4632cbb5cf)
+        circle_marker_21cbe4e1bf1e3ea959241738ea3270f2.bindPopup(popup_c2a08e609f4999800b433fa97679fd96)
         ;
 
         
     
     
-            circle_marker_647a67f64460b813b18954c48c6496d6.bindTooltip(
+            circle_marker_21cbe4e1bf1e3ea959241738ea3270f2.bindTooltip(
                 `<div>
                      SENSOR-008
                  </div>`,
@@ -2442,30 +1412,30 @@ window.addEventListener(
             );
         
     
-            var circle_marker_daa5f029809095a554007aae08b580a2 = L.circleMarker(
+            var circle_marker_b59e823865525ce172cbd2800de0b403 = L.circleMarker(
                 [23.7844401, 86.39503128333334],
-                {"bubblingMouseEvents": true, "color": "#67e8f9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#22d3ee", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 2}
-            ).addTo(feature_group_d25605b9a92fb65a1d3935ac752ec488);
+                {"bubblingMouseEvents": true, "color": "#67e8f9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#22c7a5", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_a154ba6c874e630ec9d707487dfd4af8);
         
     
-        var popup_bf51cee79001ee01876b1362731f6eca = L.popup({
+        var popup_ed881ad38755ff9e582d6471afc6b548 = L.popup({
   "maxWidth": 280,
 });
 
         
             
-                var html_49b9b72ff4e8ac001ce4105ba14194e9 = $(`<div id="html_49b9b72ff4e8ac001ce4105ba14194e9" style="width: 100.0%; height: 100.0%;">         <div style="             font-family:Inter,Arial,sans-serif;             width:220px;             color:#e2e8f0;             background:#0f172a;             padding:8px;         ">             <div style="                 font-size:15px;                 font-weight:700;                 margin-bottom:8px;             ">                 MineGuard Sensor             </div>              <b>Sensor ID:</b>             SENSOR-009             <br><br>              <b>Type:</b>             Environmental             <br><br>              <b>Status:</b>             <span style="color:#22c7a5">                 Ready             </span>         </div>         </div>`)[0];
-                popup_bf51cee79001ee01876b1362731f6eca.setContent(html_49b9b72ff4e8ac001ce4105ba14194e9);
+                var html_22d29a43f313e1eeaa97453782d274b0 = $(`<div id="html_22d29a43f313e1eeaa97453782d274b0" style="width: 100.0%; height: 100.0%;">     <div style="font-family:Arial;width:210px;padding:8px">         <b style="font-size:15px">MineGuard IoT Sensor</b><br><br>         <b>Sensor:</b> SENSOR-009<br>         <b>Zone:</b> ZONE-009<br><br>         <span style="color:#22c7a5;font-weight:700">● Connected</span>     </div>     </div>`)[0];
+                popup_ed881ad38755ff9e582d6471afc6b548.setContent(html_22d29a43f313e1eeaa97453782d274b0);
             
         
 
-        circle_marker_daa5f029809095a554007aae08b580a2.bindPopup(popup_bf51cee79001ee01876b1362731f6eca)
+        circle_marker_b59e823865525ce172cbd2800de0b403.bindPopup(popup_ed881ad38755ff9e582d6471afc6b548)
         ;
 
         
     
     
-            circle_marker_daa5f029809095a554007aae08b580a2.bindTooltip(
+            circle_marker_b59e823865525ce172cbd2800de0b403.bindTooltip(
                 `<div>
                      SENSOR-009
                  </div>`,
@@ -2475,121 +1445,29 @@ window.addEventListener(
             );
         
     
-            feature_group_d25605b9a92fb65a1d3935ac752ec488.addTo(map_7ec4fdb79a0f49ad7e4cfc4f7050f875);
+            feature_group_a154ba6c874e630ec9d707487dfd4af8.addTo(map_dbaee46697a2c133150c4c1f7f701021);
         
     
-            var feature_group_2c21062b3af44c6420cfd90766931030 = L.featureGroup(
-                {
-}
-            );
-        
-    
-            var polygon_6aeb7b0ce0933abb93fed4d78af61943 = L.polygon(
-                [[23.7815, 86.391], [23.7815, 86.3955], [23.778, 86.3965], [23.7775, 86.392]],
-                {"bubblingMouseEvents": true, "color": "#a78bfa", "dashArray": "5 5", "dashOffset": null, "fill": true, "fillColor": "#8b5cf6", "fillOpacity": 0.08, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 2}
-            ).addTo(feature_group_2c21062b3af44c6420cfd90766931030);
-        
-    
-        var popup_c593421f763f5393bb2d6490f65160ff = L.popup({
-  "maxWidth": "100%",
-});
-
-        
-            
-                var html_a5ed5f92a44f042ee25cfc2f3f15b73e = $(`<div id="html_a5ed5f92a44f042ee25cfc2f3f15b73e" style="width: 100.0%; height: 100.0%;">Gas Monitoring Area</div>`)[0];
-                popup_c593421f763f5393bb2d6490f65160ff.setContent(html_a5ed5f92a44f042ee25cfc2f3f15b73e);
-            
-        
-
-        polygon_6aeb7b0ce0933abb93fed4d78af61943.bindPopup(popup_c593421f763f5393bb2d6490f65160ff)
-        ;
-
-        
-    
-    
-            var feature_group_bc269a9a54863eb1d950ecbfca6f0f24 = L.featureGroup(
-                {
-}
-            );
-        
-    
-            var polygon_55d46c0bf101f718ac1905303297ae9f = L.polygon(
-                [[23.784, 86.397], [23.7855, 86.4], [23.7815, 86.401], [23.7805, 86.398]],
-                {"bubblingMouseEvents": true, "color": "#fb7185", "dashArray": "5 5", "dashOffset": null, "fill": true, "fillColor": "#fb7185", "fillOpacity": 0.07, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 2}
-            ).addTo(feature_group_bc269a9a54863eb1d950ecbfca6f0f24);
-        
-    
-        var popup_e014dc83cb641a13687b8203591f2c8d = L.popup({
-  "maxWidth": "100%",
-});
-
-        
-            
-                var html_a148d6876c93c8938b34a3be5186b3bc = $(`<div id="html_a148d6876c93c8938b34a3be5186b3bc" style="width: 100.0%; height: 100.0%;">Thermal / Fire Monitoring Area</div>`)[0];
-                popup_e014dc83cb641a13687b8203591f2c8d.setContent(html_a148d6876c93c8938b34a3be5186b3bc);
-            
-        
-
-        polygon_55d46c0bf101f718ac1905303297ae9f.bindPopup(popup_e014dc83cb641a13687b8203591f2c8d)
-        ;
-
-        
-    
-    
-            var feature_group_477a6f6a5e9f01fa8775a7a1d8b3910d = L.featureGroup(
-                {
-}
-            );
-        
-    
-            var polygon_593cc9b183cafefc8ddf6cfa594f0d19 = L.polygon(
-                [[23.779, 86.397], [23.781, 86.4005], [23.778, 86.402], [23.7765, 86.399]],
-                {"bubblingMouseEvents": true, "color": "#94a3b8", "dashArray": "4 5", "dashOffset": null, "fill": true, "fillColor": "#64748b", "fillOpacity": 0.08, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 2}
-            ).addTo(feature_group_477a6f6a5e9f01fa8775a7a1d8b3910d);
-        
-    
-        var popup_fc5f343380d02ba7533d94fda1b5e398 = L.popup({
-  "maxWidth": "100%",
-});
-
-        
-            
-                var html_5c0043b398993a7c4859f710474be53d = $(`<div id="html_5c0043b398993a7c4859f710474be53d" style="width: 100.0%; height: 100.0%;">Restricted Area</div>`)[0];
-                popup_fc5f343380d02ba7533d94fda1b5e398.setContent(html_5c0043b398993a7c4859f710474be53d);
-            
-        
-
-        polygon_593cc9b183cafefc8ddf6cfa594f0d19.bindPopup(popup_fc5f343380d02ba7533d94fda1b5e398)
-        ;
-
-        
-    
-    
-            var layer_control_06b48daba0bae2b02cdfd8a528f98951_layers = {
+            var layer_control_b3e35c013a1278b98d46cfe8ca7e9a07_layers = {
                 base_layers : {
-                    "openstreetmap" : tile_layer_accf9c231ed34b616200da1ace5a5dbf,
+                    "openstreetmap" : tile_layer_a00ca76dcab397b103716704f58a52df,
                 },
                 overlays :  {
-                    "Elevation / DEM" : feature_group_cf39a80b14dc08e2c12def5f2aaebe6d,
-                    "Slope Analysis" : feature_group_c6f2fa561bf477ce756381ded4bda70e,
-                    "Kusunda Study Area" : feature_group_db85705996e7e0f5cef8c190da4ac829,
-                    "Road Network" : feature_group_37a4f636afc20ac08f494aebd8ae8d77,
-                    "AI Risk Intelligence" : feature_group_ceab6bbbeb9c999abe04afd19c805286,
-                    "Sensor Locations" : feature_group_d25605b9a92fb65a1d3935ac752ec488,
-                    "Gas Monitoring" : feature_group_2c21062b3af44c6420cfd90766931030,
-                    "Thermal Monitoring" : feature_group_bc269a9a54863eb1d950ecbfca6f0f24,
-                    "Restricted Area" : feature_group_477a6f6a5e9f01fa8775a7a1d8b3910d,
+                    "Kusunda Study Area" : feature_group_b387cc5f28a985b17334af30271bde9c,
+                    "Road Network" : feature_group_3317fceec3bb4d43fb7851833b7efa78,
+                    "AI Risk Zones" : geo_json_5349ef580c042442b75169b669fc50c5,
+                    "IoT Sensors" : feature_group_a154ba6c874e630ec9d707487dfd4af8,
                 },
             };
-            let layer_control_06b48daba0bae2b02cdfd8a528f98951 = L.control.layers(
-                layer_control_06b48daba0bae2b02cdfd8a528f98951_layers.base_layers,
-                layer_control_06b48daba0bae2b02cdfd8a528f98951_layers.overlays,
+            let layer_control_b3e35c013a1278b98d46cfe8ca7e9a07 = L.control.layers(
+                layer_control_b3e35c013a1278b98d46cfe8ca7e9a07_layers.base_layers,
+                layer_control_b3e35c013a1278b98d46cfe8ca7e9a07_layers.overlays,
                 {
   "position": "topright",
   "collapsed": false,
   "autoZIndex": true,
 }
-            ).addTo(map_7ec4fdb79a0f49ad7e4cfc4f7050f875);
+            ).addTo(map_dbaee46697a2c133150c4c1f7f701021);
 
         
 </script>
